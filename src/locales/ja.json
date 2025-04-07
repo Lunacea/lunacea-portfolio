@@ -1,0 +1,75 @@
+{
+  "RootLayout": {
+    "home_link": "ホーム",
+    "about_link": "概要",
+    "counter_link": "カウンター",
+    "portfolio_link": "ポートフォリオ",
+    "sign_in_link": "ログイン",
+    "sign_up_link": "新規登録"
+  },
+  "BaseTemplate": {
+    "description": "Next.jsとTailwind CSSのスターターコード",
+    "made_with": "<author></author>で作成"
+  },
+  "Index": {
+    "meta_title": "Next.js Boilerplateの紹介",
+    "meta_description": "Next.js Boilerplateは、あなたのプロジェクトに最適なスターターコードです。Next.jsフレームワークでReactアプリケーションを構築しましょう。",
+    "sponsors_title": "スポンサー"
+  },
+  "Counter": {
+    "meta_title": "カウンター",
+    "meta_description": "データベース操作の例",
+    "loading_counter": "カウンターを読み込み中...",
+    "security_powered_by": "セキュリティ、ボット検出、レート制限は以下により提供"
+  },
+  "CounterForm": {
+    "presentation": "カウンターはデータベースに保存され、指定した値で増加します。",
+    "label_increment": "増加値",
+    "button_increment": "増加"
+  },
+  "CurrentCount": {
+    "count": "カウント: {count}"
+  },
+  "About": {
+    "meta_title": "概要",
+    "meta_description": "概要ページの説明",
+    "about_paragraph": "概要ページへようこそ！私たちは素晴らしいソフトウェアを作成することに情熱を注ぐチームです。",
+    "translation_powered_by": "翻訳は以下により提供"
+  },
+  "Portfolio": {
+    "meta_title": "ポートフォリオ",
+    "meta_description": "ポートフォリオページへようこそ！",
+    "presentation": "ポートフォリオページへようこそ！ここでは、私の作品と実績を厳選して紹介しています。このポートフォリオを通じて、私の専門知識、創造性、そしてプロジェクトにもたらす価値をご覧いただけます。",
+    "portfolio_name": "ポートフォリオ {name}",
+    "error_reporting_powered_by": "エラー報告は以下により提供",
+    "coverage_powered_by": "コードカバレッジは以下により提供"
+  },
+  "PortfolioSlug": {
+    "meta_title": "ポートフォリオ {slug}",
+    "meta_description": "ポートフォリオ {slug} の説明",
+    "header": "ポートフォリオ {slug}",
+    "content": "企業イベント向けのプロモーション素材とブランディング要素を作成しました。ロゴ、ポスター、バナー、デジタルアセットを含む視覚的に統一されたテーマを制作。クライアントのブランドアイデンティティを統合しながら、現代的で革新的なアプローチを注入。イベント参加者から好意的な反応を得て、参加者の関与度が高まり、ブランドの可視性が向上した成功したイベントとなりました。",
+    "code_review_powered_by": "コードレビューは以下により提供"
+  },
+  "SignIn": {
+    "meta_title": "ログイン",
+    "meta_description": "使いやすいログインプロセスでアカウントに簡単にサインイン"
+  },
+  "SignUp": {
+    "meta_title": "新規登録",
+    "meta_description": "直感的な登録プロセスで簡単にアカウントを作成"
+  },
+  "Dashboard": {
+    "meta_title": "ダッシュボード",
+    "hello_message": "こんにちは {email}さん！",
+    "alternative_message": "同じ技術スタックでSaaSをより早く構築したいですか？<url></url>をお試しください。"
+  },
+  "UserProfile": {
+    "meta_title": "ユーザープロフィール"
+  },
+  "DashboardLayout": {
+    "dashboard_link": "ダッシュボード",
+    "user_profile_link": "アカウント管理",
+    "sign_out": "ログアウト"
+  }
+}
