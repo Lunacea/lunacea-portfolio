@@ -22,9 +22,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache: yarn
+      - run: yarn install
+      - run: yarn run build
 
   test:
     strategy:
@@ -42,11 +42,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
+          cache: yarn
+      - run: yarn install
 
       - name: Build Next.js for E2E tests
-        run: npm run build
+        run: yarn run build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
@@ -55,13 +55,13 @@ jobs:
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
       - name: Linter
-        run: npm run lint
+        run: yarn run lint
 
       - name: Type checking
-        run: npm run check-types
+        run: yarn run check-types
 
       - name: Run unit tests
-        run: npm run test -- --coverage
+        run: yarn run test -- --coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -72,10 +72,10 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run storybook tests
-        run: npm run test-storybook:ci
+        run: yarn run test-storybook:ci
 
       - name: Run E2E tests
-        run: npx percy exec -- npm run test:e2e
+        run: npx percy exec -- yarn run test:e2e
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}

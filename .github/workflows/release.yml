@@ -30,8 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: HUSKY=0 npm ci
+          cache: yarn
+      - run: HUSKY=0 yarn install
 
       - name: Release
         env:
