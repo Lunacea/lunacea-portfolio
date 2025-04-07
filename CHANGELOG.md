@@ -1,3 +1,10 @@
+# 1.0.0 (2025-04-07)
+
+
+### Bug Fixes
+
+* adapt yarn ([9d77913](https://github.com/Lunacea/lunacea-portfolio/commit/9d77913b647d2d1aa7fe09fcdcc7c4217fb21d30))
+
 # [3.66.0](https://github.com/ixartz/Next-js-Boilerplate/compare/v3.65.2...v3.66.0) (2025-04-01)
 
 
