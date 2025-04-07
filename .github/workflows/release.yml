@@ -30,8 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: bun
-      - run: HUSKY=0 bun ci
+          cache: npm
+      - run: HUSKY=0 npm ci
 
       - name: Release
         env:
