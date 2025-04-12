@@ -1,30 +1,24 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { getTranslations } from 'next-intl/server';
-import { Sponsors } from './Sponsors';
+import { useUser } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
+// Sponsorsモジュールが見つからないため、一時的にコメントアウト
+// import { Sponsors } from './Sponsors';
 
-export const Hello = async () => {
-  const t = await getTranslations('Dashboard');
-  const user = await currentUser();
+export function Hello() {
+  const t = useTranslations('Hello');
+  const { user } = useUser();
 
   return (
-    <>
+    <div className="flex flex-col items-center gap-4 rounded-lg bg-white/50 p-8 backdrop-blur-sm">
+      <h1 className="text-xl font-bold">{t('hello_title')}</h1>
       <p>
-        {`👋 `}
-        {t('hello_message', { email: user?.emailAddresses[0]?.emailAddress })}
-      </p>
-      <p>
-        {t.rich('alternative_message', {
-          url: () => (
-            <a
-              className="text-blue-700 hover:border-b-2 hover:border-blue-700"
-              href="https://nextjs-boilerplate.com/pro-saas-starter-kit"
-            >
-              Next.js Boilerplate SaaS
-            </a>
-          ),
+        {t('hello_message', {
+          // emailが未定義の場合にデフォルト値を提供
+          email: user?.emailAddresses[0]?.emailAddress || 'user@example.com',
         })}
       </p>
+      {/* Sponsorsモジュールが見つからないため、一時的にコメントアウト
       <Sponsors />
-    </>
+      */}
+    </div>
   );
-};
+}

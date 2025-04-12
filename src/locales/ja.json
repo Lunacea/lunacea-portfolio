@@ -1,20 +1,20 @@
 {
   "RootLayout": {
-    "home_link": "ホーム",
-    "about_link": "概要",
-    "counter_link": "カウンター",
-    "portfolio_link": "ポートフォリオ",
+    "about_link": "ABOUT",
+    "portfolio_link": "WORKS",
+    "contact_link": "CONTACT",
     "sign_in_link": "ログイン",
     "sign_up_link": "新規登録"
   },
   "BaseTemplate": {
-    "description": "Next.jsとTailwind CSSのスターターコード",
+    "description": "Web Developer",
     "made_with": "<author></author>で作成"
   },
   "Index": {
-    "meta_title": "Next.js Boilerplateの紹介",
-    "meta_description": "Next.js Boilerplateは、あなたのプロジェクトに最適なスターターコードです。Next.jsフレームワークでReactアプリケーションを構築しましょう。",
-    "sponsors_title": "スポンサー"
+    "meta_title": "LUNACEA Web Developer",
+    "meta_description": "Web Developer Lunacea のポートフォリオサイトです。",
+    "draggable_card_title": "テストカード",
+    "draggable_card_description": "ドラッグしよう"
   },
   "Counter": {
     "meta_title": "カウンター",
@@ -71,5 +71,9 @@
     "dashboard_link": "ダッシュボード",
     "user_profile_link": "アカウント管理",
     "sign_out": "ログアウト"
+  },
+  "Hello": {
+    "hello_title": "こんにちは",
+    "hello_message": "どうもどうも"
   }
 }

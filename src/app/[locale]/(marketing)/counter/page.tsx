@@ -2,7 +2,6 @@ import { CounterForm } from '@/components/CounterForm';
 import { CurrentCount } from '@/components/CurrentCount';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import Image from 'next/image';
 import { Suspense } from 'react';
 
 export async function generateMetadata(props: {
@@ -42,18 +41,6 @@ export default function Counter() {
           Arcjet
         </a>
       </div>
-
-      <a
-        href="https://launch.arcjet.com/Q6eLbRE"
-      >
-        <Image
-          className="mx-auto mt-2"
-          src="/assets/images/arcjet-light.svg"
-          alt="Arcjet"
-          width={128}
-          height={38}
-        />
-      </a>
     </>
   );
 };

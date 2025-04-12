@@ -1,5 +1,4 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Image from 'next/image';
 
 type IAboutProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -39,16 +38,6 @@ export default async function About(props: IAboutProps) {
           Crowdin
         </a>
       </div>
-
-      <a href="https://l.crowdin.com/next-js">
-        <Image
-          className="mx-auto mt-2"
-          src="/assets/images/crowdin-dark.png"
-          alt="Crowdin Translation Management System"
-          width={128}
-          height={26}
-        />
-      </a>
     </>
   );
 };

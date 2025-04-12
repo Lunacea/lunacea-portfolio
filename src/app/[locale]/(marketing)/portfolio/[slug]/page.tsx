@@ -1,6 +1,5 @@
 import { routing } from '@/libs/i18nNavigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Image from 'next/image';
 
 type IPortfolioDetailProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -52,18 +51,6 @@ export default async function PortfolioDetail(props: IPortfolioDetailProps) {
           CodeRabbit
         </a>
       </div>
-
-      <a
-        href="https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025"
-      >
-        <Image
-          className="mx-auto mt-2"
-          src="/assets/images/coderabbit-logo-light.svg"
-          alt="CodeRabbit"
-          width={128}
-          height={22}
-        />
-      </a>
     </>
   );
 };

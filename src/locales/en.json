@@ -1,9 +1,8 @@
 {
   "RootLayout": {
-    "home_link": "Home",
-    "about_link": "About",
-    "counter_link": "Counter",
-    "portfolio_link": "Portfolio",
+    "about_link": "ABOUT",
+    "portfolio_link": "WORKS",
+    "contact_link": "CONTACT",
     "sign_in_link": "Sign in",
     "sign_up_link": "Sign up"
   },
