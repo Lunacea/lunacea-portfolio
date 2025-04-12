@@ -7,8 +7,9 @@ import { useEffect, useRef } from 'react';
 /**
  * ドラッグ可能なカードコンポーネント
  * ユーザーがマウスやタッチでカードを自由に移動させることができます
- * @param props.title カードのタイトル
- * @param props.description カードの説明文
+ * @param props - カードのプロパティ
+ * @param props.title - カードのタイトル
+ * @param props.description - カードの説明文
  */
 const DraggableCard = (props: {
   title: string;
@@ -23,35 +24,38 @@ const DraggableCard = (props: {
       return;
     }
 
+    // 現在のカード要素への参照を保存
+    const currentCard = cardRef.current;
+
     // 画面の中央下部に初期配置
     const positionCardInitially = () => {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      if (cardRef.current) {
-        const elementWidth = cardRef.current.offsetWidth;
-        const elementHeight = cardRef.current.offsetHeight;
+      if (currentCard) {
+        const elementWidth = currentCard.offsetWidth;
+        const elementHeight = currentCard.offsetHeight;
 
-        cardRef.current.style.left = `${(viewportWidth - elementWidth) - 4}px`;
-        cardRef.current.style.top = `${(viewportHeight - elementHeight) - 4}px`;
+        currentCard.style.left = `${(viewportWidth - elementWidth) - 4}px`;
+        currentCard.style.top = `${(viewportHeight - elementHeight) - 4}px`;
       }
     };
 
     positionCardInitially();
 
     // ドラッグ機能の設定
-    const draggable = createDraggable(cardRef.current, {
+    const draggable = createDraggable(currentCard, {
       container: '.draggable-field',
       releaseContainerFriction: 1,
       onGrab: () => {
-        if (cardRef.current) {
-          cardRef.current.style.cursor = 'grabbing';
-          cardRef.current.style.zIndex = '100';
+        if (currentCard) {
+          currentCard.style.cursor = 'grabbing';
+          currentCard.style.zIndex = '100';
         }
       },
       onRelease: () => {
-        if (cardRef.current) {
-          cardRef.current.style.cursor = 'grab';
+        if (currentCard) {
+          currentCard.style.cursor = 'grab';
         }
       },
     });
@@ -61,16 +65,14 @@ const DraggableCard = (props: {
       e.stopPropagation();
     };
 
-    cardRef.current.addEventListener('mousedown', preventPropagation);
-    cardRef.current.addEventListener('click', preventPropagation);
+    currentCard.addEventListener('mousedown', preventPropagation);
+    currentCard.addEventListener('click', preventPropagation);
 
     // クリーンアップ
     return () => {
       draggable.revert();
-      if (cardRef.current) {
-        cardRef.current.removeEventListener('mousedown', preventPropagation);
-        cardRef.current.removeEventListener('click', preventPropagation);
-      }
+      currentCard.removeEventListener('mousedown', preventPropagation);
+      currentCard.removeEventListener('click', preventPropagation);
     };
   }, []);
 

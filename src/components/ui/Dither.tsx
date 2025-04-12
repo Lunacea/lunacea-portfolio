@@ -1,47 +1,11 @@
 'use client'; // クライアントコンポーネントとしてマーク
 
+import type { ColorRatiosType } from './context/ColorRatiosContext';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import React, { createContext, use, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-
-// 色の比率を管理するためのContext
-type ColorRatiosType = {
-  blue: number;
-  green: number;
-  yellow: number;
-};
-
-type ColorRatiosContextType = {
-  colorRatios: ColorRatiosType;
-  setColorRatios: React.Dispatch<React.SetStateAction<ColorRatiosType>>;
-};
-
-const ColorRatiosContext = createContext<ColorRatiosContextType | null>(null);
-
-export const useColorRatios = (): ColorRatiosContextType => {
-  const context = use(ColorRatiosContext);
-  if (!context) {
-    throw new Error('useColorRatios must be used within a ColorRatiosProvider');
-  }
-  return context;
-};
-
-export const ColorRatiosProvider: React.FC<{
-  children: React.ReactNode;
-  initialRatios?: {
-    blue: number;
-    green: number;
-    yellow: number;
-  };
-}> = ({ children, initialRatios = { blue: 0.6, green: 0.2, yellow: 0.2 } }) => {
-  const [colorRatios, setColorRatios] = useState(initialRatios);
-
-  return (
-    <ColorRatiosContext value={{ colorRatios, setColorRatios }}>
-      {children}
-    </ColorRatiosContext>
-  );
-};
+import { ColorRatiosProvider } from './ColorRatiosProvider';
+import { useColorRatios } from './hooks/useColorRatios';
 
 const waveVertexShader = /* glsl */ `
 precision highp float;
@@ -279,6 +243,7 @@ function DitheredWaves({
   );
 }
 
+// デフォルト値をコンポーネント外部に定義
 const DEFAULT_WAVE_COLOR: [number, number, number] = [0.0, 0.5, 0.8];
 
 // キャンバス部分のみを扱うコンポーネント
@@ -450,8 +415,15 @@ export default function Dither({
   yellowRatio = 0.2,
   hideColorToggle = false, // デフォルトでは表示
 }: DitherProps) {
+  // 初期カラー比率を定義
+  const initialColorRatios: ColorRatiosType = {
+    blue: blueRatio,
+    green: greenRatio,
+    yellow: yellowRatio,
+  };
+
   return (
-    <ColorRatiosProvider initialRatios={{ blue: blueRatio, green: greenRatio, yellow: yellowRatio }}>
+    <ColorRatiosProvider initialRatios={initialColorRatios}>
       <div className="relative w-full h-full">
         <DitherCanvas
           waveSpeed={waveSpeed}

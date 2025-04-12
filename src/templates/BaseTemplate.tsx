@@ -23,15 +23,11 @@ export const BaseTemplate = (props: {
 
             <div className="flex justify-between">
               <nav>
-                <ul className="flex flex-wrap gap-x-5 text-xl">
-                  {props.leftNav}
-                </ul>
+                {props.leftNav}
               </nav>
 
               <nav>
-                <ul className="flex flex-wrap gap-x-5 text-xl">
-                  {props.rightNav}
-                </ul>
+                {props.rightNav}
               </nav>
             </div>
           </header>

@@ -1,5 +1,6 @@
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import Dither, { ColorRatiosProvider, ColorToggleButtons } from '@/components/ui/Dither';
+import { ColorRatiosProvider } from '@/components/ui/ColorRatiosProvider';
+import Dither, { ColorToggleButtons } from '@/components/ui/Dither';
 import DynamicCRTEffect from '@/components/ui/DynamicCRTEffect';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -68,7 +69,7 @@ export default async function Layout(props: {
         <div className="relative z-99">
           <BaseTemplate
             leftNav={(
-              <>
+              <ul className="flex flex-wrap gap-x-5 text-xl">
                 <li>
                   <Link href="/about/">
                     {t('about_link')}
@@ -84,10 +85,10 @@ export default async function Layout(props: {
                     {t('contact_link')}
                   </Link>
                 </li>
-              </>
+              </ul>
             )}
             rightNav={(
-              <>
+              <ul className="flex flex-wrap gap-x-5 text-xl">
                 <li>
                   <Link href="/sign-in/">
                     {t('sign_in_link')}
@@ -101,7 +102,7 @@ export default async function Layout(props: {
                 <li>
                   <LocaleSwitcher />
                 </li>
-              </>
+              </ul>
             )}
           >
             {props.children}
