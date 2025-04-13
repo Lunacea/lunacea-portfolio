@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.0.0...v1.1.0) (2025-04-13)
+
+
+### Features
+
+* create basic background and page ([88c90a8](https://github.com/Lunacea/lunacea-portfolio/commit/88c90a893f9a03a6609792977fe4bd7ee2425d6f))
+
 # 1.0.0 (2025-04-07)
 
 
