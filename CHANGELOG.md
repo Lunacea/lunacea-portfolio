@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.1.0...v1.1.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* fix building error ([b77b90b](https://github.com/Lunacea/lunacea-portfolio/commit/b77b90b1459ed85ca9cf198bf27a643b7f5af492))
+
 # [1.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.0.0...v1.1.0) (2025-04-13)
 
 
