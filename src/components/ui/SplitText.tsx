@@ -74,10 +74,11 @@ const SplitText: React.FC<SplitTextProps> = ({
       <Link href="/">
         {characters.map((char, index) => {
           const calculatedDelay = delay * 0.97 ** index * (index + 1);
+          const uniqueKey = `${char}-${index}-${text.substring(0, index)}`;
 
           return (
             <AnimatedChar
-              key={index}
+              key={uniqueKey}
               char={char}
               delay={calculatedDelay}
               show={show}
