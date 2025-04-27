@@ -1,4 +1,3 @@
-import SplitText from '@/components/ui/SplitText';
 import { AppConfig } from '@/utils/AppConfig';
 import { useTranslations } from 'next-intl';
 
@@ -16,7 +15,7 @@ export const BaseTemplate = (props: {
           <header className="mb-4">
             <div className="py-8">
               <h1 className="text-2xl font-bold">
-                <SplitText text={AppConfig.name} className="" />
+                {AppConfig.name}
               </h1>
               <h2 className="text-lg ">{t('description')}</h2>
             </div>
