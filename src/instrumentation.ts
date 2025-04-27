@@ -1,5 +1,7 @@
+// This file configures server-side instrumentation for Sentry
 import * as Sentry from '@sentry/nextjs';
 
+// Export request error tracking for Sentry
 export const onRequestError = Sentry.captureRequestError;
 
 export async function register() {

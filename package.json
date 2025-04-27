@@ -11,7 +11,7 @@
     "dev": "run-p dev:*",
     "build": "next build",
     "start": "next start",
-    "build-stats": "cross-env ANALYZE=true yarn run build",
+    "build-stats": "cross-env ANALYZE=true bun run build",
     "clean": "rimraf .next out coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

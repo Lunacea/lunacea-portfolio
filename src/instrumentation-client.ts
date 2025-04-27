@@ -1,10 +1,14 @@
-// This file configures the initialization of Sentry on the client.
-// The config you add here will be used whenever a users loads a page in their browser.
+// This file configures the initialization of Sentry and Spotlight on the client.
+// The config here will be used whenever a user loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
 import * as Spotlight from '@spotlightjs/spotlight';
 
+// Export the navigation tracking hook for Sentry
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
+// Initialize Sentry for client-side error tracking
 Sentry.init({
   // Sentry DSN
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -34,6 +38,10 @@ Sentry.init({
   debug: false,
 });
 
+// Initialize Spotlight in development mode
 if (process.env.NODE_ENV === 'development') {
   Spotlight.init();
 }
+
+// Add performance marking for application initialization
+performance.mark('app-init');
