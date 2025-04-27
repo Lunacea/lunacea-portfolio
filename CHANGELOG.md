@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.1.2...v1.2.0) (2025-04-27)
+
+
+### Bug Fixes
+
+* delete unnecessary import ([62f2cd5](https://github.com/Lunacea/lunacea-portfolio/commit/62f2cd5a93b6e829241277abc9e98d89adbd6d30))
+
+
+### Features
+
+* initialize degisn ([18d46e9](https://github.com/Lunacea/lunacea-portfolio/commit/18d46e975940f6234de2f8ca8ce2d7daf88fe94f))
+* **replace yarn with bun:** replace yarn with bun ([d9cee4a](https://github.com/Lunacea/lunacea-portfolio/commit/d9cee4aa399aeaf3493114eaea3303210f9472cc))
+
 ## [1.1.2](https://github.com/Lunacea/lunacea-portfolio/compare/v1.1.1...v1.1.2) (2025-04-13)
 
 
