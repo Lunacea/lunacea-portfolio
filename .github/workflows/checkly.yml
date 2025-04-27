@@ -11,8 +11,7 @@ jobs:
   test-e2e:
     strategy:
       matrix:
-        node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        bun-version: [latest]
 
     # Only run when the deployment was successful
     if: github.event.deployment_status.state == 'success'
@@ -30,25 +29,28 @@ jobs:
       - name: Set branch name # workaround to detect branch name in "deployment_status" actions
         run: echo "CHECKLY_TEST_REPO_BRANCH=$(git show -s --pretty=%D HEAD | tr -s ',' '\n' | sed 's/^ //' | grep -e 'origin/' | head -1 | sed 's/\origin\///g')" >> $GITHUB_ENV
 
-      - uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
+          bun-version: ${{ matrix.bun-version }}
 
-      - name: Restore or cache node_modules
-        id: cache-node-modules
+      - name: Cache Bun dependencies
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: node-modules-${{ hashFiles('package-lock.json') }}
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: yarn install
+        run: bun install
+
+      - name: Build
+        run: bun run build
 
       - name: Run checks # run the checks passing in the ENVIRONMENT_URL and recording a test session.
         id: run-checks
-        run: npx checkly test --reporter=github --record
+        run: bunx checkly test --reporter=github --record
         env:
           VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
           ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
@@ -60,4 +62,4 @@ jobs:
       - name: Deploy checks # if the test run was successful and we are on Production, deploy the checks
         id: deploy-checks
         if: steps.run-checks.outcome == 'success' && github.event.deployment_status.environment == 'Production'
-        run: npx checkly deploy --force
+        run: bunx checkly deploy --force
