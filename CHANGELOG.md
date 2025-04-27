@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.2.0...v1.2.1) (2025-04-27)
+
+
+### Bug Fixes
+
+* remove unused configuration files and update build commands to use bun ([07d92be](https://github.com/Lunacea/lunacea-portfolio/commit/07d92be549e214a953e09f74a91fcf88f5cb5f79))
+
 # [1.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.1.2...v1.2.0) (2025-04-27)
 
 
