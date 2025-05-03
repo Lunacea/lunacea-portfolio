@@ -1,6 +1,13 @@
 [phases.setup]
-aptPkgs = [ "curl" ]
-cmds = [ "curl -fsSL https://bun.sh/install | bash" ]
+aptPkgs = [
+  "curl",
+  "unzip"
+]
+cmds = [
+  "apt update",
+  "apt upgrade -y",
+  "curl -fsSL https://bun.sh/install | bash"
+]
 
 [phases.install]
 cmds = [ "$HOME/.bun/bin/bun install" ]
