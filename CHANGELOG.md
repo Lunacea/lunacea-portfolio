@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.2.1...v1.3.0) (2025-05-03)
+
+
+### Features
+
+* change LocaleSwitcher ([2ffc190](https://github.com/Lunacea/lunacea-portfolio/commit/2ffc1908cbcbe550711add06bba59d00ea53458b))
+
 ## [1.2.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.2.0...v1.2.1) (2025-04-27)
 
 
