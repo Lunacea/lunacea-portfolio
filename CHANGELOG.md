@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.0...v1.3.1) (2025-05-03)
+
+
+### Bug Fixes
+
+* add nixpacks.toml ([7beee61](https://github.com/Lunacea/lunacea-portfolio/commit/7beee61a431a572743846a1d9d2dbfffcabc6d0f))
+
 # [1.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.2.1...v1.3.0) (2025-05-03)
 
 
