@@ -1,0 +1,12 @@
+[phases.setup]
+aptPkgs = [ "curl" ]
+cmds = [ "curl -fsSL https://bun.sh/install | bash" ]
+
+[phases.install]
+cmds = [ "$HOME/.bun/bin/bun install" ]
+
+[phases.build]
+cmds = [ "$HOME/.bun/bin/bun run build" ]
+
+[start]
+cmd = "$HOME/.bun/bin/bun run start"
