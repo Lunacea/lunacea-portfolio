@@ -1,6 +1,5 @@
 'use client';
 
-import type { ChangeEventHandler } from 'react';
 import { routing, usePathname } from '@/libs/i18nNavigation';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -10,23 +9,29 @@ export const LocaleSwitcher = () => {
   const pathname = usePathname();
   const locale = useLocale();
 
-  const handleChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
-    router.push(`/${event.target.value}${pathname}`);
+  const handleLocaleChange = (newLocale: string) => {
+    router.push(`/${newLocale}${pathname}`);
     router.refresh();
   };
 
   return (
-    <select
-      defaultValue={locale}
-      onChange={handleChange}
-      className="border border-gray-300 font-medium focus:outline-hidden focus-visible:ring-3"
-      aria-label="lang-switcher"
-    >
-      {routing.locales.map(elt => (
-        <option key={elt} value={elt}>
-          {elt.toUpperCase()}
-        </option>
+    <div className="flex rounded-md overflow-hidden shadow-sm" aria-label="言語切替">
+      {routing.locales.map(langCode => (
+        <button
+          key={langCode}
+          onClick={() => handleLocaleChange(langCode)}
+          className={`
+            px-3 py-1.5 text-sm font-medium transition-colors
+            ${locale === langCode
+          ? 'bg-primary text-primary-foreground'
+          : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+        }
+          `}
+          aria-current={locale === langCode ? 'true' : 'false'}
+        >
+          {langCode.toUpperCase()}
+        </button>
       ))}
-    </select>
+    </div>
   );
 };

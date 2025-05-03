@@ -1,3 +1,4 @@
+import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { AppConfig } from '@/utils/AppConfig';
 import { useTranslations } from 'next-intl';
 
@@ -27,6 +28,7 @@ export const BaseTemplate = (props: {
 
               <nav>
                 {props.rightNav}
+                <LocaleSwitcher />
               </nav>
             </div>
           </header>
