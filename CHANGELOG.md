@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.1...v1.3.2) (2025-05-03)
+
+
+### Bug Fixes
+
+* **fix nixpacks.toml:** fix to install bun ([3d8a9af](https://github.com/Lunacea/lunacea-portfolio/commit/3d8a9af0502ba69bf322c1b50841b67577581960))
+
 ## [1.3.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.0...v1.3.1) (2025-05-03)
 
 
