@@ -18,6 +18,7 @@ export const LocaleSwitcher = () => {
     <div className="flex rounded-md overflow-hidden shadow-sm" aria-label="言語切替">
       {routing.locales.map(langCode => (
         <button
+          type="button"
           key={langCode}
           onClick={() => handleLocaleChange(langCode)}
           className={`

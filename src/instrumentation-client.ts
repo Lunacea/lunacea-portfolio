@@ -1,47 +1,39 @@
-// This file configures the initialization of Sentry and Spotlight on the client.
-// The config here will be used whenever a user loads a page in their browser.
+// This file configures the initialization of Sentry on the client.
+// The added config here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
-
 import * as Sentry from '@sentry/nextjs';
 import * as Spotlight from '@spotlightjs/spotlight';
 
-// Export the navigation tracking hook for Sentry
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-// Initialize Sentry for client-side error tracking
-Sentry.init({
-  // Sentry DSN
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    // Add optional integrations for additional features
+    integrations: [
+      Sentry.replayIntegration(),
+    ],
 
-  // Add optional integrations for additional features
-  integrations: [
-    // You can remove this option if you're not planning to use the Sentry Session Replay feature:
-    Sentry.replayIntegration({
-      // Additional Replay configuration goes in here, for example:
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-  ],
+    // Adds request headers and IP for users, for more info visit
+    sendDefaultPii: true,
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+    tracesSampleRate: 1,
 
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
+    // Define how likely Replay events are sampled.
+    // This sets the sample rate to be 10%. You may want this to be 100% while
+    // in development and sample at a lower rate in production
+    replaysSessionSampleRate: 0.1,
 
-  // Define how likely Replay events are sampled when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
+    // Define how likely Replay events are sampled when an error occurs.
+    replaysOnErrorSampleRate: 1.0,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
-});
+    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    debug: false,
+  });
 
-// Initialize Spotlight in development mode
-if (process.env.NODE_ENV === 'development') {
-  Spotlight.init();
+  if (process.env.NODE_ENV === 'development') {
+    Spotlight.init();
+  }
 }
 
-// Add performance marking for application initialization
-performance.mark('app-init');
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

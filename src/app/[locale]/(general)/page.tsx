@@ -23,6 +23,11 @@ export default async function Index(props: IIndexProps) {
 
   return (
     <>
+      <div className="fixed bg-amber-300 w-200 h-200">
+        <audio src="/assets/sound/bgm.mp3" autoPlay loop>
+          <track kind="captions" />
+        </audio>
+      </div>
     </>
   );
 }
