@@ -1,3 +1,11 @@
+## [1.3.3](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.2...v1.3.3) (2025-05-07)
+
+
+### Bug Fixes
+
+* **apply bun to commitlint:** npx -> bunx ([72b3110](https://github.com/Lunacea/lunacea-portfolio/commit/72b3110bae6b5473538ef1192e13c47d80ce14b5))
+* fix bug that mp3 in public folder cannot be read ([a2f78d7](https://github.com/Lunacea/lunacea-portfolio/commit/a2f78d759581b99df8fa04773175423ddfa83290))
+
 ## [1.3.2](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.1...v1.3.2) (2025-05-03)
 
 
