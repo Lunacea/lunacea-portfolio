@@ -10,6 +10,14 @@
     "description": "Web Developer",
     "made_with": "Made with <author></author>."
   },
+  "BGMPlayer": {
+    "dialog_title": "Play Background Music?",
+    "dialog_message": "This site can play background music. Would you like to allow it?",
+    "allow": "Allow",
+    "deny": "No Thanks",
+    "play_bgm": "Play BGM",
+    "pause_bgm": "Pause BGM"
+  },
   "Index": {
     "meta_title": "Next.js Boilerplate Presentation",
     "meta_description": "Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework.",

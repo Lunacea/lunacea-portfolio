@@ -10,6 +10,14 @@
     "description": "Web Developer",
     "made_with": "<author></author>で作成"
   },
+  "BGMPlayer": {
+    "dialog_title": "BGMを再生しますか？",
+    "dialog_message": "このサイトではバックグラウンドミュージックを再生できます。許可しますか？",
+    "allow": "許可する",
+    "deny": "再生しない",
+    "play_bgm": "BGMを再生",
+    "pause_bgm": "BGMを一時停止"
+  },
   "Index": {
     "meta_title": "LUNACEA Web Developer",
     "meta_description": "Web Developer Lunacea のポートフォリオサイトです。",
