@@ -20,11 +20,11 @@ const getInitialBGMState = (): { permission: BGMPermissionStatus; showDialog: bo
   }
   try {
     const savedPermission = localStorage.getItem(STORAGE_KEY) as BGMPermissionStatus;
-    // console.warn(`[Initial State] Saved BGM Permission: ${savedPermission}`);
-    return { permission: savedPermission, showDialog: savedPermission === null };
+    // 毎回訪問時にダイアログを表示するため、常にshowDialogをtrueに設定
+    return { permission: savedPermission, showDialog: true };
   } catch (e) {
     console.error('[Initial State] Error reading from localStorage:', e);
-    // エラー発生時はダイアログを表示し、許可状態は未定とする
+    // エラー発生時もダイアログを表示する
     return { permission: null, showDialog: true };
   }
 };
@@ -36,14 +36,22 @@ const getInitialBGMState = (): { permission: BGMPermissionStatus; showDialog: bo
 export const BGMPlayer: React.FC = () => {
   const t = useTranslations('BGMPlayer');
 
-  // 1. 状態管理 - getInitialBGMStateを使用して初期化
+  // 1. 状態管理
   const initialState = getInitialBGMState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [permissionStatus, setPermissionStatus] = useState<BGMPermissionStatus>(initialState.permission);
-  const [showDialog, setShowDialog] = useState<boolean>(initialState.showDialog);
+
+  // ダイアログの状態管理
+  // needsDialogInteraction: このマウントでダイアログ操作が必要か (初期値はクライアントでtrue)
+  const [needsDialogInteraction, setNeedsDialogInteraction] = useState<boolean>(initialState.showDialog);
+  // isDialogMounted: ダイアログがDOMに存在するか
+  const [isDialogMounted, setIsDialogMounted] = useState<boolean>(initialState.showDialog);
+  // isDialogAnimatedVisible: ダイアログのアニメーション用表示状態 (opacity, transform)
+  const [isDialogAnimatedVisible, setIsDialogAnimatedVisible] = useState<boolean>(false);
 
   // refs - 値の維持
   const soundRef = useRef<Howl | null>(null);
+  const fadeOutTimerRef = useRef<NodeJS.Timeout | null>(null); // Timer ID for dialog fade-out
 
   // 2. 音声再生関数 - 外部依存なし
   const playAudio = useCallback(() => {
@@ -92,44 +100,6 @@ export const BGMPlayer: React.FC = () => {
     }
   }, [isPlaying, pauseAudio, playAudio]);
 
-  // 5. パーミッション処理ハンドラ
-  const handlePermission = useCallback((allow: boolean) => {
-    const newStatus = allow ? 'granted' : 'denied';
-    console.warn(`BGM許可設定: ${newStatus}`);
-
-    // ローカルストレージに保存
-    try {
-      localStorage.setItem(STORAGE_KEY, newStatus);
-    } catch (e) {
-      console.error('ローカルストレージ書き込みエラー:', e);
-    }
-
-    // 状態を更新
-    setPermissionStatus(newStatus);
-    setShowDialog(false);
-
-    // 許可された場合、即時再生を試みる
-    if (allow) {
-      // ユーザーインタラクションとして処理するため即時実行
-      setTimeout(playAudio, 100);
-    }
-  }, [playAudio]);
-
-  // 6. パーミッション状態の初期化 - マウント時に一度だけ実行
-  // useEffect(() => {
-  //   // ローカルストレージからパーミッション状態を読み込む
-  //   try {
-  //     const savedPermission = localStorage.getItem(STORAGE_KEY) as BGMPermissionStatus;
-  //     console.warn(`保存されているBGM許可状態: ${savedPermission}`);
-
-  //     setPermissionStatus(savedPermission);
-  //     setShowDialog(savedPermission === null);
-  //   } catch (e) {
-  //     console.error('ローカルストレージ読み込みエラー:', e);
-  //     setShowDialog(true);
-  //   }
-  // }, []); // 空の依存配列 - マウント時に一度だけ実行
-
   // Web Audio APIのアンロック処理をuseCallbackでメモ化
   const unlockAudio = useCallback(() => {
     if (typeof window !== 'undefined' && 'Howler' in window && (window as any).Howler._autoUnlock) {
@@ -137,6 +107,7 @@ export const BGMPlayer: React.FC = () => {
     }
     // イベントリスナーは一度実行されると自動的に削除される({ once: true })
     // ここでの明示的な削除は不要
+    // Explicitly return undefined
   }, []);
 
   // 7. Howlerインスタンスの初期化 - マウント時に一度だけ実行
@@ -214,6 +185,74 @@ export const BGMPlayer: React.FC = () => {
     };
   }, [unlockAudio]); // unlockAudioを依存配列に追加
 
+  // Effect to manage initial dialog appearance (mount and fade-in)
+  // useEffect(() => {
+  //   if (needsDialogInteraction) {
+  //     setIsDialogMounted(true);
+  //   }
+  //   // Unmounting is handled by `handlePermission` which sets `needsDialogInteraction` to false
+  //   // after the fade-out animation and DOM removal.
+  // }, [needsDialogInteraction]);
+
+  // Effect to Animate Dialog In when it is mounted and interaction is still needed
+  useEffect(() => {
+    if (isDialogMounted && needsDialogInteraction) {
+      const fadeInTimer = setTimeout(() => {
+        setIsDialogAnimatedVisible(true);
+      }, 50); // Small delay for CSS to catch up after mount
+      return () => clearTimeout(fadeInTimer);
+    }
+    // If the condition is not met, explicitly return undefined for type consistency.
+    return undefined;
+  }, [isDialogMounted, needsDialogInteraction]);
+
+  // 5. パーミッション処理ハンドラ
+  const handlePermission = useCallback((allow: boolean) => {
+    const newStatus = allow ? 'granted' : 'denied';
+    console.warn(`BGM許可設定: ${newStatus}`);
+
+    // ローカルストレージに保存
+    try {
+      localStorage.setItem(STORAGE_KEY, newStatus);
+    } catch (e) {
+      console.error('ローカルストレージ書き込みエラー:', e);
+    }
+
+    // 状態を更新
+    setPermissionStatus(newStatus);
+
+    // Start fade-out animation
+    setIsDialogAnimatedVisible(false);
+
+    // After animation, remove dialog from DOM and mark interaction as complete
+    if (fadeOutTimerRef.current) {
+      clearTimeout(fadeOutTimerRef.current);
+    }
+    fadeOutTimerRef.current = setTimeout(() => {
+      setIsDialogMounted(false);
+      setNeedsDialogInteraction(false);
+    }, 300);
+
+    // 許可された場合、即時再生を試みる
+    if (allow) {
+      // ユーザーインタラクションとして処理するため即時実行
+      setTimeout(playAudio, 100);
+    }
+    // Cleanup for fadeOutTimer is not explicitly handled here,
+    // as it's a one-off timer in a callback. If component unmounts,
+    // React handles setState on unmounted component gracefully (warning).
+    // For extreme robustness, timer IDs can be managed with refs and cleared.
+  }, [playAudio]); // Dependencies: playAudio, setPermissionStatus (if from props/context)
+
+  // Effect to clear fadeOutTimer on unmount
+  useEffect(() => {
+    return () => {
+      if (fadeOutTimerRef.current) {
+        clearTimeout(fadeOutTimerRef.current);
+      }
+    };
+  }, []); // Empty dependency array means this runs on mount and cleans up on unmount
+
   // 8. パーミッション変更時の効果
   useEffect(() => {
     // パーミッションが変更されたとき、適切な処理を行う
@@ -241,7 +280,7 @@ export const BGMPlayer: React.FC = () => {
   return (
     <>
       {/* 再生コントロールボタン - パーミッション取得済みの場合のみ表示 */}
-      {permissionStatus && (
+      {permissionStatus && !needsDialogInteraction && ( // ダイアログ表示中はボタンを隠すことも考慮
         <button
           type="button"
           onClick={togglePlayback}
@@ -285,14 +324,14 @@ export const BGMPlayer: React.FC = () => {
       )}
 
       {/* 許可ダイアログ */}
-      {showDialog && (
+      {isDialogMounted && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[9999]"
+          className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[9999] transition-opacity duration-300 ease-in-out ${isDialogAnimatedVisible ? 'opacity-100' : 'opacity-0'}`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="bgm-dialog-title"
         >
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm mx-4">
+          <div className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm mx-4 transition-transform duration-300 ease-in-out ${isDialogAnimatedVisible ? 'translate-y-0' : 'translate-y-4'}`}>
             <h3
               id="bgm-dialog-title"
               className="text-lg font-medium text-gray-900 dark:text-white mb-3"
@@ -315,7 +354,7 @@ export const BGMPlayer: React.FC = () => {
                 onClick={() => handlePermission(true)}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 ref={(el) => {
-                  if (el && showDialog) {
+                  if (el && isDialogAnimatedVisible) { // isDialogAnimatedVisible でフォーカスを制御
                     setTimeout(() => el.focus(), 100);
                   }
                 }}
@@ -340,7 +379,7 @@ export const BGMPlayer: React.FC = () => {
           </div>
           <div>
             Dialog:
-            {showDialog ? 'SHOWN' : 'HIDDEN'}
+            {needsDialogInteraction ? 'SHOWN' : 'HIDDEN'}
           </div>
         </div>
       )}
