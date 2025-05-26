@@ -1,4 +1,4 @@
-import { BGMPlayerWrapper } from '@/components/audio/BGMPlayerWrapper';
+import BGMClientWrapper from '@/components/audio/BGMClientWrapper';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
@@ -20,11 +20,11 @@ export default async function Layout(props: {
 
   return (
     <>
-      {/* BGMPlayer - クライアントコンポーネント経由でマウント */}
-      <BGMPlayerWrapper />
+      {/* BGMPlayer - クライアントコンポーネントでマウント */}
+      <BGMClientWrapper />
 
       {/* メインコンテンツ */}
-      <div className="relative z-99">
+      <div className="relative">
         <BaseTemplate
           leftNav={(
             <ul className="flex flex-wrap gap-x-5 text-xl">

@@ -1,14 +1,14 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-type IIndexProps = {
-  params: Promise<{ locale: string }>;
+type IAboutProps = {
+  params: Promise<{ slug: string; locale: string }>;
 };
 
-export async function generateMetadata(props: IIndexProps) {
+export async function generateMetadata(props: IAboutProps) {
   const { locale } = await props.params;
   const t = await getTranslations({
     locale,
-    namespace: 'Index',
+    namespace: 'Works',
   });
 
   return {
@@ -17,12 +17,17 @@ export async function generateMetadata(props: IIndexProps) {
   };
 }
 
-export default async function Index(props: IIndexProps) {
+export default async function About(props: IAboutProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
+  // const t = await getTranslations({
+  //   locale,
+  //   namespace: 'About',
+  // });
 
   return (
     <>
+
     </>
   );
-}
+};
