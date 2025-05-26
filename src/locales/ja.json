@@ -39,7 +39,7 @@
     "count": "カウント: {count}"
   },
   "About": {
-    "meta_title": "概要",
+    "meta_title": "About | Lunacea portfolio",
     "meta_description": "概要ページの説明",
     "about_paragraph": "概要ページへようこそ！私たちは素晴らしいソフトウェアを作成することに情熱を注ぐチームです。",
     "translation_powered_by": "翻訳は以下により提供"
@@ -83,5 +83,11 @@
   "Hello": {
     "hello_title": "こんにちは",
     "hello_message": "どうもどうも"
+  },
+  "Works": {
+    "meta_title": "Works | Lunacea portfolio"
+  },
+  "Contact": {
+    "title": "Contact | Lunacea portfolio"
   }
 }
