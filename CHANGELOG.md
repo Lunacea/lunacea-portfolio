@@ -1,3 +1,20 @@
+# [1.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.3...v1.4.0) (2025-05-27)
+
+
+### Bug Fixes
+
+* コメントアウトによりSpotlightの初期化を無効化し、Sidecar connection errorを回避 ([9b0e37a](https://github.com/Lunacea/lunacea-portfolio/commit/9b0e37a0576ded8fc6e707a3ea89bf5f3e33664a))
+
+
+### Features
+
+* add bgm ([44f04c3](https://github.com/Lunacea/lunacea-portfolio/commit/44f04c3eeed4f24f515e7e73225f70a9dd39dcef))
+* add bgm permission ([220baa1](https://github.com/Lunacea/lunacea-portfolio/commit/220baa1560be2477bbf01276b11814a235da083a))
+* **add BGM:** add BGM Components and ControlPanel ([bda015d](https://github.com/Lunacea/lunacea-portfolio/commit/bda015d5a78fd916b868584b926cc674cad2a2a3))
+* add Button, Card, Dialog, and Slider components ([b6faa1f](https://github.com/Lunacea/lunacea-portfolio/commit/b6faa1f783ab3df69ab92fd66189b1a0b50522e3))
+* add Contact and Works sections to localization files ([207679c](https://github.com/Lunacea/lunacea-portfolio/commit/207679c8d0c1feb828e04a4e810ec78fa4f76b43))
+* add Radix UI components and update dependencies ([5fcfcd0](https://github.com/Lunacea/lunacea-portfolio/commit/5fcfcd0d863bb8bca22dbb4a42c39f27dca8735d))
+
 ## [1.3.3](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.2...v1.3.3) (2025-05-07)
 
 
