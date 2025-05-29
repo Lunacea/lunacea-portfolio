@@ -1,3 +1,11 @@
+# [1.5.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.4.0...v1.5.0) (2025-05-29)
+
+
+### Features
+
+* add BGM visualizer ([02bd63c](https://github.com/Lunacea/lunacea-portfolio/commit/02bd63c6039285602cff63839eb9551ff8929230))
+* super change base-template ([5b1c637](https://github.com/Lunacea/lunacea-portfolio/commit/5b1c637cf7a244b0fd3beaa4c1e2751ea2f8d75b))
+
 # [1.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.3.3...v1.4.0) (2025-05-27)
 
 
