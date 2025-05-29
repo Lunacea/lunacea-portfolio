@@ -1,7 +1,8 @@
-import { routing } from '@/libs/i18nNavigation';
-import { enUS, jaJP } from '@clerk/localizations';
+import { enUS, frFR } from '@clerk/localizations';
 import { ClerkProvider } from '@clerk/nextjs';
+
 import { setRequestLocale } from 'next-intl/server';
+import { routing } from '@/libs/i18nNavigation';
 
 export default async function AuthLayout(props: {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ export default async function AuthLayout(props: {
 }) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  let clerkLocale = jaJP;
+  let clerkLocale = frFR;
   let signInUrl = '/sign-in';
   let signUpUrl = '/sign-up';
   let dashboardUrl = '/dashboard';

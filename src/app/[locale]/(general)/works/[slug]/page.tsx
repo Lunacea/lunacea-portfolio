@@ -1,5 +1,6 @@
-import { routing } from '@/libs/i18nNavigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+
+import { routing } from '@/libs/i18nNavigation';
 
 type IPortfolioDetailProps = {
   params: Promise<{ slug: string; locale: string }>;
