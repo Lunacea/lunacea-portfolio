@@ -98,6 +98,9 @@ export const BaseTemplate = (props: {
               <h2 className="text-xl md:text-2xl lg:text-3xl text-gray-300 font-light tracking-wide group-hover:text-white transition-colors duration-300">
                 {t('description')}
               </h2>
+              <p className="text-lg text-gray-300 font-light tracking-wide">
+                Sorry, this site is under construction...🔧
+              </p>
             </Link>
           </div>
 

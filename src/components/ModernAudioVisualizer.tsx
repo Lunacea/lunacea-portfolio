@@ -197,7 +197,7 @@ export default function ModernAudioVisualizer({
           <div className="bg-gradient-to-br from-gray-900 to-black p-8 rounded-xl border border-white/20 max-w-md">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <Icon icon={faMusic} />
-              音楽サイトへようこそ
+              WelcomeLUNACEA Portfolio
             </h3>
             <p className="text-gray-300 mb-6">
               このサイトでは音楽が流れます。
@@ -210,14 +210,14 @@ export default function ModernAudioVisualizer({
                 onClick={() => useBGMStore.getState().grantConsent()}
                 className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200"
               >
-                はい、再生する
+                ON
               </button>
               <button
                 type="button"
                 onClick={() => useBGMStore.getState().denyConsent()}
                 className="flex-1 py-3 px-6 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-all duration-200"
               >
-                いいえ、後で
+                OFF
               </button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { BaseTemplate } from '@/templates/BaseTemplate';
+import { BaseTemplate } from '@/components/templates/BaseTemplate';
 
 /**
  * マーケティングセクションのレイアウトコンポーネント
