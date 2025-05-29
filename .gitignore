@@ -56,4 +56,5 @@ local
 # design
 DESIGN.md
 
+# tsconfig
 *.tsbuildinfo
