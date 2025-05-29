@@ -1,12 +1,14 @@
-import type { Metadata } from 'next';
-import { PostHogProvider } from '@/components/analytics/PostHogProvider';
-import { routing } from '@/libs/i18nNavigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+
 import { notFound } from 'next/navigation';
+import { PostHogProvider } from '@/components/analytics/PostHogProvider';
+import { routing } from '@/libs/i18nNavigation';
+// Font Awesome設定を最初に読み込み
+import '@/lib/fontawesome';
 import '@/styles/global.css';
 
-export const metadata: Metadata = {
+export const metadata = {
   icons: [
     {
       rel: 'apple-touch-icon',

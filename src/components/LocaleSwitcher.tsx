@@ -1,8 +1,8 @@
 'use client';
 
-import { routing, usePathname } from '@/libs/i18nNavigation';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { routing, usePathname } from '@/libs/i18nNavigation';
 
 export const LocaleSwitcher = () => {
   const router = useRouter();
@@ -15,17 +15,17 @@ export const LocaleSwitcher = () => {
   };
 
   return (
-    <div className="flex rounded-md overflow-hidden shadow-sm" aria-label="言語切替">
+    <div className="flex gap-1" aria-label="言語切替">
       {routing.locales.map(langCode => (
         <button
           type="button"
           key={langCode}
           onClick={() => handleLocaleChange(langCode)}
           className={`
-            px-3 py-1.5 text-sm font-medium transition-colors
+            px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md min-w-[40px]
             ${locale === langCode
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+          ? 'text-white bg-white/10'
+          : 'text-white/70 hover:text-white hover:bg-white/5'
         }
           `}
           aria-current={locale === langCode ? 'true' : 'false'}

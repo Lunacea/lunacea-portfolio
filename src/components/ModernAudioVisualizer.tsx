@@ -1,7 +1,9 @@
 'use client';
 
-import { useBGMStore } from '@/stores/bgm';
+import { faMusic } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useMemo, useRef } from 'react';
+import { Icon } from '@/components/Icon';
+import { useBGMStore } from '@/stores/bgm';
 
 type ModernAudioVisualizerProps = {
   className?: string;
@@ -62,15 +64,10 @@ export default function ModernAudioVisualizer({
 
   // Zustandストアから状態とアクションを取得（パフォーマンス最適化）
   const isPlaying = useBGMStore(state => state.isPlaying);
-  const isLoading = useBGMStore(state => state.isLoading);
-  const volume = useBGMStore(state => state.volume);
   const hasUserConsent = useBGMStore(state => state.hasUserConsent);
   const frequencyData = useBGMStore(state => state.frequencyData);
 
   // アクション
-  const play = useBGMStore(state => state.play);
-  const pause = useBGMStore(state => state.pause);
-  const setVolume = useBGMStore(state => state.setVolume);
   const updateFrequencyData = useBGMStore(state => state.updateFrequencyData);
 
   // メモ化された描画パラメータ
@@ -110,9 +107,8 @@ export default function ModernAudioVisualizer({
       // 音声データ更新
       updateFrequencyData();
 
-      // キャンバスクリア
-      ctx.fillStyle = 'rgba(5, 5, 10, 0.1)';
-      ctx.fillRect(0, 0, size, size);
+      // キャンバスクリア（完全に透明）
+      ctx.clearRect(0, 0, size, size);
 
       // 音楽連動または装飾的パターン
       const musicalBands = isPlaying && frequencyData
@@ -199,7 +195,10 @@ export default function ModernAudioVisualizer({
       {hasUserConsent === null && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-gradient-to-br from-gray-900 to-black p-8 rounded-xl border border-white/20 max-w-md">
-            <h3 className="text-xl font-bold text-white mb-4">🎵 音楽サイトへようこそ</h3>
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <Icon icon={faMusic} />
+              音楽サイトへようこそ
+            </h3>
             <p className="text-gray-300 mb-6">
               このサイトでは音楽が流れます。
               <br />
@@ -225,71 +224,13 @@ export default function ModernAudioVisualizer({
         </div>
       )}
 
-      {/* コントロールUI */}
-      <div className="absolute top-4 left-4 z-10 bg-black/20 backdrop-blur-md rounded-lg p-4 border border-white/10">
-        <div className="flex flex-col gap-3 w-48">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-white">🎵 Music</span>
-            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-              isPlaying
-                ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
-            }`}
-            >
-              {isPlaying ? '再生中' : '停止中'}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={isPlaying ? pause : play}
-            disabled={isLoading}
-            className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {isLoading ? '🔄' : isPlaying ? '⏸️' : '▶️'}
-            {isLoading ? '読み込み中' : isPlaying ? '一時停止' : '再生'}
-          </button>
-
-          {/* 音量コントロール */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-white/80">音量</span>
-              <span className="text-sm font-medium text-white">
-                {Math.round(volume * 100)}
-                %
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-white/70">🔊</span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={e => setVolume(Number(e.target.value) / 100)}
-                aria-label="音量調整"
-                className="flex-1 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-600 transition-colors"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* キャンバス */}
+      {/* ビジュアライザー - 基準線と動く部分のみ */}
       <canvas
         ref={canvasRef}
         width={size}
         height={size}
-        className="border border-gray-700/50 rounded-lg bg-gradient-to-br from-gray-900 to-black"
+        className="w-full h-full"
       />
-
-      {/* 説明テキスト */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-        <p className="text-sm text-gray-400 text-center bg-black/20 backdrop-blur-sm px-3 py-1 rounded-full">
-          {isPlaying ? '🎼 音楽連動ビジュアライザー' : '🎨 装飾的ビジュアライザー'}
-        </p>
-      </div>
     </div>
   );
 }

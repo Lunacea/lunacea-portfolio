@@ -69,7 +69,9 @@ const initBGM = (): void => {
     loop: true,
     volume: 0.7,
     html5: true,
-    preload: true,
+    preload: false,
+    pool: 1,
+    autoplay: false,
     onload: () => {
       initAudioAnalysis();
       console.warn('🎵 BGM loaded successfully');
@@ -77,8 +79,30 @@ const initBGM = (): void => {
     onloaderror: (_, error) => {
       console.error('❌ BGM load error:', error);
     },
+    onplayerror: (_, error) => {
+      console.error('❌ BGM play error:', error);
+    },
   });
 };
+
+// === クリーンアップ関数 ===
+const cleanup = (): void => {
+  if (howlInstance) {
+    howlInstance.unload();
+    howlInstance = null;
+  }
+  if (audioContext && audioContext.state !== 'closed') {
+    audioContext.close().catch(console.warn);
+    audioContext = null;
+  }
+  analyser = null;
+  dataArray = null;
+};
+
+// === ブラウザ離脱時のクリーンアップ ===
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', cleanup);
+}
 
 // === Zustandストア ===
 export const useBGMStore = create<BGMStore>()(
@@ -113,18 +137,29 @@ export const useBGMStore = create<BGMStore>()(
 
         play: () => {
           if (!howlInstance) {
+            console.error('❌ Howl instance not initialized');
+            set({ isLoading: false }, false, 'bgm/playError');
             return;
           }
 
           set({ isLoading: true }, false, 'bgm/playStart');
 
-          // オーディオコンテキストの再開
-          if (audioContext?.state === 'suspended') {
-            audioContext.resume().catch(console.warn);
-          }
+          try {
+            // オーディオコンテキストの再開（ユーザーインタラクション後に実行）
+            if (audioContext?.state === 'suspended') {
+              audioContext.resume().then(() => {
+                console.warn('🎵 Audio context resumed');
+              }).catch((error) => {
+                console.error('❌ Audio context resume failed:', error);
+              });
+            }
 
-          howlInstance.play();
-          set({ isPlaying: true, isLoading: false }, false, 'bgm/playSuccess');
+            howlInstance.play();
+            set({ isPlaying: true, isLoading: false }, false, 'bgm/playSuccess');
+          } catch (error) {
+            console.error('❌ BGM play error:', error);
+            set({ isPlaying: false, isLoading: false }, false, 'bgm/playError');
+          }
         },
 
         pause: () => {
