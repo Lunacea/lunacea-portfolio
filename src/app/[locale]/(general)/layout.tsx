@@ -1,4 +1,3 @@
-import BGMClientWrapper from '@/components/audio/BGMClientWrapper';
 import { BaseTemplate } from '@/templates/BaseTemplate';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
@@ -20,9 +19,6 @@ export default async function Layout(props: {
 
   return (
     <>
-      {/* BGMPlayer - クライアントコンポーネントでマウント */}
-      <BGMClientWrapper />
-
       {/* メインコンテンツ */}
       <div className="relative">
         <BaseTemplate
