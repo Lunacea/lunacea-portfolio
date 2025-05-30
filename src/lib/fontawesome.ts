@@ -1,11 +1,17 @@
 import { config, library } from '@fortawesome/fontawesome-svg-core';
 import {
+  faGithub,
+  faXTwitter,
+} from '@fortawesome/free-brands-svg-icons';
+import {
   faBars,
   faClose,
+  faMoon,
   faMusic,
   faPause,
   faPlay,
   faSpinner,
+  faSun,
   faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -28,4 +34,8 @@ library.add(
   faClose,
   faBars,
   faVolumeHigh,
+  faGithub,
+  faXTwitter,
+  faMoon,
+  faSun,
 );

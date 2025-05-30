@@ -22,10 +22,10 @@ export const LocaleSwitcher = () => {
           key={langCode}
           onClick={() => handleLocaleChange(langCode)}
           className={`
-            px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md min-w-[40px]
+            px-2 py-1 text-sm font-medium transition-all duration-200 rounded min-w-[36px]
             ${locale === langCode
-          ? 'text-white bg-white/10'
-          : 'text-white/70 hover:text-white hover:bg-white/5'
+          ? 'text-white bg-white/20'
+          : 'text-white/70 hover:text-white hover:bg-white/10'
         }
           `}
           aria-current={locale === langCode ? 'true' : 'false'}

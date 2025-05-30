@@ -24,7 +24,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
       <button
         type="button"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-6 left-6 z-[100] p-3 hover:bg-white/5 transition-all duration-200 rounded-lg group"
+        className="lg:hidden fixed top-6 left-6 z-99 p-3 hover:bg-white/5 transition-all duration-200 rounded-lg group"
         aria-label={isMobileMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
       >
         {/* カスタムハンバーガーメニューアイコン */}
@@ -57,7 +57,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
       </button>
 
       {/* モバイルメニュー */}
-      <nav className={`lg:hidden fixed inset-0 z-99 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
+      <nav className={`lg:hidden fixed inset-0 z-2 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
         isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
       }`}
       >

@@ -23,31 +23,31 @@ export default async function Layout(props: {
       <div className="relative">
         <BaseTemplate
           leftNav={(
-            <ul className="flex flex-col space-y-6 text-xl">
+            <ul className="space-y-6 text-xl">
               <li className="relative">
                 <Link
                   href="/about/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium block py-2 pl-4"
+                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b from-blue-400 to-purple-400 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
                   {t('about_link')}
                 </Link>
               </li>
               <li className="relative">
                 <Link
                   href="/works/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium block py-2 pl-4"
+                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b from-blue-400 to-purple-400 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
                   {t('portfolio_link')}
                 </Link>
               </li>
               <li className="relative">
                 <Link
                   href="/contact/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium block py-2 pl-4"
+                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b from-blue-400 to-purple-400 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
                   {t('contact_link')}
                 </Link>
               </li>

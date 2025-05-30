@@ -1,49 +1,3 @@
-/* Font Awesome CSS - FOUC防止のため最優先で読み込み */
-@import '@fortawesome/fontawesome-svg-core/styles.css';
-
-/* Font Awesome FOUC防止の追加ルール */
-.fa,
-.fas,
-.far,
-.fal,
-.fad,
-.fab {
-  width: 1em !important;
-  height: 1em !important;
-  display: inline-block !important;
-  vertical-align: -0.125em !important;
-}
-
-/* Font Awesome固定幅クラス */
-.fa-fw {
-  width: 1.28571429em !important;
-  text-align: center !important;
-}
-
-/* モバイルナビゲーションスタイル */
-.mobile-nav-container a {
-  position: relative;
-  padding: 12px 0 12px 24px;
-  display: block;
-}
-
-.mobile-nav-container a::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background: linear-gradient(to bottom, rgb(96, 165, 250), rgb(168, 85, 247));
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
-  transform-origin: center;
-}
-
-.mobile-nav-container a:hover::before {
-  transform: scaleY(1);
-}
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -54,6 +8,19 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* フォントファミリーの設定 */
+  --font-family-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic',
+    'Meiryo', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* heading用フォント（技術的でクリーンなフォント） */
+  --font-family-heading: var(--font-rajdhani), 'Rajdhani', 'Orbitron', 'Exo 2', sans-serif;
+
+  /* Rajdhaniフォント用 */
+  --font-family-rajdhani: var(--font-rajdhani), 'Rajdhani', sans-serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -162,5 +129,25 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* カスタムフォントクラス */
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-family-heading);
+  }
+
+  .font-rajdhani {
+    font-family: var(--font-family-rajdhani);
+  }
+
+  .text-neumorphism-inset {
+    text-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.3),
+      -2px -2px 4px rgba(255, 255, 255, 0.1),
+      inset 2px 2px 6px rgba(0, 0, 0, 0.4),
+      inset -2px -2px 6px rgba(255, 255, 255, 0.05);
+    color: #1f2937;
   }
 }

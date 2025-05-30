@@ -62,7 +62,7 @@ export const MusicController = () => {
       } else {
         // 停止時：緩やかに静的な状態に戻る
         const targetValues = [0.3, 0.4, 0.3];
-        const easeSpeed = 0.08; // 緩やかさを調整（0.05-0.1程度）
+        const easeSpeed = 0.05; // 緩やかさを調整（0.05-0.1程度）
 
         setAnimationValues(prev => prev.map((current, index) => {
           const target = targetValues[index] || 0.3; // デフォルト値を提供
@@ -86,7 +86,7 @@ export const MusicController = () => {
   const volumePercentage = volume * 100;
 
   return (
-    <div className="fixed bottom-6 right-6 z-99 flex items-center gap-2">
+    <div className="fixed bottom-6 right-6 z-1 flex items-center gap-2">
       {/* デバッグ表示 */}
       <div className="hidden">
         {JSON.stringify(animationValues.map(v => Math.round(v * 100)))}
