@@ -4,14 +4,20 @@ import {
   faXTwitter,
 } from '@fortawesome/free-brands-svg-icons';
 import {
+  faArrowLeft,
   faBars,
+  faCalendar,
+  faClock,
   faClose,
+  faEdit,
+  faEnvelope,
   faMoon,
   faMusic,
   faPause,
   faPlay,
   faSpinner,
   faSun,
+  faTag,
   faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -38,4 +44,10 @@ library.add(
   faXTwitter,
   faMoon,
   faSun,
+  faEnvelope,
+  faCalendar,
+  faClock,
+  faEdit,
+  faTag,
+  faArrowLeft,
 );

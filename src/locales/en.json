@@ -80,9 +80,24 @@
     "sign_out": "Sign out"
   },
   "Contact": {
-    "title": "Contact | Lunacea portfolio"
+    "title": "Contact | Lunacea portfolio",
+    "meta_title": "Contact | Lunacea portfolio",
+    "email_label": "Email Contact",
+    "social_links": "Social Links"
   },
   "Works": {
-    "meta_title": "Works | Lunacea portfolio"
+    "meta_title": "Works | Lunacea portfolio",
+    "meta_description": "Showcasing web development projects and applications portfolio."
+  },
+  "Blog": {
+    "meta_title": "Blog | Lunacea portfolio",
+    "meta_description": "Technical blog posts",
+    "no_posts": "No posts available",
+    "read_more": "Read more",
+    "reading_time": "{time} min read",
+    "published_on": "Published on {date}",
+    "tags": "Tags: ",
+    "all_posts": "All posts",
+    "latest_posts": "Latest posts"
   }
 }

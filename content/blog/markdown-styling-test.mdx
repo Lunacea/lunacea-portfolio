@@ -1,0 +1,245 @@
+---
+title: 'Markdown スタイリングテスト'
+description: 'このブログのMarkdownレンダリング機能をテストするための記事です。様々なMarkdown要素を含んでいます。'
+publishedAt: '2024-12-26'
+updatedAt: '2024-12-26'
+tags: ['Markdown', 'テスト', 'スタイリング', 'MDX']
+---
+
+# Markdownスタイリングテスト
+
+この記事では、このブログで使用できる様々なMarkdown要素をテストします。
+
+## 見出し
+
+### H3見出し
+
+#### H4見出し
+
+##### H5見出し
+
+###### H6見出し
+
+## テキストスタイル
+
+これは通常のテキストです。**太字**、*斜体*、`インラインコード`、~~取り消し線~~などが使用できます。
+
+### リンクテスト
+
+- [外部リンク](https://nextjs.org/)
+- [内部リンク](/blog)
+- [コンタクトページ](/contact)
+
+## リスト
+
+### 順序なしリスト
+
+- 項目1
+- 項目2
+  - ネストされた項目1
+  - ネストされた項目2
+- 項目3
+
+### 順序付きリスト
+
+1. 最初の項目
+2. 2番目の項目
+   1. ネストされた項目A
+   2. ネストされた項目B
+3. 3番目の項目
+
+## 引用
+
+> これは引用文です。重要な情報や名言を強調するときに使用します。
+> 
+> 複数行の引用も可能です。
+
+## コードブロック（Shikiテスト）
+
+### JavaScript
+
+```javascript title="greet.js"
+// シンプルな関数の例
+function greetUser(name) {
+  return `Hello, ${name}!`;
+}
+
+// ES6 アロー関数
+const multiply = (a, b) => a * b;
+
+// クラスの例
+class Calculator {
+  constructor() {
+    this.result = 0;
+  }
+  
+  add(value) {
+    this.result += value;
+    return this;
+  }
+  
+  getResult() {
+    return this.result;
+  }
+}
+```
+
+### TypeScript
+
+```typescript title="user-service.ts"
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  isActive: boolean;
+}
+
+type UserRole = 'admin' | 'user' | 'guest';
+
+class UserService {
+  private users: User[] = [];
+  
+  constructor(private apiKey: string) {}
+  
+  async fetchUser(id: number): Promise<User | null> {
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch user');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      return null;
+    }
+  }
+}
+```
+
+### CSS
+
+```css
+/* モダンCSS */
+.card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+}
+```
+
+### Python
+
+```python title="fibonacci.py"
+# Pythonコードのテスト
+def fibonacci(n):
+    """フィボナッチ数列を計算する関数"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+class DataProcessor:
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+    
+    def process(self):
+        """データを処理する"""
+        if not self.processed:
+            self.data = [item * 2 for item in self.data]
+            self.processed = True
+        return self.data
+
+# 使用例
+processor = DataProcessor([1, 2, 3, 4, 5])
+result = processor.process()
+print(f"処理結果: {result}")
+```
+
+### JSON
+
+```json
+{
+  "name": "Lunacea Portfolio",
+  "version": "1.0.0",
+  "description": "Modern portfolio website",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": ["portfolio", "nextjs", "react", "typescript"]
+}
+```
+
+## テーブル
+
+| 技術 | 説明 | 使用例 |
+|------|------|--------|
+| React | UIライブラリ | コンポーネント作成 |
+| Next.js | Reactフレームワーク | Webアプリケーション |
+| TypeScript | 型安全なJavaScript | 大規模開発 |
+| Tailwind CSS | ユーティリティファーストCSS | スタイリング |
+
+## 水平線
+
+---
+
+## チェックリスト
+
+- [x] MDXレンダリングの実装
+- [x] シンタックスハイライト（Shiki）
+- [x] レスポンシブデザイン
+- [x] ダークモード対応
+- [ ] Mermaid図表サポート
+- [ ] 数式レンダリング
+- [ ] 検索機能
+
+## 画像（プレースホルダー）
+
+画像のレンダリングテスト:
+
+```markdown
+![サンプル画像](https://via.placeholder.com/800x400?text=Sample+Image)
+```
+
+## 最後に
+
+このテストページでは、Shikiによる美しいシンタックスハイライトを含む様々なMarkdown要素を確認できます。
+
+### Shikiの特徴
+
+1. **高性能** - サーバーサイドでレンダリング
+2. **美しい** - VS Codeと同じシンタックスハイライト
+3. **軽量** - クライアントサイドJavaScriptが不要
+4. **豊富なテーマ** - 多数のテーマから選択可能
+
+---
+
+*Markdown testing with Shiki completed! ✨* 

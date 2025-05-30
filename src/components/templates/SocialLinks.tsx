@@ -1,6 +1,7 @@
 'use client';
 
 import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { Icon } from '@/components/Icon';
 
 export const SocialLinks = () => {
@@ -16,6 +17,12 @@ export const SocialLinks = () => {
       'icon': faXTwitter,
       'url': 'https://x.com/_Lunacea', // 実際のURLに変更してください
       'aria-label': 'X (Twitter)プロフィールを開く',
+    },
+    {
+      'name': 'Email',
+      'icon': faEnvelope,
+      'url': 'mailto:contact@lunacea.jp',
+      'aria-label': 'メールを送信',
     },
   ];
 

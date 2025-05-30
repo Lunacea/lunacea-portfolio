@@ -26,7 +26,7 @@ export default async function Layout(props: {
             <ul className="space-y-6 text-xl">
               <li className="relative">
                 <Link
-                  href="/about/"
+                  href="/profile/"
                   className="group relative text-theme-secondary hover:text-theme-primary transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
@@ -44,11 +44,11 @@ export default async function Layout(props: {
               </li>
               <li className="relative">
                 <Link
-                  href="/contact/"
+                  href="/blog/"
                   className="group relative text-theme-secondary hover:text-theme-primary transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
-                  {t('contact_link')}
+                  {t('blog_link')}
                 </Link>
               </li>
             </ul>

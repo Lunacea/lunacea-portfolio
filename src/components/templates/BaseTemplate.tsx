@@ -28,10 +28,10 @@ export const BaseTemplate = (props: {
       <Navigation leftNav={props.leftNav} />
 
       {/* メインコンテンツエリア */}
-      <main className="relative z-1 lg:ml-64 overflow-hidden">
+      <main className="relative z-1 lg:ml-64">
         {/* 巨大なLunaceaタイトル */}
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 pt-28 sm:pt-24 lg:pt-20 lg:px-8 overflow-hidden">
-          <div className="text-center mb-12 w-full flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 pt-28 sm:pt-24 lg:pt-20 lg:px-8">
+          <div className="text-center mb-12 w-full flex flex-col items-center overflow-hidden">
             <Link href="/" className="group">
               <h1
                 className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold leading-none
@@ -52,12 +52,12 @@ export const BaseTemplate = (props: {
                 })}
               </h1>
               <h2 className="
-                text-xl md:text-2xl lg:text-3xl text-theme-secondary tracking-wide font-heading
-              group-hover:text-theme-primary transition-all duration-300"
+                text-xl md:text-2xl lg:text-3xl text-muted-foreground tracking-wide font-heading
+              group-hover:text-foreground transition-all duration-300"
               >
                 {t('description')}
               </h2>
-              <p className="text-lg text-theme-secondary font-light tracking-wide transition-all duration-300">
+              <p className="text-lg text-muted-foreground font-light tracking-wide transition-all duration-300">
                 Sorry, this site is under construction...🔧
               </p>
             </Link>

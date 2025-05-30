@@ -45,7 +45,9 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
     );
   }
 
-  const handleToggle = () => {
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
