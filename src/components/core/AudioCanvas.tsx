@@ -57,11 +57,6 @@ export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
   const smoothedDataRef = useRef<number[]>([]);
   const animationFrameRef = useRef<number>(0);
 
-  // Zustandストアから状態とアクションを取得（パフォーマンス最適化）
-  const isPlaying = useBGMStore(state => state.isPlaying);
-  const frequencyData = useBGMStore(state => state.frequencyData);
-  const updateFrequencyData = useBGMStore(state => state.updateFrequencyData);
-
   // メモ化された描画パラメータ
   const drawParams = useMemo(() => {
     const centerX = size / 2;
@@ -96,15 +91,19 @@ export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
     const { centerX, centerY, baseRadius, maxWaveHeight } = drawParams;
 
     const draw = (timestamp: number) => {
+      // ストアから最新の値を取得
+      const currentIsPlaying = useBGMStore.getState().isPlaying;
+      const currentFrequencyData = useBGMStore.getState().frequencyData;
+
       // 音声データ更新
-      updateFrequencyData();
+      useBGMStore.getState().updateFrequencyData();
 
       // キャンバスクリア（完全に透明）
       ctx.clearRect(0, 0, size, size);
 
       // 音楽連動または装飾的パターン
-      const musicalBands = isPlaying && frequencyData
-        ? selectMusicalFrequencies(frequencyData)
+      const musicalBands = currentIsPlaying && currentFrequencyData
+        ? selectMusicalFrequencies(currentFrequencyData)
         : getDecorativePattern(timestamp, 52);
 
       const bandCount = musicalBands.length;
@@ -117,7 +116,7 @@ export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
       for (let i = 0; i < bandCount; i++) {
         const target = musicalBands[i] ?? 0;
         const current = smoothedDataRef.current[i] ?? 0;
-        const smoothing = isPlaying ? 0.15 : 0.05; // 音楽時は速く、装飾時はゆっくり
+        const smoothing = currentIsPlaying ? 0.15 : 0.05; // 音楽時は速く、装飾時はゆっくり
         smoothedDataRef.current[i] = current + (target - current) * smoothing;
       }
 
@@ -131,14 +130,14 @@ export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
       const averageIntensity = symmetricData.reduce((sum, val) => sum + val, 0) / totalPoints;
 
       // 動的カラー
-      const hue = isPlaying
+      const hue = currentIsPlaying
         ? (averageIntensity * 360 + timestamp * 0.05) % 360
         : (timestamp * 0.02) % 360; // 装飾時はゆっくりとした色変化
-      const saturation = isPlaying ? 70 + averageIntensity * 30 : 50;
-      const lightness = isPlaying ? 50 + averageIntensity * 20 : 40;
+      const saturation = currentIsPlaying ? 70 + averageIntensity * 30 : 50;
+      const lightness = currentIsPlaying ? 50 + averageIntensity * 20 : 40;
 
       ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-      ctx.lineWidth = isPlaying ? 2 + averageIntensity * 3 : 2;
+      ctx.lineWidth = currentIsPlaying ? 2 + averageIntensity * 3 : 2;
       ctx.beginPath();
 
       const angleStep = (Math.PI * 2) / totalPoints;
@@ -179,7 +178,7 @@ export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isPlaying, frequencyData, drawParams, size, updateFrequencyData]);
+  }, [drawParams, size]); // isPlayingとfrequencyDataを依存配列から除外
 
   return (
     <canvas
