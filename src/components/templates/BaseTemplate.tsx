@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Header } from '@/components/templates/Header';
-import { LatestUpdates } from '@/components/templates/LatestUpdates';
 import { MusicController } from '@/components/templates/MusicController';
 import { Navigation } from '@/components/templates/Navigation';
 import { SocialLinks } from '@/components/templates/SocialLinks';
@@ -29,9 +28,9 @@ export const BaseTemplate = (props: {
       <Navigation leftNav={props.leftNav} />
 
       {/* メインコンテンツエリア */}
-      <main className="relative z-1 lg:ml-64">
+      <main className="relative z-1 lg:ml-64 overflow-hidden">
         {/* 巨大なLunaceaタイトル */}
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 pt-28 sm:pt-24 lg:pt-20 lg:px-8 overflow-x-auto">
+        <div className="flex flex-col items-center justify-center min-h-screen px-4 pt-28 sm:pt-24 lg:pt-20 lg:px-8 overflow-hidden">
           <div className="text-center mb-12 w-full flex flex-col items-center">
             <Link href="/" className="group">
               <h1
@@ -39,15 +38,18 @@ export const BaseTemplate = (props: {
                 mb-4 tracking-widest uppercase text-neumorphism-theme whitespace-nowrap
                 transition-all duration-700 cursor-pointer lg:translate-x-0 text-center font-rajdhani"
               >
-                {AppConfig.name.split('').map((char, index) => (
-                  char.toUpperCase() === 'C'
+                {AppConfig.name.split('').map((char, index) => {
+                  // 文字の出現回数をカウントしてユニークなkeyを生成
+                  const charOccurrence = AppConfig.name.split('').slice(0, index + 1).filter(c => c.toLowerCase() === char.toLowerCase()).length;
+
+                  return char.toUpperCase() === 'C'
                     ? (
-                        <ThemeToggle key={`theme-toggle-c-position-${index}-${char.toLowerCase()}`} />
+                        <ThemeToggle key={`theme-toggle-c-${AppConfig.name}-${char.toLowerCase()}-${charOccurrence}`} />
                       )
                     : (
-                        <span key={`char-${char.toLowerCase()}-position-${index}`}>{char}</span>
-                      )
-                ))}
+                        <span key={`char-${AppConfig.name}-${char.toLowerCase()}-${charOccurrence}`}>{char}</span>
+                      );
+                })}
               </h1>
               <h2 className="
                 text-xl md:text-2xl lg:text-3xl text-theme-secondary tracking-wide font-heading
@@ -70,9 +72,6 @@ export const BaseTemplate = (props: {
 
       {/* 音楽コントローラー */}
       <MusicController />
-
-      {/* 最新情報 */}
-      <LatestUpdates />
 
       {/* ソーシャルリンク */}
       <SocialLinks />

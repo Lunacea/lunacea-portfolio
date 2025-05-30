@@ -22,8 +22,8 @@ export const LatestUpdates = () => {
     .slice(0, 2);
 
   return (
-    <div className="fixed bottom-24 left-4 lg:bottom-32 lg:left-6 z-99 flex flex-col">
-      <div className="max-w-xs">
+    <div className="fixed bottom-24 left-6 z-1 flex flex-col">
+      <div className="max-w-xs backdrop-blur-[2px] bg-gradient-to-r from-background/8 to-transparent p-4 shadow-sm border-l border-border/10">
         <h3 className="text-xs font-heading font-semibold text-muted-foreground mb-3 lg:mb-4 tracking-wider">
           LATEST UPDATES
         </h3>
@@ -47,7 +47,7 @@ export const LatestUpdates = () => {
                 </p>
               </a>
               {index < sortedLatestUpdates.length - 1 && (
-                <div className="w-full h-px bg-border mt-3 lg:mt-4"></div>
+                <div className="w-full h-px bg-border/10 mt-3 lg:mt-4"></div>
               )}
             </div>
           ))}
