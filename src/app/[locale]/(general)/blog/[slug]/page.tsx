@@ -86,17 +86,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* 記事ヘッダー */}
             <header className="pb-8 mb-8 border-b border-border/30">
               {/* タグ */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                <Icon icon={faTag} className="text-primary/60 text-sm mt-1 mr-2" />
-                {post.tags.map((tag, index) => (
-                  <Link
-                    key={`tag-${index}-${tag}`}
-                    href={`/blog/tag/${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all duration-300 border border-primary/20"
-                  >
-                    {tag}
-                  </Link>
-                ))}
+              <div className="flex items-start gap-2 mb-6">
+                <Icon icon={faTag} className="text-primary/60 text-sm mt-0.5 flex-shrink-0" />
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map((tag, index) => (
+                    <Link
+                      key={`tag-${index}-${tag}`}
+                      href={`/blog/tag/${encodeURIComponent(tag)}`}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all duration-300 border border-primary/20"
+                    >
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
