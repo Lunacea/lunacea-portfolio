@@ -1,3 +1,14 @@
+# [1.6.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.5.0...v1.6.0) (2025-05-30)
+
+
+### Features
+
+* add light mode ([881ba03](https://github.com/Lunacea/lunacea-portfolio/commit/881ba035f77f24d2706dca96e19af5bd6721f16a))
+* design audio controller ([153ea9a](https://github.com/Lunacea/lunacea-portfolio/commit/153ea9aa16f6dc19fcf04e305ee1b7b506b16332))
+* design hamburger-button ([6d86e2d](https://github.com/Lunacea/lunacea-portfolio/commit/6d86e2d286a0ac473190f386ae1cb0b0dcaccf12))
+* **LatestUpdate.tsx:** adjust bg and z-index ([8f2dd18](https://github.com/Lunacea/lunacea-portfolio/commit/8f2dd18fcd2d2b2b4680e2cb54cabb57442c2a9f))
+* super change design and layout ([24ff5b3](https://github.com/Lunacea/lunacea-portfolio/commit/24ff5b3a03d333986a7efe57f88811e35ad808e1))
+
 # [1.5.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.4.0...v1.5.0) (2025-05-29)
 
 
