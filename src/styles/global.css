@@ -9,17 +9,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* フォントファミリーの設定 */
-  --font-family-sans:
-    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic',
-    'Meiryo', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-
-  /* heading用フォント（技術的でクリーンなフォント） */
-  --font-family-heading: var(--font-rajdhani), 'Rajdhani', 'Orbitron', 'Exo 2', sans-serif;
-
-  /* Rajdhaniフォント用 */
-  --font-family-rajdhani: var(--font-rajdhani), 'Rajdhani', sans-serif;
+  /* 背景画像のURL定義 */
+  --bg-image-light: url(/assets/images/bg-paper-white.jpg);
+  --bg-image-dark: url(/assets/images/bg-paper-bk.jpg);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -56,40 +48,62 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+
+  /* フォントファミリーの設定 */
+  --font-family-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic',
+    'Meiryo', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* heading用フォント（技術的でクリーンなフォント） */
+  --font-family-heading: var(--font-rajdhani), 'Rajdhani', 'Orbitron', 'Exo 2', sans-serif;
+
+  /* Rajdhaniフォント用 */
+  --font-family-rajdhani: var(--font-rajdhani), 'Rajdhani', sans-serif;
+
+  /* ライトモードの色設定 */
+  --background: oklch(0.98 0.005 85);
+  --foreground: oklch(0.13 0.02 280);
+  --card: oklch(0.97 0.01 85);
+  --card-foreground: oklch(0.15 0.02 280);
+  --popover: oklch(0.98 0.005 85);
+  --popover-foreground: oklch(0.13 0.02 280);
+  --primary: oklch(0.28 0.08 280);
+  --primary-foreground: oklch(0.98 0.005 85);
+  --secondary: oklch(0.93 0.02 85);
+  --secondary-foreground: oklch(0.28 0.08 280);
+  --muted: oklch(0.95 0.01 85);
+  --muted-foreground: oklch(0.45 0.03 280);
+  --accent: oklch(0.92 0.03 85);
+  --accent-foreground: oklch(0.28 0.08 280);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.88 0.02 85);
+  --input: oklch(0.88 0.02 85);
+  --ring: oklch(0.6 0.05 280);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.96 0.01 85);
+  --sidebar-foreground: oklch(0.15 0.02 280);
+  --sidebar-primary: oklch(0.28 0.08 280);
+  --sidebar-primary-foreground: oklch(0.98 0.005 85);
+  --sidebar-accent: oklch(0.93 0.02 85);
+  --sidebar-accent-foreground: oklch(0.28 0.08 280);
+  --sidebar-border: oklch(0.88 0.02 85);
+  --sidebar-ring: oklch(0.6 0.05 280);
+
+  /* テーマごとのテキストシャドウ設定 */
+  --text-shadow-light:
+    1px 1px 3px rgba(0, 0, 0, 0.1), -1px -1px 3px rgba(255, 255, 255, 0.9), inset 1px 1px 4px rgba(0, 0, 0, 0.05),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.7);
+
+  --title-color-light: oklch(0.25 0.05 280);
 }
 
 .dark {
+  /* ダークモードの色設定 */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -121,6 +135,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* ダークモード用のテキストシャドウ設定 */
+  --text-shadow-dark:
+    2px 2px 4px rgba(0, 0, 0, 0.4), -2px -2px 4px rgba(255, 255, 255, 0.1), inset 2px 2px 8px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 8px rgba(255, 255, 255, 0.05);
+
+  --title-color-dark: #e5e7eb;
 }
 
 @layer base {
@@ -128,20 +149,46 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-all duration-500;
   }
 }
 
-/* カスタムフォントクラス */
+/* カスタムユーティリティクラス */
 @layer utilities {
   .font-heading {
-    font-family: var(--font-family-heading);
+    font-family: var(--font-rajdhani), 'Rajdhani', 'Orbitron', 'Exo 2', sans-serif;
   }
 
   .font-rajdhani {
-    font-family: var(--font-family-rajdhani);
+    font-family: var(--font-rajdhani), 'Rajdhani', sans-serif;
   }
 
+  /* 背景画像クラス */
+  .bg-theme-paper {
+    background-image: var(--bg-image-light);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  .dark .bg-theme-paper {
+    background-image: var(--bg-image-dark);
+  }
+
+  /* テーマ対応のニューモルフィズムテキスト */
+  .text-neumorphism-theme {
+    text-shadow: var(--text-shadow-light);
+    color: var(--title-color-light);
+    transition: all 0.5s ease;
+  }
+
+  .dark .text-neumorphism-theme {
+    text-shadow: var(--text-shadow-dark);
+    color: var(--title-color-dark);
+  }
+
+  /* 旧ニューモルフィズムクラス（互換性のため残す） */
   .text-neumorphism-inset {
     text-shadow:
       2px 2px 4px rgba(0, 0, 0, 0.3),
@@ -149,5 +196,31 @@
       inset 2px 2px 6px rgba(0, 0, 0, 0.4),
       inset -2px -2px 6px rgba(255, 255, 255, 0.05);
     color: #1f2937;
+  }
+
+  /* オーバーレイクラス */
+  .bg-theme-overlay {
+    opacity: 0.4;
+    transition: opacity 0.5s ease;
+  }
+
+  .dark .bg-theme-overlay {
+    opacity: 0.3;
+  }
+
+  /* テーマ対応のテキスト色 */
+  .text-theme-primary {
+    color: var(--foreground);
+    transition: color 0.5s ease;
+  }
+
+  .text-theme-secondary {
+    color: var(--muted-foreground);
+    transition: color 0.5s ease;
+  }
+
+  .text-theme-accent {
+    color: var(--primary);
+    transition: color 0.5s ease;
   }
 }

@@ -11,7 +11,7 @@ export const Header = ({ rightNav }: HeaderProps) => {
     <header className="absolute top-6 right-6 z-99">
       <nav className="flex items-center gap-3">
         {rightNav}
-        <div className="p-3 hover:bg-white/5 transition-all duration-200 rounded-lg">
+        <div className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg">
           <LocaleSwitcher />
         </div>
       </nav>

@@ -27,27 +27,27 @@ export default async function Layout(props: {
               <li className="relative">
                 <Link
                   href="/about/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
+                  className="group relative text-theme-secondary hover:text-theme-primary transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
                   {t('about_link')}
                 </Link>
               </li>
               <li className="relative">
                 <Link
                   href="/works/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
+                  className="group relative text-theme-secondary hover:text-theme-primary transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
                   {t('portfolio_link')}
                 </Link>
               </li>
               <li className="relative">
                 <Link
                   href="/contact/"
-                  className="group relative text-gray-300 hover:text-white transition-all duration-300 text-lg font-medium inline-block py-2"
+                  className="group relative text-theme-secondary hover:text-theme-primary transition-all duration-300 text-lg font-medium inline-block py-2"
                 >
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
                   {t('contact_link')}
                 </Link>
               </li>

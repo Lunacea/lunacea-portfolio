@@ -24,14 +24,14 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
       <button
         type="button"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-6 left-6 z-99 p-3 hover:bg-white/5 transition-all duration-200 rounded-lg group"
+        className="lg:hidden fixed top-6 left-6 z-99 p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group"
         aria-label={isMobileMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
       >
         {/* カスタムハンバーガーメニューアイコン */}
         <div className="w-6 h-6 flex flex-col justify-center items-center">
           {/* 上の線 */}
           <span
-            className={`block w-6 h-0.5 bg-white/70 group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out ${
+            className={`block w-6 h-0.5 bg-slate-600/70 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out ${
               isMobileMenuOpen
                 ? 'rotate-45 translate-y-2'
                 : ''
@@ -39,7 +39,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
           />
           {/* 中の線 */}
           <span
-            className={`block w-6 h-0.5 bg-white/70 group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out my-1.5 ${
+            className={`block w-6 h-0.5 bg-slate-600/70 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out my-1.5 ${
               isMobileMenuOpen
                 ? 'opacity-0 scale-0'
                 : ''
@@ -47,7 +47,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
           />
           {/* 下の線 */}
           <span
-            className={`block w-6 h-0.5 bg-white/70 group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out ${
+            className={`block w-6 h-0.5 bg-slate-600/70 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full transform transition-all duration-300 ease-in-out ${
               isMobileMenuOpen
                 ? '-rotate-45 -translate-y-2'
                 : ''
@@ -57,7 +57,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
       </button>
 
       {/* モバイルメニュー */}
-      <nav className={`lg:hidden fixed inset-0 z-2 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
+      <nav className={`lg:hidden fixed inset-0 z-2 bg-white/95 dark:bg-black/90 backdrop-blur-sm transition-all duration-300 ${
         isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
       }`}
       >

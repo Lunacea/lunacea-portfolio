@@ -27,12 +27,12 @@ export const SocialLinks = () => {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-3 hover:bg-white/5 transition-all duration-200 rounded-lg group"
+          className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group"
           aria-label={link['aria-label']}
         >
           <Icon
             icon={link.icon}
-            className="text-white/70 group-hover:text-white transition-colors duration-200 text-lg"
+            className="text-theme-secondary group-hover:text-theme-primary transition-colors duration-200 text-lg"
           />
         </a>
       ))}

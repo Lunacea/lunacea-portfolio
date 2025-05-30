@@ -18,9 +18,9 @@ export const BaseTemplate = (props: {
   const t = useTranslations('BaseTemplate');
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
-      {/* 背景画像 */}
-      <div className="absolute inset-0 bg-[url(/assets/images/bg-paper-bk.jpg)] bg-cover bg-center bg-no-repeat opacity-30"></div>
+    <div className="min-h-screen bg-background text-foreground relative transition-all duration-500">
+      {/* テーマ対応背景画像 */}
+      <div className="absolute inset-0 bg-theme-paper bg-theme-overlay"></div>
 
       {/* ヘッダー */}
       <Header rightNav={props.rightNav} />
@@ -36,36 +36,26 @@ export const BaseTemplate = (props: {
             <Link href="/" className="group">
               <h1
                 className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold leading-none
-                mb-4 tracking-widest uppercase text-neumorphism-inset whitespace-nowrap
-                transition-colors duration-700 cursor-pointer lg:translate-x-0 text-center"
-                style={{
-                  fontFamily: 'var(--font-rajdhani), "Rajdhani", sans-serif !important',
-                  textShadow: `
-                    2px 2px 4px rgba(0, 0, 0, 0.4),
-                    -2px -2px 4px rgba(255, 255, 255, 0.1),
-                    inset 2px 2px 8px rgba(0, 0, 0, 0.5),
-                    inset -2px -2px 8px rgba(255, 255, 255, 0.05)
-                  `,
-                  color: '#e5e7eb',
-                }}
+                mb-4 tracking-widest uppercase text-neumorphism-theme whitespace-nowrap
+                transition-all duration-700 cursor-pointer lg:translate-x-0 text-center font-rajdhani"
               >
                 {AppConfig.name.split('').map((char, index) => (
                   char.toUpperCase() === 'C'
                     ? (
-                        <ThemeToggle key={index} />
+                        <ThemeToggle key={`theme-toggle-c-position-${index}-${char.toLowerCase()}`} />
                       )
                     : (
-                        <span key={index}>{char}</span>
+                        <span key={`char-${char.toLowerCase()}-position-${index}`}>{char}</span>
                       )
                 ))}
               </h1>
               <h2 className="
-                text-xl md:text-2xl lg:text-3xl text-gray-300 tracking-wide font-heading
-              group-hover:text-white transition-colors duration-300"
+                text-xl md:text-2xl lg:text-3xl text-theme-secondary tracking-wide font-heading
+              group-hover:text-theme-primary transition-all duration-300"
               >
                 {t('description')}
               </h2>
-              <p className="text-lg text-gray-300 font-light tracking-wide">
+              <p className="text-lg text-theme-secondary font-light tracking-wide transition-all duration-300">
                 Sorry, this site is under construction...🔧
               </p>
             </Link>

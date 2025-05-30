@@ -24,7 +24,7 @@ export const LatestUpdates = () => {
   return (
     <div className="fixed bottom-24 left-4 lg:bottom-32 lg:left-6 z-99 flex flex-col">
       <div className="max-w-xs">
-        <h3 className="text-xs font-heading font-semibold text-white/50 mb-3 lg:mb-4 tracking-wider">
+        <h3 className="text-xs font-heading font-semibold text-muted-foreground mb-3 lg:mb-4 tracking-wider">
           LATEST UPDATES
         </h3>
         <div className="space-y-3 lg:space-y-4">
@@ -35,19 +35,19 @@ export const LatestUpdates = () => {
                 className="block group"
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h4 className="text-sm font-medium text-white group-hover:text-purple-300 transition-colors leading-tight">
+                  <h4 className="text-sm font-medium text-theme-primary group-hover:text-theme-accent transition-colors leading-tight">
                     {update.title}
                   </h4>
-                  <span className="text-xs text-white/40 ml-3 flex-shrink-0 font-mono">
+                  <span className="text-xs text-muted-foreground ml-3 flex-shrink-0 font-mono">
                     {update.date}
                   </span>
                 </div>
-                <p className="text-xs text-white/60 leading-relaxed mb-2">
+                <p className="text-xs text-theme-secondary leading-relaxed mb-2">
                   {update.description}
                 </p>
               </a>
               {index < sortedLatestUpdates.length - 1 && (
-                <div className="w-full h-px bg-white/10 mt-3 lg:mt-4"></div>
+                <div className="w-full h-px bg-border mt-3 lg:mt-4"></div>
               )}
             </div>
           ))}

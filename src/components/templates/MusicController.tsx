@@ -93,20 +93,20 @@ export const MusicController = () => {
       </div>
 
       {/* 音量スライダー - デスクトップのみ */}
-      <div className="hidden md:flex items-center gap-2 p-3 hover:bg-white/5 transition-all duration-200 rounded-lg">
-        <Icon icon={faVolumeHigh} className="text-white/70 text-xs flex-shrink-0" />
+      <div className="hidden md:flex items-center gap-2 p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg">
+        <Icon icon={faVolumeHigh} className="text-slate-600 dark:text-white/70 text-xs flex-shrink-0" />
         <div className="relative w-20 h-6 flex items-center">
           {/* スライダーの背景線 */}
-          <div className="absolute w-full h-0.5 bg-white/20 rounded-full"></div>
+          <div className="absolute w-full h-0.5 bg-slate-300 dark:bg-white/20 rounded-full"></div>
           {/* スライダーの進行バー */}
           <div
-            className="absolute h-0.5 bg-white/70 rounded-full transition-all duration-200 w-[var(--volume-width)]"
+            className="absolute h-0.5 bg-slate-600 dark:bg-white/70 rounded-full transition-all duration-200 w-[var(--volume-width)]"
             style={{ '--volume-width': `${volumePercentage}%` } as React.CSSProperties}
           >
           </div>
           {/* 現在位置の縦線（ハンドル） */}
           <div
-            className="absolute w-0.5 h-3 bg-white/70 rounded-full transition-all duration-200 left-[var(--volume-position)]"
+            className="absolute w-0.5 h-3 bg-slate-600 dark:bg-white/70 rounded-full transition-all duration-200 left-[var(--volume-position)]"
             style={{ '--volume-position': `calc(${volumePercentage}% - 1px)` } as React.CSSProperties}
           >
           </div>
@@ -127,7 +127,7 @@ export const MusicController = () => {
       <button
         type="button"
         onClick={toggleMusic}
-        className="p-3 hover:bg-white/5 transition-all duration-200 rounded-lg group"
+        className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group"
         aria-label={isPlaying ? '音楽を停止' : '音楽を再生'}
       >
         <div className="w-6 h-6 flex justify-center items-end gap-1.5">
@@ -138,7 +138,7 @@ export const MusicController = () => {
             return (
               <span
                 key={VISUALIZER_KEYS[index]}
-                className="block w-0.5 bg-white/70 group-hover:bg-white rounded-full transform transition-all duration-100 ease-out h-[var(--bar-height)] opacity-[var(--bar-opacity)]"
+                className="block w-0.5 bg-slate-600 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full transform transition-all duration-100 ease-out h-[var(--bar-height)] opacity-[var(--bar-opacity)]"
                 style={{
                   '--bar-height': `${barHeight}%`,
                   '--bar-opacity': barOpacity,

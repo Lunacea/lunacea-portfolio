@@ -24,8 +24,8 @@ export const LocaleSwitcher = () => {
           className={`
             px-2 py-1 text-sm font-medium transition-all duration-200 rounded min-w-[36px]
             ${locale === langCode
-          ? 'text-white bg-white/20'
-          : 'text-white/70 hover:text-white hover:bg-white/10'
+          ? 'text-foreground bg-primary/20 dark:text-white dark:bg-white/20'
+          : 'text-muted-foreground hover:text-foreground hover:bg-accent dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10'
         }
           `}
           aria-current={locale === langCode ? 'true' : 'false'}
