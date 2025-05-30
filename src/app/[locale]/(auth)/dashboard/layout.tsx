@@ -1,7 +1,7 @@
 import { SignOutButton } from '@clerk/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher';
+import { LocaleSwitcher } from '@/components/core/LocaleSwitcher';
 import { BaseTemplate } from '@/components/templates/BaseTemplate';
 
 export default async function DashboardLayout(props: {

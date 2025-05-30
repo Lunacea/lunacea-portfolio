@@ -1,6 +1,6 @@
 'use client';
 
-import ModernAudioVisualizer from '@/components/ModernAudioVisualizer';
+import ModernAudioVisualizer from '@/components/core/ModernAudioVisualizer';
 
 export default function Index() {
   return (

@@ -1,13 +1,11 @@
 'use client';
 
-import { faMusic } from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Icon } from '@/components/Icon';
+import { useEffect, useMemo, useRef } from 'react';
 import { useBGMStore } from '@/stores/bgm';
 
-type ModernAudioVisualizerProps = {
+export type AudioCanvasProps = {
+  size: number;
   className?: string;
-  size?: number;
 };
 
 // 音楽的周波数帯域の選択（最適化版）
@@ -54,20 +52,14 @@ function getDecorativePattern(time: number, bandCount: number): number[] {
   });
 }
 
-export default function ModernAudioVisualizer({
-  className = '',
-  size = 400,
-}: ModernAudioVisualizerProps) {
+export const AudioCanvas = ({ size, className = '' }: AudioCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const smoothedDataRef = useRef<number[]>([]);
   const animationFrameRef = useRef<number>(0);
 
   // Zustandストアから状態とアクションを取得（パフォーマンス最適化）
   const isPlaying = useBGMStore(state => state.isPlaying);
-  const hasUserConsent = useBGMStore(state => state.hasUserConsent);
   const frequencyData = useBGMStore(state => state.frequencyData);
-
-  // アクション
   const updateFrequencyData = useBGMStore(state => state.updateFrequencyData);
 
   // メモ化された描画パラメータ
@@ -190,47 +182,11 @@ export default function ModernAudioVisualizer({
   }, [isPlaying, frequencyData, drawParams, size, updateFrequencyData]);
 
   return (
-    <div className={`relative ${className}`}>
-      {/* ユーザー許可確認モーダル */}
-      {hasUserConsent === null && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-gradient-to-br from-gray-900 to-black p-8 rounded-xl border border-white/20 max-w-md">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Icon icon={faMusic} />
-              WelcomeLUNACEA Portfolio
-            </h3>
-            <p className="text-gray-300 mb-6">
-              このサイトでは音楽が流れます。
-              <br />
-              音楽を再生しますか？
-            </p>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => useBGMStore.getState().grantConsent()}
-                className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200"
-              >
-                ON
-              </button>
-              <button
-                type="button"
-                onClick={() => useBGMStore.getState().denyConsent()}
-                className="flex-1 py-3 px-6 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-all duration-200"
-              >
-                OFF
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ビジュアライザー - 基準線と動く部分のみ */}
-      <canvas
-        ref={canvasRef}
-        width={size}
-        height={size}
-        className="w-full h-full"
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={size}
+      height={size}
+      className={`w-full h-full ${className}`}
+    />
   );
-}
+};
