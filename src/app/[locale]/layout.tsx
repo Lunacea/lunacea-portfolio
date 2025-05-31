@@ -6,8 +6,8 @@ import { Inter, Rajdhani } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { routing } from '@/libs/i18nNavigation';
-// Font Awesome設定を最初に読み込み
-import '@/lib/fontawesome';
+// Font Awesome設定を最初に読み込み // コメントアウトまたは削除
+// import '@/lib/fontawesome'; // コメントアウトまたは削除
 import '@/styles/global.css';
 
 // Interフォントの設定（パフォーマンス最適化）
