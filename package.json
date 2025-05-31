@@ -1,6 +1,6 @@
 {
   "name": "lunacea-portfolio",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "author": "Lunacea",
   "engines": {
     "node": ">=20"
