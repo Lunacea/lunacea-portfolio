@@ -1,3 +1,12 @@
+# [1.7.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.6.0...v1.7.0) (2025-05-31)
+
+
+### Features
+
+* add blog and mdx ([19355f0](https://github.com/Lunacea/lunacea-portfolio/commit/19355f03ba0c559a94556ff3210ae1775e11382d))
+* feat: add draggable business card and scroll reveal components, update blog and profile pages ([ec22007](https://github.com/Lunacea/lunacea-portfolio/commit/ec22007f48ce797e9582eb5c988552c671de2264))
+* update all ([25ac435](https://github.com/Lunacea/lunacea-portfolio/commit/25ac435b780af8c235a64f884f228c8a37311322))
+
 # [1.6.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.5.0...v1.6.0) (2025-05-30)
 
 
