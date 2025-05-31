@@ -62,7 +62,7 @@ export type BGMStorageKeys = {
 };
 
 export const DEFAULT_BGM_CONFIG: BGMConfig = {
-  bgmPath: '/assets/sound/bgm.mp3',
+  bgmPath: '/assets/sound/bg.mp3',
   defaultVolume: 0.3,
   fadeTime: 1000,
   autoPlay: true,

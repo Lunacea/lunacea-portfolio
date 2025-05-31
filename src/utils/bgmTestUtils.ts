@@ -102,7 +102,7 @@ export class MockBGMPlayer {
 }
 
 export const createTestBGMConfig = (overrides: Partial<BGMConfig> = {}): BGMConfig => ({
-  bgmPath: '/test/mock-bgm.mp3',
+  bgmPath: '/test/mock-bg.mp3',
   defaultVolume: 0.5,
   fadeTime: 500,
   autoPlay: false,

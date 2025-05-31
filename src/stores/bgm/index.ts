@@ -71,7 +71,7 @@ const initBGM = (): void => {
 
   try {
     howlInstance = new Howl({
-      src: ['/assets/sound/bgm.mp3'],
+      src: ['/assets/sound/bg.mp3'],
       loop: true,
       volume: 0.7,
       html5: true,
