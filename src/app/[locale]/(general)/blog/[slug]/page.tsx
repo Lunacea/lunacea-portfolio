@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { faArrowLeft, faCalendar, faClock, faTag } from '@fortawesome/free-solid-svg-icons';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { FaCalendar, FaClock } from 'react-icons/fa';
 import { BlogPostContent } from '@/components/blog/BlogPostContent';
 import { SideTableOfContents } from '@/components/blog/SideTableOfContents';
 import { Icon } from '@/components/Icon';
@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           href="/blog"
           className="inline-flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 rounded-lg hover:bg-card/50 backdrop-blur-sm"
         >
-          <Icon icon={faArrowLeft} className="text-primary" />
+          <Icon icon={<FaCalendar />} className="text-primary" />
           <span>{t('all_posts')}</span>
         </Link>
       </nav>
@@ -87,11 +87,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <header className="pb-8 mb-8 border-b border-border/30">
               {/* タグ */}
               <div className="flex items-start gap-2 mb-6">
-                <Icon icon={faTag} className="text-primary/60 text-sm mt-0.5 flex-shrink-0" />
                 <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag, index) => (
+                  {post.tags.map(tag => (
                     <Link
-                      key={`tag-${index}-${tag}`}
+                      key={`tag-${tag}`}
                       href={`/blog/tag/${encodeURIComponent(tag)}`}
                       className="inline-flex items-center px-3 py-1 text-sm font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-all duration-300 border border-primary/20"
                     >
@@ -114,11 +113,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {/* メタデータ */}
               <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                 <time dateTime={post.publishedAt} className="flex items-center gap-2">
-                  <Icon icon={faCalendar} className="text-primary" />
+                  <Icon icon={<FaCalendar />} className="text-primary" />
                   {formatDate(post.publishedAt, locale)}
                 </time>
                 <div className="flex items-center gap-2">
-                  <Icon icon={faClock} className="text-accent" />
+                  <Icon icon={<FaClock />} className="text-primary" />
                   {post.readingTime}
                 </div>
               </div>
@@ -155,7 +154,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           href="/blog"
           className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-2xl hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-300 font-medium"
         >
-          <Icon icon={faArrowLeft} />
+          <Icon icon={<FaCalendar />} />
           <span>{t('all_posts')}</span>
         </Link>
       </footer>

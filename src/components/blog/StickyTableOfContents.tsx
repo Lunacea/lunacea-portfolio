@@ -1,7 +1,7 @@
 'use client';
 
-import { faList } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FaList } from 'react-icons/fa';
 import { Icon } from '@/components/Icon';
 
 type TableOfContentsItem = {
@@ -16,33 +16,48 @@ type StickyTableOfContentsProps = {
 
 export function StickyTableOfContents({ items }: StickyTableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
+  const activeIdRef = useRef<string>('');
+
+  // アクティブな見出しを更新する関数をメモ化
+  const updateActiveId = useCallback(() => {
+    if (!items || items.length === 0) {
+      return;
+    }
+
+    // 現在表示されている見出しを特定
+    const headings = items.map(item => document.getElementById(item.id)).filter(Boolean);
+
+    let foundActiveId = '';
+    for (let i = headings.length - 1; i >= 0; i--) {
+      const heading = headings[i];
+      if (heading) {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 100) {
+          foundActiveId = heading.id;
+          break;
+        }
+      }
+    }
+
+    // 現在のactiveIdと異なる場合のみ更新
+    if (activeIdRef.current !== foundActiveId) {
+      activeIdRef.current = foundActiveId;
+      requestAnimationFrame(() => {
+        setActiveId(foundActiveId);
+      });
+    }
+  }, [items]);
 
   useEffect(() => {
     if (!items || items.length === 0) {
       return;
     }
 
-    const handleScroll = () => {
-      // 現在表示されている見出しを特定
-      const headings = items.map(item => document.getElementById(item.id)).filter(Boolean);
+    window.addEventListener('scroll', updateActiveId);
+    updateActiveId(); // 初期化
 
-      for (let i = headings.length - 1; i >= 0; i--) {
-        const heading = headings[i];
-        if (heading) {
-          const rect = heading.getBoundingClientRect();
-          if (rect.top <= 100) {
-            setActiveId(heading.id);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // 初期化
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [items]);
+    return () => window.removeEventListener('scroll', updateActiveId);
+  }, [items, updateActiveId]);
 
   if (!items || items.length === 0) {
     return null;
@@ -54,7 +69,7 @@ export function StickyTableOfContents({ items }: StickyTableOfContentsProps) {
         {/* ヘッダー */}
         <div className="flex items-center gap-3 mb-4 pb-3 border-b border-border/30">
           <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg">
-            <Icon icon={faList} className="text-primary text-sm" />
+            <Icon icon={<FaList />} className="text-primary text-sm" />
           </div>
           <h3 className="font-semibold text-foreground text-sm">目次</h3>
         </div>
@@ -62,9 +77,9 @@ export function StickyTableOfContents({ items }: StickyTableOfContentsProps) {
         {/* 目次リスト */}
         <nav>
           <ul className="space-y-1">
-            {items.map((item, index) => (
+            {items.map(item => (
               <li
-                key={`sticky-toc-${index}-${item.id}`}
+                key={`sticky-toc-${item.id}`}
                 className={`${item.level > 1 ? `ml-${(item.level - 1) * 3}` : ''}`}
               >
                 <a

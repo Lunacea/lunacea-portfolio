@@ -38,10 +38,25 @@
     "count": "Count: {count}"
   },
   "About": {
-    "meta_title": "About",
-    "meta_description": "About page description",
+    "meta_title": "Profile | Lunacea portfolio",
+    "meta_description": "Profile, tech stack, and achievements of Web Developer Lunacea, currently studying at Iwate Prefectural University Software & Information Sciences",
     "about_paragraph": "Welcome to our About page! We are a team of passionate individuals dedicated to creating amazing software.",
-    "translation_powered_by": "Translation powered by"
+    "translation_powered_by": "Translation powered by",
+    "hero_title": "Hello, I'm Lunacea",
+    "hero_subtitle": "Web Developer | Human Interaction Designer",
+    "mission_title": "Mission",
+    "mission_description": "Creating products that contribute to environments where people can comfortably express themselves",
+    "research_title": "Research",
+    "work_experience_title": "Work Experience",
+    "hackathon_title": "Hackathon Achievement",
+    "leadership_title": "Leadership",
+    "tech_stack_title": "Tech Stack",
+    "qualifications_title": "Qualifications & Education",
+    "core_strengths_title": "Core Strengths",
+    "development_values_title": "Development Values",
+    "about_me_title": "About Me",
+    "future_goals_title": "Future Goals",
+    "featured_projects_title": "Featured Projects"
   },
   "Portfolio": {
     "meta_title": "Portfolio",
@@ -87,7 +102,11 @@
   },
   "Works": {
     "meta_title": "Works | Lunacea portfolio",
-    "meta_description": "Showcasing web development projects and applications portfolio."
+    "meta_description": "Showcasing web development projects and applications portfolio.",
+    "preparing_title": "Coming Soon",
+    "preparing_description": "New projects are being planned and developed. Stay tuned for updates!",
+    "status_developing": "Under Development",
+    "footer_message": "More projects will be added soon."
   },
   "Blog": {
     "meta_title": "Blog | Lunacea portfolio",

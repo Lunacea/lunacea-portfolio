@@ -1,8 +1,8 @@
 'use client';
 
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useState } from 'react';
+import { FaMoon, FaSun } from 'react-icons/fa';
 import { Icon } from '@/components/Icon';
 
 type ThemeToggleProps = {
@@ -15,7 +15,9 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
 
   // ハイドレーションエラーを避けるため、クライアントサイドでのマウント後にのみレンダリング
   useEffect(() => {
-    setMounted(true);
+    requestAnimationFrame(() => {
+      setMounted(true);
+    });
   }, []);
 
   // ドラッグ開始時の処理
@@ -39,7 +41,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
     // サーバーサイドレンダリング時は太陽アイコンを表示（ライトモードデフォルト）
     return (
       <Icon
-        icon={faSun}
+        icon={<FaSun />}
         className={`${className} opacity-50 text-amber-500 dark:text-amber-200 mx-1 text-[0.85em] w-[0.85em] h-[0.85em] align-baseline`}
       />
     );
@@ -65,7 +67,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
       data-drag-text="C"
     >
       <Icon
-        icon={isDark ? faMoon : faSun}
+        icon={isDark ? <FaMoon /> : <FaSun />}
         className={`
           mx-1 text-[0.85em] w-[0.85em] h-[0.85em] align-baseline
           transition-all duration-500

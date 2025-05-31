@@ -40,10 +40,22 @@
     "count": "カウント: {count}"
   },
   "About": {
-    "meta_title": "About | Lunacea portfolio",
-    "meta_description": "概要ページの説明",
+    "meta_title": "Profile | Lunacea portfolio",
+    "meta_description": "岩手県立大学ソフトウェア情報学部所属のWeb Developer Lunacea のプロフィール、技術スタック、実績について",
     "about_paragraph": "概要ページへようこそ！私たちは素晴らしいソフトウェアを作成することに情熱を注ぐチームです。",
-    "translation_powered_by": "翻訳は以下により提供"
+    "translation_powered_by": "翻訳は以下により提供",
+    "hero_title": "こんにちは、Lunaceaです",
+    "hero_subtitle": "Webデベロッパー | ヒューマンインタラクションデザイナー",
+    "mission_title": "ミッション",
+    "mission_description": "人々が気持ちよく表現し合える環境に貢献できるプロダクトづくり",
+    "research_title": "研究活動",
+    "work_experience_title": "実務経験",
+    "hackathon_title": "ハッカソン実績",
+    "leadership_title": "リーダーシップ",
+    "tech_stack_title": "技術スタック",
+    "qualifications_title": "資格・学歴",
+    "core_strengths_title": "コアストレングス",
+    "development_values_title": "開発における価値観"
   },
   "Portfolio": {
     "meta_title": "ポートフォリオ",
@@ -87,7 +99,11 @@
   },
   "Works": {
     "meta_title": "Works | Lunacea portfolio",
-    "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。"
+    "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。",
+    "preparing_title": "準備中",
+    "preparing_description": "新しいプロジェクトを企画・開発中です。近日公開予定です。",
+    "status_developing": "開発中",
+    "footer_message": "今後、さらに多くのプロジェクトが追加される予定です。"
   },
   "Contact": {
     "title": "Contact | Lunacea portfolio",

@@ -59,8 +59,14 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
     const slug = getSlugFromFilename(filename);
     const readingTimeResult = readingTime(content);
 
-    // 最初の段落を抜粋として使用
-    const excerpt = content.split('\n\n')[0]?.replace(/^#+\s/, '') || data.description || '';
+    // 最初の段落を抜粋として使用（Markdown記号を除去）
+    const rawExcerpt = content.split('\n\n')[0]?.replace(/^#+\s/, '') || data.description || '';
+    const cleanExcerpt = rawExcerpt
+      .replace(/[#*_`~[\]]/g, '') // Markdown記号を除去
+      .replace(/!\[.*?\]\(.*?\)/g, '') // 画像リンクを除去
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // リンクはテキスト部分のみ残す
+      .replace(/\s+/g, ' ') // 複数のスペースを1つに
+      .trim();
 
     // MDXをHTMLに変換（統一された処理）
     let htmlContent = '';
@@ -85,7 +91,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       content,
       htmlContent,
       tableOfContents,
-      excerpt: excerpt.length > 200 ? `${excerpt.substring(0, 200)}...` : excerpt,
+      excerpt: cleanExcerpt.length > 200 ? `${cleanExcerpt.substring(0, 200)}...` : cleanExcerpt,
     };
   } catch (error) {
     console.error(`ブログ記事の解析エラー (${filename}):`, error);

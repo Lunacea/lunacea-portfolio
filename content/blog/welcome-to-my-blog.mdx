@@ -1,88 +1,79 @@
 ---
 title: 'Welcome to My Blog'
-description: 'Welcome to my technical blog! This is the first post where I introduce myself and what you can expect to find here.'
-publishedAt: '2024-12-25'
-updatedAt: '2024-12-25'
-tags: ['Welcome', 'Introduction', 'Blog']
+description: 'フロントエンド開発とユーザーインターフェースの実践的な知見を共有する技術ブログです。'
+publishedAt: '2025-05-31'
+updatedAt: '2025-05-31'
+tags: ['Welcome', 'Frontend', 'UI/UX']
 ---
 
-# Welcome to My Blog!
+# Hi!
 
-こんにちは！私のテクニカルブログへようこそ。このブログでは、Web開発、プログラミング、そして最新の技術トレンドについて書いていきます。
+こんにちは！このブログでは、フロントエンド開発とユーザーインターフェースに関する実践的な知見を共有していきます。
 
-## このブログについて
+## このブログの目的
 
-このブログでは以下のようなトピックを扱っていく予定です：
+日々の開発で学んだこと、つまずいたこと、解決したことを記録し、同じような課題に取り組む開発者の皆さんの参考になればと思っています。
 
-### 主要なテーマ
+### 主な内容
 
-- **Web開発**: React、Next.js、TypeScriptなどのモダンなフロントエンド技術
-- **バックエンド**: Node.js、Python、データベース設計
-- **開発ツール**: 開発効率を上げるツールやワークフロー
-- **ベストプラクティス**: コードの品質向上とメンテナンス性
+- **フロントエンド技術**: React、Next.js、Svelte/SvelteKitでの実装パターン
+- **UI/UX設計**: ユーザビリティを重視したインターフェース設計の考え方
+- **開発効率化**: 開発フローや便利なツールの紹介
+- **問題解決**: 実際に遭遇したバグや課題の解決方法
+
+## 大切にしたい考え方
+
+技術は手段であり、最終的にはユーザーにとって価値のあるプロダクトを作ることが重要だと考えています。
+
+そのため、以下の視点を大切にして記事を書いていきます：
+
+### 記事の方針
+
+1. **実用性**: 実際のプロジェクトで使える知識
+2. **わかりやすさ**: 初心者の方にも理解しやすい説明
+3. **ユーザー視点**: 技術的な実装だけでなく、ユーザー体験への影響も考慮
 
 ## 技術スタック
 
-このブログは以下の技術を使用して構築されています：
+主に以下の技術について書いていく予定です：
 
-```typescript
-const techStack = {
-  frontend: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS'],
-  backend: ['Node.js', 'Drizzle ORM'],
-  database: ['PostgreSQL'],
-  deployment: ['Vercel'],
-  tools: ['ESLint', 'Prettier', 'Husky']
+```typescript title="mainTopics.ts"
+const mainTopics = {
+  // フロントエンド
+  frontend: ['React', 'Next.js', 'Svelte/SvelteKit', 'TypeScript'],
+  
+  // スタイリング
+  styling: ['Tailwind CSS', 'CSS Modules', 'Responsive Design'],
+  
+  // 設計・手法
+  approach: ['Component Design', 'Accessibility', 'Performance']
 };
 
-console.log('My tech stack:', techStack);
+console.log('共有していきたい技術領域:', mainTopics);
 ```
 
-### 特徴
+## UI/UXの視点も大切に
 
-1. **レスポンシブデザイン** - すべてのデバイスで最適な表示
-2. **ダークモード対応** - 目に優しい表示切り替え
-3. **MDX対応** - リッチなコンテンツ作成
-4. **SEO最適化** - 検索エンジンに優しい構造
+技術的な実装だけでなく、「なぜその実装を選んだのか」「ユーザーにどんな体験を提供するのか」という視点も含めて書いていきたいと思います。
 
-## コードの例
+良いコードとは、動くだけでなく：
+- **保守しやすい**
+- **理解しやすい**  
+- **ユーザにとって快適**
 
-簡単なReactコンポーネントの例：
+なコードだと考えています。
 
-```jsx
-import { useState } from 'react';
+## 一緒に学んでいきましょう
 
-function Counter() {
-  const [count, setCount] = useState(0);
+このブログが、フロントエンド開発やUI設計に取り組む皆さんの日々の開発に少しでも役立てば嬉しいです。
 
-  return (
-    <div className="counter">
-      <h2>カウンター: {count}</h2>
-      <button onClick={() => setCount(count + 1)}>
-        クリック
-      </button>
-    </div>
-  );
-}
+記事の内容について質問や改善点があれば、お気軽にフィードバックをお送りください。
 
-export default Counter;
-```
+> If we want users to like our software we should design it to behave like a likeable person: 
+> respectful, generous and helpful.
+> *— Alan Cooper*
 
-## 今後の予定
-
-今後、以下のような記事を公開していく予定です：
-
-- Next.js 15の新機能詳細解説
-- TypeScriptのベストプラクティス
-- パフォーマンス最適化テクニック
-- モダンなCSS技法
-
-## 最後に
-
-このブログが皆さんの開発の参考になれば幸いです。質問や提案があれば、お気軽に[コンタクト](/contact)からご連絡ください。
-
-> 「学習し続けることが、エンジニアとしての成長の鍵である」
-
-一緒に学び、成長していきましょう！
+ユーザーにとって本当に価値のあるプロダクトを作るための知見を、一緒に積み重ねていきましょう！
 
 ---
 

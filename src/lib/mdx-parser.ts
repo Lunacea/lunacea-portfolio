@@ -58,6 +58,10 @@ export async function parseMarkdownToHtml(markdown: string): Promise<string> {
 
 /**
  * MDXコンテンツから目次を抽出
+ * - コードブロック内の#は除外
+ * - Front matterを除外
+ * - インラインコードブロック内の#は除外
+ * - 適切な見出しのみを抽出
  */
 export function extractTableOfContents(markdown: string): Array<{
   id: string;
@@ -67,28 +71,91 @@ export function extractTableOfContents(markdown: string): Array<{
   const lines = markdown.split('\n');
   const toc: Array<{ id: string; title: string; level: number }> = [];
 
+  let inCodeBlock = false;
+  let inFrontMatter = false;
+  let lineIndex = 0;
+
   for (const line of lines) {
     const trimmedLine = line.trim();
-    if (trimmedLine.startsWith('#')) {
-      const hashCount = trimmedLine.match(/^#+/)?.[0].length || 0;
-      if (hashCount >= 1 && hashCount <= 6) {
-        const title = trimmedLine.substring(hashCount).trim();
-        if (title) {
-          // シンプルなID生成
-          const id = title
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF-]/g, '')
-            .replace(/^-+|-+$/g, '');
 
-          toc.push({
-            id,
-            title,
-            level: hashCount,
-          });
+    // Front matterの処理（ファイルの最初の---から次の---まで）
+    if (lineIndex === 0 && trimmedLine === '---') {
+      inFrontMatter = true;
+      lineIndex++;
+      continue;
+    }
+
+    if (inFrontMatter && trimmedLine === '---') {
+      inFrontMatter = false;
+      lineIndex++;
+      continue;
+    }
+
+    if (inFrontMatter) {
+      lineIndex++;
+      continue;
+    }
+
+    // コードブロックの開始・終了を検出
+    if (trimmedLine.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      lineIndex++;
+      continue;
+    }
+
+    // コードブロック内は無視
+    if (inCodeBlock) {
+      lineIndex++;
+      continue;
+    }
+
+    // 見出しの検出（#で始まる行）
+    if (trimmedLine.startsWith('#')) {
+      // インラインコードブロック内の#をチェック
+      const backtickCount = (line.match(/`/g) || []).length;
+      const isInInlineCode = backtickCount > 0 && backtickCount % 2 !== 0;
+
+      if (!isInInlineCode) {
+        const hashMatch = trimmedLine.match(/^(#{1,6})\s(.+)$/);
+        if (hashMatch && hashMatch[1] && hashMatch[2]) {
+          const hashCount = hashMatch[1].length;
+          const title = hashMatch[2].trim();
+
+          // 空のタイトルは除外
+          if (title && title.length > 0) {
+            // タイトルから余分な記号を除去（リンクやコードの記号など）
+            const cleanTitle = title
+              .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // マークダウンリンクを削除
+              .replace(/`([^`]+)`/g, '$1') // インラインコードのバッククォートを削除
+              .replace(/\*\*([^*]+)\*\*/g, '$1') // 太字記号を削除
+              .replace(/\*([^*]+)\*/g, '$1') // 斜体記号を削除
+              .replace(/~~([^~]+)~~/g, '$1') // 取り消し線を削除
+              .trim();
+
+            if (cleanTitle && cleanTitle.length > 0) {
+              // より厳密なID生成（日本語対応、記号の適切な処理）
+              const id = cleanTitle
+                .toLowerCase()
+                .replace(/\s+/g, '-') // スペースをハイフンに
+                .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]/g, '') // 英数字、ひらがな、カタカナ、漢字、ハイフンのみ残す
+                .replace(/-+/g, '-') // 連続するハイフンを1つに
+                .replace(/^-+|-+$/g, '') // 先頭末尾のハイフンを削除
+                .substring(0, 50); // 長すぎる場合は切り詰め
+
+              if (id) {
+                toc.push({
+                  id,
+                  title: cleanTitle,
+                  level: hashCount,
+                });
+              }
+            }
+          }
         }
       }
     }
+
+    lineIndex++;
   }
 
   return toc;

@@ -1,26 +1,25 @@
 'use client';
 
-import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { FaEnvelope, FaGithub, FaTwitter } from 'react-icons/fa';
 import { Icon } from '@/components/Icon';
 
 export const SocialLinks = () => {
   const socialLinks = [
     {
       'name': 'GitHub',
-      'icon': faGithub,
+      'icon': <FaGithub />,
       'url': 'https://github.com/Lunacea', // 実際のURLに変更してください
       'aria-label': 'GitHubプロフィールを開く',
     },
     {
       'name': 'X (Twitter)',
-      'icon': faXTwitter,
+      'icon': <FaTwitter />,
       'url': 'https://x.com/_Lunacea', // 実際のURLに変更してください
       'aria-label': 'X (Twitter)プロフィールを開く',
     },
     {
       'name': 'Email',
-      'icon': faEnvelope,
+      'icon': <FaEnvelope />,
       'url': 'mailto:contact@lunacea.jp',
       'aria-label': 'メールを送信',
     },

@@ -15,7 +15,7 @@ export const LocaleSwitcher = () => {
   };
 
   return (
-    <div className="flex gap-1" aria-label="言語切替">
+    <div className="flex gap-1 p-3" aria-label="言語切替">
       {routing.locales.map(langCode => (
         <button
           type="button"
