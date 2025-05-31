@@ -31,36 +31,12 @@ export default async function BlogPage({ params }: BlogPageProps) {
       <div className="container mx-auto px-4 py-12">
         {/* ページヘッダー */}
         <header className="text-center mb-16">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              Blog
-            </h1>
-          </div>
-
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            フロントエンド開発とユーザーインターフェースの実践的な知見を共有する技術ブログです。
-          </p>
 
           {/* 統計情報 */}
-          {posts.length > 0 && (
-            <div className="mt-8 pt-8 border-t border-border/30">
-              <div className="flex items-center justify-center gap-8 text-sm mb-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <span className="text-muted-foreground">
-                    <strong className="text-foreground">{posts.length}</strong>
-                    {' '}
-                    記事
-                  </span>
-                </div>
-              </div>
-
-              {/* GitHub草風の更新頻度グラフ */}
-              <div className="max-w-2xl mx-auto">
-                <ContributionGraph posts={posts} weekCount={20} />
-              </div>
-            </div>
-          )}
+          {/* GitHub草風の更新頻度グラフ */}
+          <div className="max-w-2xl mx-auto">
+            <ContributionGraph posts={posts} weekCount={20} />
+          </div>
         </header>
 
         {/* ブログ記事一覧 */}
@@ -75,14 +51,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
                 </div>
 
                 {/* フッター装飾 */}
-                <div className="text-center mt-16 pt-8">
+                {/* <div className="text-center mt-16 pt-8">
                   <div className="inline-flex items-center gap-3 px-6 py-3 bg-card/50 backdrop-blur-sm rounded-full border border-border/30">
                     <div className="w-3 h-3 bg-accent rounded-full animate-pulse"></div>
                     <span className="text-muted-foreground text-sm">
                       さらなる記事を準備中...
                     </span>
                   </div>
-                </div>
+                </div> */}
               </div>
             )
           : (

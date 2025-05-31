@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FaCalendar, FaClock } from 'react-icons/fa';
+import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
 import { BlogPostContent } from '@/components/blog/BlogPostContent';
 import { SideTableOfContents } from '@/components/blog/SideTableOfContents';
 import { Icon } from '@/components/Icon';
@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           href="/blog"
           className="inline-flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 rounded-lg hover:bg-card/50 backdrop-blur-sm"
         >
-          <Icon icon={<FaCalendar />} className="text-primary" />
+          <Icon icon={<FaAngleLeft />} className="text-primary" />
           <span>{t('all_posts')}</span>
         </Link>
       </nav>
@@ -149,7 +149,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       )}
 
       {/* フッター */}
-      <footer className="container mx-auto px-4 py-12 max-w-7xl text-center">
+      {/* <footer className="container mx-auto px-4 py-12 max-w-7xl text-center">
         <Link
           href="/blog"
           className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-2xl hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-300 font-medium"
@@ -157,7 +157,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <Icon icon={<FaCalendar />} />
           <span>{t('all_posts')}</span>
         </Link>
-      </footer>
+      </footer> */}
     </div>
   );
 }
