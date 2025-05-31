@@ -1,15 +1,21 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useBGMStore } from '@/stores/bgm';
 
 export const UserConsentModal = () => {
+  const [mounted, setMounted] = useState(false);
   const hasUserConsent = useBGMStore(state => state.hasUserConsent);
   const grantConsent = useBGMStore(state => state.grantConsent);
   const denyConsent = useBGMStore(state => state.denyConsent);
 
   const [isClosing, setIsClosing] = useState(false);
   const [rippleOrigin, setRippleOrigin] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    // クライアントサイドでのみ実行
+    setMounted(true);
+  }, []);
 
   const handleConsent = useCallback((grant: boolean, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -29,7 +35,7 @@ export const UserConsentModal = () => {
     }, 1500);
   }, [grantConsent, denyConsent]);
 
-  if (hasUserConsent !== null) {
+  if (mounted && hasUserConsent !== null) {
     return null;
   }
 

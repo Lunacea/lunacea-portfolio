@@ -5,14 +5,14 @@ export const LatestUpdates = () => {
     {
       title: 'ポートフォリオサイト公開',
       date: '2025-05-04',
-      url: '/works/portfolio',
+      url: '',
       description: 'Next.js 15とTailwind CSSで構築',
     },
     {
-      title: 'BGM機能追加',
-      date: '2025-05-29',
-      url: '/about',
-      description: 'オーディオビジュアライザー実装',
+      title: 'ブログサイト公開',
+      date: '2025-05-31',
+      url: '/blog',
+      description: 'mdxで記事を書くことができます。',
     },
   ];
 

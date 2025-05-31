@@ -9,6 +9,7 @@ type BGMState = {
   isLoading: boolean;
   volume: number;
   hasUserConsent: boolean | null; // null=未確認, true=許可, false=拒否
+  isInitialized: boolean; // BGMシステムの初期化状態
 
   // 音声データ
   frequencyData: Uint8Array | null;
@@ -53,36 +54,44 @@ const initAudioAnalysis = (): void => {
 
       dataArray = new Uint8Array(analyser.frequencyBinCount);
     }
-  } catch (error) {
-    console.warn('Audio analysis setup failed:', error);
+  } catch {
+    // Audio analysis setup failed, ignore
   }
 };
 
 // === BGMの初期化 ===
 const initBGM = (): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   if (howlInstance) {
     return;
   }
 
-  howlInstance = new Howl({
-    src: ['/assets/sound/bgm.mp3'],
-    loop: true,
-    volume: 0.7,
-    html5: true,
-    preload: false,
-    pool: 1,
-    autoplay: false,
-    onload: () => {
-      initAudioAnalysis();
-      console.warn('🎵 BGM loaded successfully');
-    },
-    onloaderror: (_, error) => {
-      console.error('❌ BGM load error:', error);
-    },
-    onplayerror: (_, error) => {
-      console.error('❌ BGM play error:', error);
-    },
-  });
+  try {
+    howlInstance = new Howl({
+      src: ['/assets/sound/bgm.mp3'],
+      loop: true,
+      volume: 0.7,
+      html5: true,
+      preload: false,
+      pool: 1,
+      autoplay: false,
+      onload: () => {
+        initAudioAnalysis();
+      },
+      onloaderror: () => {
+        // BGM load error, ignore
+      },
+      onplayerror: () => {
+        // BGM play error, ignore
+      },
+    });
+  } catch {
+    // Failed to create Howl instance, ignore
+    howlInstance = null;
+  }
 };
 
 // === クリーンアップ関数 ===
@@ -92,7 +101,7 @@ const cleanup = (): void => {
     howlInstance = null;
   }
   if (audioContext && audioContext.state !== 'closed') {
-    audioContext.close().catch(console.warn);
+    audioContext.close().catch(() => { /* ignore */ });
     audioContext = null;
   }
   analyser = null;
@@ -108,22 +117,41 @@ if (typeof window !== 'undefined') {
 export const useBGMStore = create<BGMStore>()(
   devtools(
     (set, get) => {
-      // BGM初期化
-      initBGM();
+      let initialUserConsent: boolean | null = null;
+      if (typeof window !== 'undefined') {
+        // 同一ドメインからの遷移か確認
+        const referrer = document.referrer;
+        const currentOrigin = window.location.origin;
+
+        if (referrer) {
+          try {
+            const referrerOrigin = new URL(referrer).origin;
+            if (referrerOrigin === currentOrigin) {
+              initialUserConsent = true;
+            }
+          } catch {
+            // Could not parse referrer URL, ignore
+          }
+        }
+
+        // BGM初期化をクライアントサイドで遅延実行
+        setTimeout(() => {
+          initBGM();
+        }, 100);
+      }
 
       return {
         // === 初期状態 ===
         isPlaying: false,
         isLoading: false,
         volume: 0.7,
-        hasUserConsent: null,
+        hasUserConsent: initialUserConsent,
+        isInitialized: false,
         frequencyData: null,
 
         // === アクション ===
         requestUserConsent: () => {
-          // ユーザーコンセント状態をチェックし、未確認の場合はモーダルを表示
-          // 実際の処理はコンポーネント側で実行
-          console.warn('🎵 User consent requested');
+          // User consent requested, do nothing
         },
 
         grantConsent: () => {
@@ -137,27 +165,32 @@ export const useBGMStore = create<BGMStore>()(
 
         play: () => {
           if (!howlInstance) {
-            console.error('❌ Howl instance not initialized');
-            set({ isLoading: false }, false, 'bgm/playError');
+            set({ isInitialized: false }, false, 'bgm/initializationStart');
+            initBGM();
+
+            // 短い遅延後に再試行
+            setTimeout(() => {
+              if (!howlInstance) {
+                set({ isLoading: false, isInitialized: false }, false, 'bgm/playError');
+              } else {
+                set({ isInitialized: true }, false, 'bgm/initializationSuccess');
+                get().play(); // 再帰的に呼び出し
+              }
+            }, 200);
             return;
           }
 
           set({ isLoading: true }, false, 'bgm/playStart');
 
           try {
-            // オーディオコンテキストの再開（ユーザーインタラクション後に実行）
             if (audioContext?.state === 'suspended') {
-              audioContext.resume().then(() => {
-                console.warn('🎵 Audio context resumed');
-              }).catch((error) => {
-                console.error('❌ Audio context resume failed:', error);
-              });
+              audioContext.resume().catch(() => { /* Audio context resume failed, ignore */ });
             }
 
             howlInstance.play();
-            set({ isPlaying: true, isLoading: false }, false, 'bgm/playSuccess');
-          } catch (error) {
-            console.error('❌ BGM play error:', error);
+            set({ isPlaying: true, isLoading: false, isInitialized: true }, false, 'bgm/playSuccess');
+          } catch {
+            // BGM play error, ignore
             set({ isPlaying: false, isLoading: false }, false, 'bgm/playError');
           }
         },
@@ -202,3 +235,4 @@ export const selectVolume = (state: BGMStore) => state.volume;
 export const selectHasUserConsent = (state: BGMStore) => state.hasUserConsent;
 export const selectFrequencyData = (state: BGMStore) => state.frequencyData;
 export const selectIsLoading = (state: BGMStore) => state.isLoading;
+export const selectIsInitialized = (state: BGMStore) => state.isInitialized;

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import React, { useState } from 'react';
 
 export type NavigationProps = {
   leftNav: React.ReactNode;
@@ -8,13 +9,49 @@ export type NavigationProps = {
 
 export const Navigation = ({ leftNav }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
+      <style jsx global>
+        {`
+        .nav-link {
+          transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover:not(.active-nav-link) {
+          background: rgb(var(--muted) / 0.5);
+          transform: translateX(4px);
+        }
+        
+        .active-nav-link {
+          background: rgb(var(--primary) / 0.1) !important;
+          color: rgb(var(--primary)) !important;
+          font-weight: 600 !important;
+          border: 1px solid rgb(var(--primary) / 0.2) !important;
+          position: relative;
+          pointer-events: none;
+          cursor: default;
+        }
+        
+        .active-nav-link::before {
+          content: '';
+          position: absolute;
+          left: -2px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 60%;
+          background: rgb(var(--primary));
+          border-radius: 0 2px 2px 0;
+        }
+      `}
+      </style>
+
       {/* 左側ナビゲーション - デスクトップ */}
       <nav className="hidden lg:flex fixed left-0 top-0 h-full w-64 z-1">
-        <div className="flex flex-col justify-center pl-8 pr-4 space-y-8">
-          <div className="space-y-6">
+        <div className="flex flex-col justify-center pl-8 lg:pr-4 space-y-8">
+          <div className="space-y-6" data-current-path={pathname || ''}>
             {leftNav}
           </div>
         </div>
@@ -64,6 +101,7 @@ export const Navigation = ({ leftNav }: NavigationProps) => {
         <div className="flex flex-col justify-center items-center h-full space-y-8 text-2xl">
           <div
             className="space-y-6 mobile-nav-container"
+            data-current-path={pathname || ''}
             role="button"
             tabIndex={0}
             onClick={() => setIsMobileMenuOpen(false)}
