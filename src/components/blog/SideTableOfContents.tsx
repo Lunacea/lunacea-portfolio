@@ -13,7 +13,9 @@ type SideTableOfContentsProps = {
 };
 
 export function SideTableOfContents({ items }: SideTableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string>('');
+  const [activeId, setActiveId] = useState<string>(
+    items.filter(item => item.level <= 2)[0]?.id ?? '',
+  );
   const activeIdRef = useRef<string>('');
 
   // トップレベルヘディング（H1またはH2）のみフィルタリング
@@ -58,7 +60,6 @@ export function SideTableOfContents({ items }: SideTableOfContentsProps) {
     }
 
     window.addEventListener('scroll', updateActiveId, { passive: true });
-    updateActiveId(); // 初期化
 
     return () => {
       window.removeEventListener('scroll', updateActiveId);

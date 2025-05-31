@@ -26,11 +26,13 @@ export function ScrollReveal({
       return;
     }
 
+    let timerId: NodeJS.Timeout;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (entry && entry.isIntersecting) {
-          setTimeout(() => {
+          timerId = setTimeout(() => {
             setIsVisible(true);
           }, delay);
           observer.unobserve(element);
@@ -46,6 +48,9 @@ export function ScrollReveal({
 
     return () => {
       observer.disconnect();
+      if (timerId) {
+        clearTimeout(timerId);
+      }
     };
   }, [delay, threshold]);
 

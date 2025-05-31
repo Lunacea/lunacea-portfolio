@@ -15,6 +15,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
 
   // フックの定義を先に行う
   useEffect(() => {
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setMounted(true);
   }, []);
 

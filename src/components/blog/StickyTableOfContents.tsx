@@ -15,7 +15,7 @@ type StickyTableOfContentsProps = {
 };
 
 export function StickyTableOfContents({ items }: StickyTableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string>('');
+  const [activeId, setActiveId] = useState<string>(items[0]?.id ?? '');
   const activeIdRef = useRef<string>('');
 
   // アクティブな見出しを更新する関数をメモ化
@@ -54,7 +54,6 @@ export function StickyTableOfContents({ items }: StickyTableOfContentsProps) {
     }
 
     window.addEventListener('scroll', updateActiveId);
-    updateActiveId(); // 初期化
 
     return () => window.removeEventListener('scroll', updateActiveId);
   }, [items, updateActiveId]);

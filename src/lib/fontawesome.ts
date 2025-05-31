@@ -30,7 +30,7 @@ import {
   faUsers,
   faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
-import '@fortawesome/fontawesome-svg-core/styles.css';
+// import '@fortawesome/fontawesome-svg-core/styles.css'; // この行を削除またはコメントアウト
 
 // FOUC (Flash of Unstyled Content) を防ぐため、Font AwesomeのCSSを無効化
 // Next.jsのCSSインポートで管理

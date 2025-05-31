@@ -14,6 +14,7 @@ export const UserConsentModal = () => {
 
   useEffect(() => {
     // クライアントサイドでのみ実行
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setMounted(true);
   }, []);
 
