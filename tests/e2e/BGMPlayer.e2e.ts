@@ -21,7 +21,7 @@ test.describe('BGMPlayer', () => {
 
     await expect(dialog).toBeVisible({ timeout: 5000 });
 
-    await page.getByRole('button', { name: '許可' }).click();
+    await page.getByRole('button', { name: 'OK' }).click();
 
     await expect(dialog).not.toBeVisible({ timeout: 3000 });
 

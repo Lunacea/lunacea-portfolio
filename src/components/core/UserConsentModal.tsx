@@ -1,21 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
 import { useBGMStore } from '@/stores/bgm';
 
 export const UserConsentModal = () => {
-  const [mounted, setMounted] = useState(false);
+  const t = useTranslations('UserConsentModal');
+
   const hasUserConsent = useBGMStore(state => state.hasUserConsent);
   const grantConsent = useBGMStore(state => state.grantConsent);
   const denyConsent = useBGMStore(state => state.denyConsent);
 
   const [isClosing, setIsClosing] = useState(false);
   const [rippleOrigin, setRippleOrigin] = useState<{ x: number; y: number } | null>(null);
-
-  useEffect(() => {
-    // クライアントサイドでのみ実行
-    setMounted(true);
-  }, []);
 
   const handleConsent = useCallback((grant: boolean, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -35,14 +32,12 @@ export const UserConsentModal = () => {
     }, 1500);
   }, [grantConsent, denyConsent]);
 
-  if (mounted && hasUserConsent !== null) {
-    return null;
-  }
-
   return (
-    <div className={`fixed inset-0 z-2 bg-black/90 backdrop-blur-sm flex items-center justify-center transition-all duration-1200 ease-out ${
-      isClosing ? 'opacity-0' : 'opacity-100'
-    }`}
+    <div
+      hidden={hasUserConsent !== null}
+      className={`fixed inset-0 z-2 bg-black/90 backdrop-blur-sm flex items-center justify-center transition-all duration-1200 ease-out ${
+        isClosing ? 'opacity-0' : 'opacity-100'
+      }`}
     >
       {/* 優しい波エフェクト */}
       {isClosing && rippleOrigin && (
@@ -96,9 +91,9 @@ export const UserConsentModal = () => {
           LUNACEA Portfolio
         </h3>
         <p className="text-white/70 text-sm leading-relaxed mb-8">
-          このサイトでは音楽が流れます。
+          {t('dialog_message_1')}
           <br />
-          音楽を再生しますか？
+          {t('dialog_message_2')}
         </p>
         <div className="flex gap-3 justify-center">
           <button
@@ -107,7 +102,7 @@ export const UserConsentModal = () => {
             disabled={isClosing}
             className="px-6 py-2 text-sm font-medium text-white hover:text-purple-300 transition-colors duration-200 disabled:pointer-events-none"
           >
-            ON
+            {t('allow')}
           </button>
           <div className="w-px h-8 bg-white/20 self-center"></div>
           <button
@@ -116,7 +111,7 @@ export const UserConsentModal = () => {
             disabled={isClosing}
             className="px-6 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 disabled:pointer-events-none"
           >
-            OFF
+            {t('deny')}
           </button>
         </div>
       </div>

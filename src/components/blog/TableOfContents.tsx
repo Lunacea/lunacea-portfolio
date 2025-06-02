@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { FaChevronUp, FaList } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 
 type TableOfContentsItem = {
   id: string;

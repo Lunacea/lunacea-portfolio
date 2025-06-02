@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaVolumeUp } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 import { useBGMStore } from '@/stores/bgm';
 
 const VISUALIZER_KEYS = ['mid', 'high1', 'high2'] as const;

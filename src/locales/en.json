@@ -1,78 +1,127 @@
 {
   "RootLayout": {
-    "about_link": "ABOUT",
-    "portfolio_link": "WORKS",
-    "contact_link": "CONTACT",
+    "profile_link": "PROFILE",
+    "works_link": "WORKS",
+    "blog_link": "BLOG",
     "sign_in_link": "Sign in",
     "sign_up_link": "Sign up"
   },
-  "BaseTemplate": {
-    "description": "Web Developer",
-    "made_with": "Made with <author></author>."
-  },
-  "BGMPlayer": {
-    "dialog_title": "Play Background Music?",
-    "dialog_message": "This site can play background music. Would you like to allow it?",
-    "allow": "Allow",
-    "deny": "No Thanks",
-    "play_bgm": "Play BGM",
-    "pause_bgm": "Pause BGM"
+  "UserConsentModal": {
+    "dialog_title": "LUNACEA Portfolio",
+    "dialog_message_1": "This site can play background music.",
+    "dialog_message_2": "Would you like to allow it?",
+    "allow": "ON",
+    "deny": "OFF"
   },
   "Index": {
-    "meta_title": "Next.js Boilerplate Presentation",
-    "meta_description": "Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework.",
-    "sponsors_title": "Sponsors"
+    "meta_title": "Lunacea Web Developer",
+    "meta_description": "Lunacea Web Developer portfolio site."
   },
-  "Counter": {
-    "meta_title": "Counter",
-    "meta_description": "An example of DB operation",
-    "loading_counter": "Loading counter...",
-    "security_powered_by": "Security, bot detection and rate limiting powered by"
+  "LatestUpdates": {
+    "latest_updates_1": "Portfolio site released",
+    "latest_updates_1_description": "Built with Next.js 15 and Tailwind CSS",
+    "latest_updates_2": "Blog site released",
+    "latest_updates_2_description": "You can read articles by mdx."
   },
-  "CounterForm": {
-    "presentation": "The counter is stored in the database and incremented by the value you provide.",
-    "label_increment": "Increment by",
-    "button_increment": "Increment"
+  "BusinessCard": {
+    "university_name": "Iwate Prefectural University",
+    "department_name": "Graduate School of Software and Information Science"
   },
-  "CurrentCount": {
-    "count": "Count: {count}"
-  },
-  "About": {
+  "Profile": {
     "meta_title": "Profile | Lunacea portfolio",
-    "meta_description": "Profile, tech stack, and achievements of Web Developer Lunacea, currently studying at Iwate Prefectural University Software & Information Sciences",
+    "meta_description": "Profile, tech stack, and achievements of Web Developer Lunacea",
     "about_paragraph": "Welcome to our About page! We are a team of passionate individuals dedicated to creating amazing software.",
     "translation_powered_by": "Translation powered by",
     "hero_title": "Hello, I'm Lunacea",
     "hero_subtitle": "Web Developer | Human Interaction Designer",
     "mission_title": "Mission",
     "mission_description": "Creating products that contribute to environments where people can comfortably express themselves",
-    "research_title": "Research",
-    "work_experience_title": "Work Experience",
+    "mission_statement_detail_1": "Aiming to 'create products that contribute to an environment where people can comfortably express themselves,",
+    "mission_statement_detail_2": "I develop products with a user-first approach.",
+    "experience_achievements_title": "Experience & Achievements",
+    "research_section_title": "User Interface Research",
+    "research_affiliation": "Iwate Prefectural University, Graduate School of Software and Information Science",
+    "research_description_1": "Currently developing a feedback visualization system for online customer reviews.",
+    "research_description_2": "Advancing research and development with a focus on user-centered design.",
+    "professional_dev_section_title": "Professional Development",
+    "professional_dev_affiliation": "Part-time and Internship Experience",
+    "vr_app_dev_title": "VR Voice Memo System Development",
+    "vr_app_dev_description": "Desktop application development utilizing C#, Whisper API, and Excel output.",
+    "notification_app_dev_title": "Notification System Web App Development",
+    "notification_app_dev_description": "Full-stack development with Next.js + TypeScript, utilizing OneSignal.",
     "hackathon_title": "Hackathon Achievement",
+    "hackathon_section_title": "Hackathon Achievement",
+    "hackathon_award_subheader": "Awards",
+    "hackathon_project_name": "Takizawa Hackathon Ver.7",
+    "hackathon_project_description_1": "Developed 'TunaAgri,' a Svelte app for generating farmers' profile QR codes.",
+    "hackathon_project_description_2": "Received an award for its ease of implementation and solution for community revitalization.",
     "leadership_title": "Leadership",
+    "leadership_section_title": "Leadership Experience",
+    "leadership_role_and_affiliation": "President, Tohoku University Philharmonic Orchestra",
+    "leadership_description": "Managed an organization of approximately 200 members, led joint concerts with other circles, and implemented regulation improvements.",
     "tech_stack_title": "Tech Stack",
     "qualifications_title": "Qualifications & Education",
-    "core_strengths_title": "Core Strengths",
+    "qualifications_education_title": "Qualifications & Education",
+    "education_section_title": "Education",
+    "education_master_course": "Iwate Prefectural University, Graduate School",
+    "education_master_details": "Master's Program, Software and Information Science (Current Student)",
+    "education_master_period": "April 2025 - Present",
+    "education_bachelor_ipu": "Iwate Prefectural University",
+    "education_bachelor_ipu_details": "Faculty of Software and Information Science, Graduated",
+    "education_bachelor_ipu_period": "April 2023 - March 2025",
+    "education_bachelor_tohoku": "Tohoku University",
+    "education_bachelor_tohoku_details": "Faculty of Engineering, Department of Materials Science and Engineering, Transferred",
+    "education_bachelor_tohoku_period": "April 2016 - March 2023",
+    "certifications_section_title": "Certifications",
+    "certification_ap_name": "Applied Information Technology Engineer Examination",
+    "certification_ap_issuer": "IPA (Information-technology Promotion Agency, Japan)",
+    "certification_fe_name": "Fundamental Information Technology Engineer Examination",
+    "certification_fe_issuer": "IPA (Information-technology Promotion Agency, Japan)",
+    "core_strengths_title": "My Strengths",
+    "core_strength_user_centric_title": "User-Centered Design",
+    "core_strength_user_centric_description": "Focus on realizing intuitive and easy-to-use interfaces from the user's perspective.",
+    "core_strength_learning_title": "Eagerness for Continuous Learning",
+    "core_strength_learning_description": "Actively acquire new technologies and knowledge, constantly striving for self-improvement.",
+    "core_strength_teamwork_title": "Teamwork",
+    "core_strength_teamwork_description": "Collaborate with diverse members and contribute to achieving common goals.",
     "development_values_title": "Development Values",
     "about_me_title": "About Me",
     "future_goals_title": "Future Goals",
     "featured_projects_title": "Featured Projects"
   },
-  "Portfolio": {
-    "meta_title": "Portfolio",
-    "meta_description": "Welcome to my portfolio page!",
-    "presentation": "Welcome to my portfolio page! Here you will find a carefully curated collection of my work and accomplishments. Through this portfolio, I'm to showcase my expertise, creativity, and the value I can bring to your projects.",
-    "portfolio_name": "Portfolio {name}",
-    "error_reporting_powered_by": "Error reporting powered by",
-    "coverage_powered_by": "Code coverage powered by"
+  "Works": {
+    "meta_title": "Works | Lunacea portfolio",
+    "meta_description": "Showcasing web development projects and applications portfolio.",
+    "preparing_title": "Coming Soon",
+    "preparing_description": "New projects are being planned and developed. Stay tuned for updates!",
+    "status_developing": "Under Development",
+    "footer_message": "More projects will be added soon."
   },
-  "PortfolioSlug": {
-    "meta_title": "Portfolio {slug}",
-    "meta_description": "Portfolio {slug} description",
-    "header": "Portfolio {slug}",
-    "content": "Created a set of promotional materials and branding elements for a corporate event. Crafted a visually unified theme, encompassing a logo, posters, banners, and digital assets. Integrated the client's brand identity while infusing it with a contemporary and innovative approach. Garnered favorable responses from event attendees, resulting in a successful event with heightened participant engagement and increased brand visibility.",
-    "code_review_powered_by": "Code review powered by"
+  "WorksSlug": {
+    "meta_title": "{slug} | Lunacea portfolio",
+    "meta_description": "{slug} introduction",
+    "header": "{slug}"
   },
+  "Blog": {
+    "meta_title": "Blog | Lunacea portfolio",
+    "meta_description": "Technical blog posts",
+    "no_posts": "No posts available",
+    "preparing_title": "Coming Soon!",
+    "preparing_description": "We are planning to release technical articles and project introduction articles in the near future. Please look forward to them!",
+    "read_more": "Read more",
+    "reading_time": "{time} min read",
+    "published_on": "Published on {date}",
+    "tags": "Tags: ",
+    "all_posts": "All posts",
+    "latest_posts": "Latest posts"
+  },
+  "ContributionGraph": {
+    "past_week_count": "Past {count} weeks of update frequency",
+    "update_frequency": "Weekly update frequency",
+    "active_days": "Active days",
+    "articles": "Articles"
+  },
+
   "SignIn": {
     "meta_title": "Sign in",
     "meta_description": "Seamlessly sign in to your account with our user-friendly login process."
@@ -94,29 +143,8 @@
     "user_profile_link": "Manage your account",
     "sign_out": "Sign out"
   },
-  "Contact": {
-    "title": "Contact | Lunacea portfolio",
-    "meta_title": "Contact | Lunacea portfolio",
-    "email_label": "Email Contact",
-    "social_links": "Social Links"
-  },
-  "Works": {
-    "meta_title": "Works | Lunacea portfolio",
-    "meta_description": "Showcasing web development projects and applications portfolio.",
-    "preparing_title": "Coming Soon",
-    "preparing_description": "New projects are being planned and developed. Stay tuned for updates!",
-    "status_developing": "Under Development",
-    "footer_message": "More projects will be added soon."
-  },
-  "Blog": {
-    "meta_title": "Blog | Lunacea portfolio",
-    "meta_description": "Technical blog posts",
-    "no_posts": "No posts available",
-    "read_more": "Read more",
-    "reading_time": "{time} min read",
-    "published_on": "Published on {date}",
-    "tags": "Tags: ",
-    "all_posts": "All posts",
-    "latest_posts": "Latest posts"
+  "Hello": {
+    "hello_title": "Hello",
+    "hello_message": "Hello, how are you?"
   }
 }

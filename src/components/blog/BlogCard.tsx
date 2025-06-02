@@ -4,7 +4,7 @@ import type { BlogPostMeta } from '@/lib/blog';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { FaCalendar, FaClock } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 
 type BlogCardProps = {
   post: BlogPostMeta;

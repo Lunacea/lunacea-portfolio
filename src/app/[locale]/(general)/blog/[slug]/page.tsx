@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
 import { BlogPostContent } from '@/components/blog/BlogPostContent';
 import { SideTableOfContents } from '@/components/blog/SideTableOfContents';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 import { getAllBlogPosts, getBlogPost } from '@/lib/blog';
 
 type BlogPostPageProps = {
@@ -78,7 +78,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </Link>
       </nav>
 
-      {/* メインコンテンツエリア - Next.js公式風レイアウト */}
+      {/* メインコンテンツエリア */}
       <div className="container mx-auto px-4 pb-16 max-w-7xl">
         <div className="lg:flex lg:gap-8">
           {/* 記事コンテンツ */}

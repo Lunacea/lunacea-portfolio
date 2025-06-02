@@ -1,8 +1,14 @@
 'use client';
 
-import React from 'react';
+import dynamic from 'next/dynamic';
 import { AudioCanvas } from '@/components/core/AudioCanvas';
-import { UserConsentModal } from '@/components/core/UserConsentModal';
+// import { UserConsentModal } from '@/components/core/UserConsentModal';
+
+// UserConsentModal を動的にインポートし、SSRを無効にする
+const UserConsentModal = dynamic(
+  () => import('@/components/core/UserConsentModal').then(mod => mod.UserConsentModal),
+  { ssr: false },
+);
 
 type ModernAudioVisualizerProps = {
   className?: string;

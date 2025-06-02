@@ -1,16 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FaGraduationCap, FaMapMarkerAlt } from 'react-icons/fa';
-import { SiGithub, SiMinutemailer, SiX } from 'react-icons/si';
-import { Icon } from '@/components/Icon';
+import BusinessCard from '@/components/BusinessCard';
 
-type DraggableBusinessCardProps = {
-  locale: string;
-};
-
-export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCardProps) {
+export function DraggableBusinessCard() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -24,18 +17,19 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
   const isAnimating = useRef(false);
 
   // 名刺のサイズ（max-w-mdは約384px）
-  const CARD_WIDTH = useMemo(() => 384, []);
-  const CARD_HEIGHT = useMemo(() => 200, []);
+  // const CARD_WIDTH = useMemo(() => 384, []);
+  // const CARD_HEIGHT = useMemo(() => 200, []);
 
   const constrainPosition = useCallback((x: number, y: number) => {
     if (typeof window === 'undefined') {
       return { x, y, bounced: false };
     }
 
-    const maxX = window.innerWidth * 0.5 - CARD_WIDTH * 0.5;
-    const minX = -window.innerWidth * 0.5 + CARD_WIDTH * 0.5;
-    const maxY = window.innerHeight * 0.5 - CARD_HEIGHT * 0.5;
-    const minY = -window.innerHeight * 0.5 + CARD_HEIGHT * 0.5;
+    // TODO: レンダリングされる名刺の中心座標をもとに移動可能な範囲を計算する
+    const maxX = window.innerWidth * 0.5;
+    const minX = -window.innerWidth * 0.5;
+    const maxY = window.innerHeight * 0.5;
+    const minY = -window.innerHeight * 0.5;
 
     let bounced = false;
     let newX = x;
@@ -58,7 +52,7 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
     }
 
     return { x: newX, y: newY, bounced };
-  }, [CARD_WIDTH, CARD_HEIGHT]);
+  }, []);
 
   // 高FPS用のアニメーションフレーム更新
   const updatePosition = useCallback(() => {
@@ -81,20 +75,19 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
     }
   }, [updatePosition]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleInteractionStart = useCallback((clientX: number, clientY: number) => {
     setIsDragging(true);
     setSlideRotation(0);
     setVelocity({ x: 0, y: 0 });
-    setLastMousePosition({ x: e.clientX, y: e.clientY });
+    setLastMousePosition({ x: clientX, y: clientY });
     setLastMoveTime(Date.now());
     setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
+      x: clientX - position.x,
+      y: clientY - position.y,
     });
   }, [position]);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleInteractionMove = useCallback((clientX: number, clientY: number) => {
     if (!isDragging) {
       return;
     }
@@ -103,8 +96,8 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
     const deltaTime = currentTime - lastMoveTime;
 
     if (deltaTime > 0) {
-      const deltaX = e.clientX - lastMousePosition.x;
-      const deltaY = e.clientY - lastMousePosition.y;
+      const deltaX = clientX - lastMousePosition.x;
+      const deltaY = clientY - lastMousePosition.y;
 
       const newVelocity = {
         x: deltaX / deltaTime,
@@ -113,15 +106,37 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
       setVelocity(newVelocity);
     }
 
-    setLastMousePosition({ x: e.clientX, y: e.clientY });
+    setLastMousePosition({ x: clientX, y: clientY });
     setLastMoveTime(currentTime);
 
-    const newX = e.clientX - dragStart.x;
-    const newY = e.clientY - dragStart.y;
+    const newX = clientX - dragStart.x;
+    const newY = clientY - dragStart.y;
 
     // 高FPSのためrequestAnimationFrameで更新をスケジュール
     scheduleUpdate(newX, newY);
   }, [isDragging, dragStart, lastMousePosition, lastMoveTime, scheduleUpdate]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    handleInteractionStart(e.clientX, e.clientY);
+  }, [handleInteractionStart]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    handleInteractionMove(e.clientX, e.clientY);
+  }, [handleInteractionMove]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // e.preventDefault(); // スクロールなどのネイティブな挙動を妨げないようにコメントアウトすることも検討
+    if (e.touches.length === 1) {
+      handleInteractionStart(e.touches[0]!.clientX, e.touches[0]!.clientY);
+    }
+  }, [handleInteractionStart]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (e.touches.length === 1) {
+      handleInteractionMove(e.touches[0]!.clientX, e.touches[0]!.clientY);
+    }
+  }, [handleInteractionMove]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -175,13 +190,28 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
 
   // マウスイベントリスナーの最適化
   React.useEffect(() => {
+    const handleMouseMoveDocument = (e: MouseEvent) => handleMouseMove(e);
+    const handleTouchMoveDocument = (e: TouchEvent) => {
+      // ドラッグ中のスクロールを防ぐ
+      if (isDragging) {
+        e.preventDefault();
+      }
+      handleTouchMove(e);
+    };
+    const handleMouseUpDocument = () => handleMouseUp();
+    const handleTouchEndDocument = () => handleMouseUp(); // handleMouseUp を共通で使う
+
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove, { passive: true });
-      document.addEventListener('mouseup', handleMouseUp, { passive: true });
+      document.addEventListener('mousemove', handleMouseMoveDocument, { passive: true });
+      document.addEventListener('mouseup', handleMouseUpDocument, { passive: true });
+      document.addEventListener('touchmove', handleTouchMoveDocument, { passive: false }); // passive: false に変更
+      document.addEventListener('touchend', handleTouchEndDocument, { passive: true });
 
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleMouseMoveDocument);
+        document.removeEventListener('mouseup', handleMouseUpDocument);
+        document.removeEventListener('touchmove', handleTouchMoveDocument);
+        document.removeEventListener('touchend', handleTouchEndDocument);
         // クリーンアップ時にアニメーションフレームもキャンセル
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
@@ -219,59 +249,9 @@ export function DraggableBusinessCard({ locale: _locale }: DraggableBusinessCard
         role="button"
         tabIndex={0}
         aria-label="ドラッグ可能な名刺"
+        onTouchStart={handleTouchStart}
       >
-        <div className="flex items-center gap-6 mb-6">
-          <Image
-            src="/assets/images/Lunacea-nobg.png"
-            alt="Lunacea"
-            width={80}
-            height={80}
-            className="rounded-full pointer-events-none"
-            priority
-          />
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Lunacea</h1>
-            <p className="text-muted-foreground">Web Developer & Human Interaction Designer</p>
-          </div>
-        </div>
-
-        {/* Contact Information */}
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center gap-3">
-            <Icon icon={<SiGithub className="w-4 h-4" />} className="text-muted-foreground w-4" />
-            <span className="text-sm text-muted-foreground">Lunacea</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Icon icon={<SiX className="w-4 h-4" />} className="text-muted-foreground w-4" />
-            <span className="text-sm text-muted-foreground">@_Lunacea</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Icon icon={<SiMinutemailer className="w-4 h-4" />} className="text-muted-foreground w-4" />
-            <span className="text-sm text-muted-foreground">contact@lunacea.jp</span>
-          </div>
-        </div>
-
-        {/* University Info */}
-        <div className="flex justify-center items-center gap-6 text-xs text-muted-foreground pt-4 border-t border-border/30">
-          <div className="flex items-center gap-2">
-            <Icon icon={<FaMapMarkerAlt className="w-4 h-4" />} className="text-muted-foreground" />
-            <span>岩手県立大学</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon icon={<FaGraduationCap className="w-4 h-4" />} className="text-muted-foreground" />
-            <span>ソフトウェア情報学研究科</span>
-          </div>
-        </div>
-
-        {/* ドラッグヒント */}
-        <div className="absolute top-2 right-2 opacity-40 pointer-events-none">
-          <div className="text-xs text-muted-foreground">📌</div>
-        </div>
-
-        {/* Drag Meテキスト */}
-        <div className="absolute bottom-2 left-2 opacity-30 pointer-events-none">
-          <div className="text-xs text-muted-foreground italic">drag me</div>
-        </div>
+        <BusinessCard />
       </div>
     </div>
   );

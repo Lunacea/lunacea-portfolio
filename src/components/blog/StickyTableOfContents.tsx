@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaList } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 
 type TableOfContentsItem = {
   id: string;

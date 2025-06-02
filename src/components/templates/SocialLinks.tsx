@@ -1,7 +1,7 @@
 'use client';
 
 import { FaEnvelope, FaGithub, FaTwitter } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 
 export const SocialLinks = () => {
   const socialLinks = [

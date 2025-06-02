@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
 import { FaMoon, FaSun } from 'react-icons/fa';
-import { Icon } from '@/components/Icon';
+import Icon from '@/components/Icon';
 
 type ThemeToggleProps = {
   className?: string;

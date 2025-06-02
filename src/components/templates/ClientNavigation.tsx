@@ -14,18 +14,41 @@ export function ClientNavigation() {
 
   // 現在のパスがアクティブかどうか判定
   const isActivePath = (href: string) => {
+    // 1. パス名からロケールプレフィックスを除去し、ベースパスを取得
     const pathSegments = pathname?.split('/').filter(Boolean) || [];
-    let pathWithoutLocale = '';
-    if (pathSegments.length > 1 && pathSegments[0]?.length === 2) {
-      pathWithoutLocale = `/${pathSegments.slice(1).join('/')}`;
-    } else if (pathSegments.length > 0) {
-      pathWithoutLocale = `/${pathSegments.join('/')}`;
-    }
-    const normalizedPathWithoutLocale = pathWithoutLocale.replace(/\/$/, '') || '';
-    const normalizedHref = href.replace(/\/$/, '');
+    let basePath = '/'; // デフォルトはルートパス
 
-    return normalizedPathWithoutLocale === normalizedHref
-      || (normalizedHref !== '' && normalizedPathWithoutLocale.startsWith(normalizedHref));
+    if (pathSegments.length > 0) {
+      // 最初のセグメントが2文字のロケールコード（例: "en", "ja"）であるか確認
+      // ".." のような相対パスセグメントはロケールと見なさない
+      if (pathSegments[0]?.length === 2 && !pathSegments[0].includes('.')) {
+        // ロケールを除いた残りのセグメントでパスを再構築
+        const remainingSegments = pathSegments.slice(1);
+        if (remainingSegments.length > 0) {
+          basePath = `/${remainingSegments.join('/')}`;
+        } // remainingSegmentsが空の場合、basePathは '/' のまま (例: /en -> /)
+      } else {
+        // ロケールプレフィックスがない場合、または最初のセグメントがロケールではない場合
+        basePath = `/${pathSegments.join('/')}`;
+      }
+    }
+
+    // 2. ベースパスとhrefを正規化
+    // 末尾のスラッシュを除去し、空文字列になった場合は '/' とする
+    const normalizePath = (p: string) => {
+      const trimmed = p.replace(/\/$/, '');
+      return trimmed === '' ? '/' : trimmed;
+    };
+
+    const normalizedBasePath = normalizePath(basePath);
+    const normalizedHref = normalizePath(href);
+
+    // 3. 比較ロジック
+    if (normalizedHref === '/') { // Home リンクの場合
+      return normalizedBasePath === '/';
+    }
+    // その他のリンクの場合：完全一致、またはサブパスとして一致
+    return normalizedBasePath === normalizedHref || normalizedBasePath.startsWith(`${normalizedHref}/`);
   };
 
   // アクティブリンクのスタイル
@@ -40,6 +63,7 @@ export function ClientNavigation() {
 
   // ナビゲーションアイテムのデータ
   const navItems: NavItem[] = [
+    { href: '/', label: 'Home' },
     { href: '/profile', label: 'Profile' },
     { href: '/works', label: 'Works' },
     { href: '/blog', label: 'Blog' },

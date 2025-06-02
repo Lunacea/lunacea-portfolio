@@ -1,18 +1,27 @@
-'use client';
+import { getTranslations } from 'next-intl/server';
 
-export const LatestUpdates = () => {
+type ILatestUpdatesProps = {
+  locale: string;
+};
+
+export async function LatestUpdates({ locale }: ILatestUpdatesProps) {
+  const t = await getTranslations({
+    locale,
+    namespace: 'LatestUpdates',
+  });
+
   const updates = [
     {
-      title: 'ポートフォリオサイト公開',
+      title: t('latest_updates_1'),
       date: '2025-05-04',
       url: '',
-      description: 'Next.js 15とTailwind CSSで構築',
+      description: t('latest_updates_1_description'),
     },
     {
-      title: 'ブログサイト公開',
+      title: t('latest_updates_2'),
       date: '2025-05-31',
       url: '/blog',
-      description: 'mdxで記事を書くことができます。',
+      description: t('latest_updates_2_description'),
     },
   ];
 

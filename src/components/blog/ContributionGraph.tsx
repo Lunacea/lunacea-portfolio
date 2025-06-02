@@ -1,4 +1,5 @@
 import type { BlogPostMeta } from '@/lib/blog';
+import { useTranslations } from 'next-intl';
 import React, { useMemo } from 'react';
 import { DayCell } from '@/components/blog/DayCell';
 
@@ -62,6 +63,8 @@ const isFirstDayOfMonth = (dateStr: string): boolean => {
 };
 
 export function ContributionGraph({ posts, weekCount = 20 }: ContributionGraphProps) {
+  const t = useTranslations('ContributionGraph');
+
   const dateRange = useMemo(() => {
     const today = new Date();
     const days = [];
@@ -107,19 +110,16 @@ export function ContributionGraph({ posts, weekCount = 20 }: ContributionGraphPr
     <div className="space-y-3">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          過去
-          {weekCount}
-          {' '}
-          週間の更新頻度
+          {t('past_week_count', { count: weekCount })}
         </span>
         <span>
           {totalPosts}
           {' '}
-          記事 •
+          {t('articles')}
           {' '}
           {activeDays}
           {' '}
-          日間活動
+          {t('active_days')}
         </span>
       </div>
 

@@ -3,12 +3,11 @@ import { BaseTemplate } from '@/components/templates/BaseTemplate';
 import { ClientNavigation } from '@/components/templates/ClientNavigation';
 
 /**
- * マーケティングセクションのレイアウトコンポーネント
- * バックグラウンドエフェクトと色調整機能を提供します
+ * バックグラウンドエフェクトと色調整機能
  */
-export default function Layout(props: { // GeneralLayout から Layout に名称戻す
+export default function Layout(props: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>; // params の型も元に戻す (もし変更していれば)
+  params: Promise<{ locale: string }>;
 }) {
   return (
     <>

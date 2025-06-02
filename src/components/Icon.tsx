@@ -7,7 +7,7 @@ type IconProps = {
   spin?: boolean;
 };
 
-export function Icon({ icon, className = '', spin = false }: IconProps) {
+export default function Icon({ icon, className = '', spin = false }: IconProps) {
   const combinedClassName = `
     w-[1em] h-[1em] inline-block align-middle
     ${spin ? 'animate-spin' : ''}

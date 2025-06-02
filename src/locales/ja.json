@@ -1,76 +1,117 @@
 {
   "RootLayout": {
-    "about_link": "PROFILE",
-    "portfolio_link": "WORKS",
-    "contact_link": "CONTACT",
+    "profile_link": "PROFILE",
+    "works_link": "WORKS",
+    "blog_link": "BLOG",
     "sign_in_link": "ログイン",
-    "sign_up_link": "新規登録",
-    "blog_link": "BLOG"
+    "sign_up_link": "新規登録"
   },
-  "BaseTemplate": {
-    "description": "Web Developer",
-    "made_with": "<author></author>で作成"
-  },
-  "BGMPlayer": {
-    "dialog_title": "BGMを再生しますか？",
-    "dialog_message": "このサイトではバックグラウンドミュージックを再生できます。許可しますか？",
-    "allow": "許可する",
-    "deny": "再生しない",
-    "play_bgm": "BGMを再生",
-    "pause_bgm": "BGMを一時停止"
+  "UserConsentModal": {
+    "dialog_title": "LUNACEA Portfolio",
+    "dialog_message_1": "このサイトでは音楽が流れます。",
+    "dialog_message_2": "音楽を再生しますか？",
+    "allow": "ON",
+    "deny": "OFF"
   },
   "Index": {
     "meta_title": "LUNACEA Web Developer",
-    "meta_description": "Web Developer Lunacea のポートフォリオサイトです。",
-    "draggable_card_title": "テストカード",
-    "draggable_card_description": "ドラッグしよう"
+    "meta_description": "Web Developer Lunacea のポートフォリオサイトです。"
   },
-  "Counter": {
-    "meta_title": "カウンター",
-    "meta_description": "データベース操作の例",
-    "loading_counter": "カウンターを読み込み中...",
-    "security_powered_by": "セキュリティ、ボット検出、レート制限は以下により提供"
+  "LatestUpdates": {
+    "latest_updates_1": "ポートフォリオサイト公開",
+    "latest_updates_1_description": "Next.js 15とTailwind CSSで構築",
+    "latest_updates_2": "ブログサイト公開",
+    "latest_updates_2_description": "mdxによる記事を読むことができます。"
   },
-  "CounterForm": {
-    "presentation": "カウンターはデータベースに保存され、指定した値で増加します。",
-    "label_increment": "増加値",
-    "button_increment": "増加"
+  "BusinessCard": {
+    "university_name": "岩手県立大学",
+    "department_name": "ソフトウェア情報学研究科"
   },
-  "CurrentCount": {
-    "count": "カウント: {count}"
-  },
-  "About": {
+  "Profile": {
     "meta_title": "Profile | Lunacea portfolio",
-    "meta_description": "岩手県立大学ソフトウェア情報学部所属のWeb Developer Lunacea のプロフィール、技術スタック、実績について",
-    "about_paragraph": "概要ページへようこそ！私たちは素晴らしいソフトウェアを作成することに情熱を注ぐチームです。",
-    "translation_powered_by": "翻訳は以下により提供",
-    "hero_title": "こんにちは、Lunaceaです",
-    "hero_subtitle": "Webデベロッパー | ヒューマンインタラクションデザイナー",
-    "mission_title": "ミッション",
+    "meta_description": "Web Developer Lunacea のプロフィール、技術スタック、実績について",
+    "mission_title": "Mission",
     "mission_description": "人々が気持ちよく表現し合える環境に貢献できるプロダクトづくり",
-    "research_title": "研究活動",
-    "work_experience_title": "実務経験",
+    "mission_statement_detail_1": "「人々が気持ちよく表現し合える環境に貢献できるプロダクトづくり」を目指して、",
+    "mission_statement_detail_2": "ユーザーファーストを重視したプロダクト開発を行っています。",
+    "experience_achievements_title": "Experience & Achievements",
+    "research_section_title": "User Interface Research",
+    "research_affiliation": "岩手県立大学 ソフトウェア情報学研究科",
+    "research_description_1": "オンラインカスタマーレビューのフィードバック可視化システムを開発中。",
+    "research_description_2": "ユーザー中心設計を意識した研究開発を進めています。",
+    "professional_dev_section_title": "Professional Development",
+    "professional_dev_affiliation": "アルバイト・インターンシップ経験",
+    "vr_app_dev_title": "VR音声メモシステム開発",
+    "vr_app_dev_description": "C#、Whisper API、Excel出力を活用したデスクトップアプリケーション開発",
+    "notification_app_dev_title": "通知システムWebアプリ開発",
+    "notification_app_dev_description": "Next.js + TypeScript によるフルスタック開発、OneSignal活用",
     "hackathon_title": "ハッカソン実績",
+    "hackathon_section_title": "Hackathon Achievement",
+    "hackathon_award_subheader": "受賞実績",
+    "hackathon_project_name": "Takizawa Hackathon Ver.7",
+    "hackathon_project_description_1": "農家さんのプロフィールQR生成アプリ「TunaAgri」をSvelteで開発。",
+    "hackathon_project_description_2": "導入の容易さとコミュニティ活性化への解決策が評価され受賞。",
     "leadership_title": "リーダーシップ",
+    "leadership_section_title": "Leadership Experience",
+    "leadership_role_and_affiliation": "東北大学学友会吹奏楽部 部長",
+    "leadership_description": "約200名規模の組織運営、サークル合同演奏会の主導、規約改善等を実施。",
     "tech_stack_title": "技術スタック",
     "qualifications_title": "資格・学歴",
-    "core_strengths_title": "コアストレングス",
+    "qualifications_education_title": "Qualifications & Education",
+    "education_section_title": "Education",
+    "education_master_course": "岩手県立大学大学院",
+    "education_master_details": "ソフトウェア情報学研究科 博士前期課程 (在学中)",
+    "education_master_period": "2025年4月 - 現在",
+    "education_bachelor_ipu": "岩手県立大学",
+    "education_bachelor_ipu_details": "ソフトウェア情報学部 卒業",
+    "education_bachelor_ipu_period": "2023年4月 - 2025年3月",
+    "education_bachelor_tohoku": "東北大学",
+    "education_bachelor_tohoku_details": "工学部 材料科学総合学科 転学",
+    "education_bachelor_tohoku_period": "2016年4月 - 2023年3月",
+    "certifications_section_title": "Certifications",
+    "certification_ap_name": "応用情報技術者試験",
+    "certification_ap_issuer": "IPA 独立行政法人 情報処理推進機構",
+    "certification_fe_name": "基本情報技術者試験",
+    "certification_fe_issuer": "IPA 独立行政法人 情報処理推進機構",
+    "core_strengths_title": "私のいいところ",
+    "core_strength_user_centric_title": "ユーザー中心設計",
+    "core_strength_user_centric_description": "利用者の視点に立ち、直感的で使いやすいインターフェースの実現に注力。",
+    "core_strength_learning_title": "継続的学習意欲",
+    "core_strength_learning_description": "新しい技術や知識を積極的に習得し、常に自己のスキルアップを図る。",
+    "core_strength_teamwork_title": "チームワーク",
+    "core_strength_teamwork_description": "多様なメンバーと協調し、共通の目標達成に向けて貢献。",
     "development_values_title": "開発における価値観"
   },
-  "Portfolio": {
-    "meta_title": "ポートフォリオ",
-    "meta_description": "ポートフォリオページへようこそ！",
-    "presentation": "ポートフォリオページへようこそ！ここでは、私の作品と実績を厳選して紹介しています。このポートフォリオを通じて、私の専門知識、創造性、そしてプロジェクトにもたらす価値をご覧いただけます。",
-    "portfolio_name": "ポートフォリオ {name}",
-    "error_reporting_powered_by": "エラー報告は以下により提供",
-    "coverage_powered_by": "コードカバレッジは以下により提供"
+  "Works": {
+    "meta_title": "Works | Lunacea portfolio",
+    "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。",
+    "preparing_title": "ごめんなさい！準備中です…",
+    "preparing_description": "近日公開予定です。",
+    "status_developing": "開発中",
+    "footer_message": "今後、さらに多くのプロジェクトが追加される予定です。"
   },
-  "PortfolioSlug": {
-    "meta_title": "ポートフォリオ {slug}",
-    "meta_description": "ポートフォリオ {slug} の説明",
-    "header": "ポートフォリオ {slug}",
-    "content": "企業イベント向けのプロモーション素材とブランディング要素を作成しました。ロゴ、ポスター、バナー、デジタルアセットを含む視覚的に統一されたテーマを制作。クライアントのブランドアイデンティティを統合しながら、現代的で革新的なアプローチを注入。イベント参加者から好意的な反応を得て、参加者の関与度が高まり、ブランドの可視性が向上した成功したイベントとなりました。",
-    "code_review_powered_by": "コードレビューは以下により提供"
+  "WorksSlug": {
+    "meta_title": "{slug} | Lunacea portfolio",
+    "meta_description": "{slug} のご紹介",
+    "header": "{slug}"
+  },
+  "Blog": {
+    "meta_title": "Blog | Lunacea portfolio",
+    "meta_description": "技術ブログ記事一覧",
+    "no_posts": "記事がありません",
+    "preparing_title": "記事を準備中です",
+    "preparing_description": "近日中に技術記事やプロジェクトの紹介記事を公開予定です。お楽しみに！",
+    "read_more": "続きを読む",
+    "reading_time": "{time}分で読了",
+    "published_on": "公開日: {date}",
+    "tags": "タグ: ",
+    "all_posts": "すべての記事",
+    "latest_posts": "最新の記事"
+  },
+  "ContributionGraph": {
+    "past_week_count": "過去 {count} 週間の更新頻度",
+    "active_days": "日間活動",
+    "articles": "記事"
   },
   "SignIn": {
     "meta_title": "ログイン",
@@ -96,30 +137,5 @@
   "Hello": {
     "hello_title": "こんにちは",
     "hello_message": "どうもどうも"
-  },
-  "Works": {
-    "meta_title": "Works | Lunacea portfolio",
-    "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。",
-    "preparing_title": "ごめんなさい！準備中です…",
-    "preparing_description": "近日公開予定です。",
-    "status_developing": "開発中",
-    "footer_message": "今後、さらに多くのプロジェクトが追加される予定です。"
-  },
-  "Contact": {
-    "title": "Contact | Lunacea portfolio",
-    "meta_title": "Contact | Lunacea portfolio",
-    "email_label": "メールで連絡",
-    "social_links": "SNSリンク"
-  },
-  "Blog": {
-    "meta_title": "Blog | Lunacea portfolio",
-    "meta_description": "技術ブログ記事一覧",
-    "no_posts": "記事がありません",
-    "read_more": "続きを読む",
-    "reading_time": "{time}分で読了",
-    "published_on": "公開日: {date}",
-    "tags": "タグ: ",
-    "all_posts": "すべての記事",
-    "latest_posts": "最新の記事"
   }
 }
