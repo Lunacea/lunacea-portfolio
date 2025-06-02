@@ -14,7 +14,6 @@ export const UserConsentModal = () => {
 
   useEffect(() => {
     // クライアントサイドでのみ実行
-    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setMounted(true);
   }, []);
 
@@ -41,7 +40,7 @@ export const UserConsentModal = () => {
   }
 
   return (
-    <div className={`fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center transition-all duration-1200 ease-out ${
+    <div className={`fixed inset-0 z-2 bg-black/90 backdrop-blur-sm flex items-center justify-center transition-all duration-1200 ease-out ${
       isClosing ? 'opacity-0' : 'opacity-100'
     }`}
     >

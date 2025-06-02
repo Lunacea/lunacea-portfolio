@@ -80,7 +80,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
       {safeHtmlContent && (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
           {/*
-            注意: このdangerouslySetInnerHTMLは信頼できるサーバーサイド処理済みMDXコンテンツを表示するためのものです。
+            WARNING: このdangerouslySetInnerHTMLは信頼できるサーバーサイド処理済みMDXコンテンツを表示するためのものです。
             コンテンツはbuild時にMarkdownから生成され、適切にサニタイズされています。
           */}
           {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}

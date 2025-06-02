@@ -160,7 +160,9 @@ export const MusicController = () => {
             return (
               <span
                 key={VISUALIZER_KEYS[index]}
-                className="block w-0.5 bg-slate-600 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full transform transition-all duration-100 ease-out h-[var(--bar-height)] opacity-[var(--bar-opacity)]"
+                className="
+                  block w-0.5 bg-slate-600 dark:bg-white/70 group-hover:bg-slate-800 dark:group-hover:bg-white rounded-full
+                  transform transition-all duration-100 ease-out h-[var(--bar-height)] opacity-[var(--bar-opacity)]"
                 style={{
                   '--bar-height': `${barHeight}%`,
                   '--bar-opacity': barOpacity,
