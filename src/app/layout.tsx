@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     // TODO: lang 属性は一旦削除し、[locale]/layout.tsx で documentElement に設定することを検討
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body className={`${inter.variable} ${rajdhani.variable} font-sans`}>
         <ThemeProvider
           attribute="class"
