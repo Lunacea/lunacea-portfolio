@@ -20,7 +20,7 @@ export const BaseTemplate = (props: {
       <div className="absolute inset-0 bg-theme-paper bg-theme-overlay"></div>
 
       {/* 固定位置のLocaleSwitcher */}
-      <div className="fixed top-6 right-6 lg:right-6 z-50">
+      <div className="fixed top-6 right-6 lg:right-6 z-99">
         <LocaleSwitcher />
       </div>
 
@@ -31,9 +31,9 @@ export const BaseTemplate = (props: {
       <Navigation leftNav={props.leftNav} />
 
       {/* メインコンテンツエリア */}
-      <main className="relative lg:ml-64 z-1">
+      <main className="relative lg:ml-64">
         {/* 巨大なLunaceaタイトル */}
-        <div className="flex flex-col items-center justify-center pt-28 sm:pt-24 lg:pt-20">
+        <div className="flex flex-col items-center justify-center pt-28 sm:pt-24 lg:pt-20 overflow-x-hidden">
           <div className="text-center w-full flex flex-col items-center">
             <Link href="/" className="group">
               <h1
@@ -42,7 +42,6 @@ export const BaseTemplate = (props: {
                 transition-all duration-700 cursor-pointer lg:translate-x-0 text-center font-rajdhani"
               >
                 {AppConfig.name.split('').map((char, index) => {
-                  // 文字の出現回数をカウントしてユニークなkeyを生成
                   const charOccurrence = AppConfig.name.split('').slice(0, index + 1).filter(c => c.toLowerCase() === char.toLowerCase()).length;
 
                   return char.toUpperCase() === 'C'
@@ -54,12 +53,6 @@ export const BaseTemplate = (props: {
                       );
                 })}
               </h1>
-              <h2 className="
-                text-xl md:text-2xl lg:text-3xl text-muted-foreground tracking-wide font-heading
-              group-hover:text-foreground transition-all duration-300"
-              >
-                Hi, I am a Web Developer.
-              </h2>
             </Link>
           </div>
 
