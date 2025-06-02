@@ -1,3 +1,15 @@
+# [1.8.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.7.1...v1.8.0) (2025-06-02)
+
+
+### Bug Fixes
+
+* fix performance of theme-toggle ([1ff35cf](https://github.com/Lunacea/lunacea-portfolio/commit/1ff35cf9968f06463bb5427ff4c552fdd792fc18))
+
+
+### Features
+
+* fix layout, i18n, interaction, performance ([b78040c](https://github.com/Lunacea/lunacea-portfolio/commit/b78040c70ce1be743b910517a90c309bc5d33e98))
+
 ## [1.7.1](https://github.com/Lunacea/lunacea-portfolio/compare/v1.7.0...v1.7.1) (2025-05-31)
 
 
