@@ -166,9 +166,9 @@
   /* 背景画像クラス */
   .bg-theme-paper {
     background-image: var(--bg-image-light);
-    background-size: cover;
+    background-size: 101%;
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-attachment: fixed;
   }
 
@@ -481,4 +481,28 @@
 
 .dark .error-fallback {
   @apply bg-red-900/20 border-red-800 text-red-200;
+}
+
+/* ThemeToggle Icon Styles */
+.theme-toggle-button .sun-icon {
+  display: inline-block; /* デフォルトで太陽を表示 */
+}
+.theme-toggle-button .moon-icon {
+  display: none; /* デフォルトで月を非表示 */
+}
+
+html.dark .theme-toggle-button .sun-icon {
+  display: none; /* ダークモード時は太陽を非表示 */
+}
+html.dark .theme-toggle-button .moon-icon {
+  display: inline-block; /* ダークモード時は月を表示 */
+}
+
+/* ライトモード時 (html.light が付与された場合) の明示的な指定 */
+/* (基本的にはデフォルトで太陽が表示されているため、このブロックは必須ではないが、より明確にするために記述) */
+html.light .theme-toggle-button .sun-icon {
+  display: inline-block;
+}
+html.light .theme-toggle-button .moon-icon {
+  display: none;
 }
