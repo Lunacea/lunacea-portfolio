@@ -8,18 +8,18 @@ export const SocialLinks = () => {
     {
       'name': 'GitHub',
       'icon': <FaGithub />,
-      'url': 'https://github.com/Lunacea', // 実際のURLに変更してください
+      'url': 'https://github.com/Lunacea',
       'aria-label': 'GitHubプロフィールを開く',
     },
     {
       'name': 'X (Twitter)',
-      'icon': <FaTwitter />,
-      'url': 'https://x.com/_Lunacea', // 実際のURLに変更してください
+      'icon': <FaTwitter color="#1DA1F2" />,
+      'url': 'https://x.com/_Lunacea',
       'aria-label': 'X (Twitter)プロフィールを開く',
     },
     {
       'name': 'Email',
-      'icon': <FaEnvelope />,
+      'icon': <FaEnvelope color="#FF69B4" />,
       'url': 'mailto:contact@lunacea.jp',
       'aria-label': 'メールを送信',
     },
@@ -33,12 +33,12 @@ export const SocialLinks = () => {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group"
+          className="p-3 hover:scale-130 transition-all duration-300 rounded-lg group"
           aria-label={link['aria-label']}
         >
           <Icon
             icon={link.icon}
-            className="text-theme-secondary group-hover:text-theme-primary transition-colors duration-200 text-lg"
+            className="text-lg"
           />
         </a>
       ))}
