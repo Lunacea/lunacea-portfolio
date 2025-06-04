@@ -72,7 +72,7 @@ export default async function Profile(props: IProfileProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-16 max-w-4xl relative overflow-x-clip">
+      <div className="container mx-auto px-4 py-16 max-w-4xl relative">
         {/* Draggable Business Card */}
         <ScrollReveal direction="fade" delay={100} className="relative z-1">
           <DraggableBusinessCard />
