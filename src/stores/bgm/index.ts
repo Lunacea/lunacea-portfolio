@@ -81,15 +81,21 @@ const initBGM = (): void => {
       onload: () => {
         initAudioAnalysis();
       },
-      onloaderror: () => {
-        // BGM load error, ignore
+      onloaderror: (error) => {
+        console.warn('BGM読み込みエラー:', error);
       },
-      onplayerror: () => {
-        // BGM play error, ignore
+      onplayerror: (error) => {
+        console.warn('BGM再生エラー:', error);
+        // エラー時は再生状態をリセット（ストア定義後に実行されるため安全）
+        setTimeout(() => {
+          if (typeof window !== 'undefined' && (window as any).bgmStore) {
+            (window as any).bgmStore.getState().pause();
+          }
+        }, 0);
       },
     });
-  } catch {
-    // Failed to create Howl instance, ignore
+  } catch (error) {
+    console.warn('Howlインスタンス作成失敗:', error);
     howlInstance = null;
   }
 };
@@ -137,6 +143,8 @@ export const useBGMStore = create<BGMStore>()(
         // BGM初期化をクライアントサイドで遅延実行
         setTimeout(() => {
           initBGM();
+          // グローバル参照を設定（エラーハンドリング用）
+          (window as any).bgmStore = useBGMStore;
         }, 100);
       }
 
@@ -164,6 +172,14 @@ export const useBGMStore = create<BGMStore>()(
         },
 
         play: () => {
+          const state = get();
+
+          // ユーザー同意がない場合は再生しない
+          if (!state.hasUserConsent) {
+            console.warn('BGM再生: ユーザー同意が必要です');
+            return;
+          }
+
           if (!howlInstance) {
             set({ isInitialized: false }, false, 'bgm/initializationStart');
             initBGM();
@@ -171,6 +187,7 @@ export const useBGMStore = create<BGMStore>()(
             // 短い遅延後に再試行
             setTimeout(() => {
               if (!howlInstance) {
+                console.warn('BGM初期化に失敗しました');
                 set({ isLoading: false, isInitialized: false }, false, 'bgm/playError');
               } else {
                 set({ isInitialized: true }, false, 'bgm/initializationSuccess');
@@ -184,24 +201,33 @@ export const useBGMStore = create<BGMStore>()(
 
           try {
             if (audioContext?.state === 'suspended') {
-              audioContext.resume().catch(() => { /* Audio context resume failed, ignore */ });
+              audioContext.resume().catch((error) => {
+                console.warn('AudioContextの再開に失敗:', error);
+              });
             }
 
             howlInstance.play();
             set({ isPlaying: true, isLoading: false, isInitialized: true }, false, 'bgm/playSuccess');
-          } catch {
-            // BGM play error, ignore
+          } catch (error) {
+            console.warn('BGM再生エラー:', error);
             set({ isPlaying: false, isLoading: false }, false, 'bgm/playError');
           }
         },
 
         pause: () => {
           if (!howlInstance) {
+            console.warn('BGM停止: インスタンスが存在しません');
             return;
           }
 
-          howlInstance.pause();
-          set({ isPlaying: false }, false, 'bgm/pause');
+          try {
+            howlInstance.pause();
+            set({ isPlaying: false }, false, 'bgm/pause');
+          } catch (error) {
+            console.warn('BGM停止エラー:', error);
+            // エラーが発生しても状態はリセット
+            set({ isPlaying: false }, false, 'bgm/pauseError');
+          }
         },
 
         setVolume: (volume: number) => {
