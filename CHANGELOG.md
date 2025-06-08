@@ -1,3 +1,16 @@
+# [1.9.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.8.0...v1.9.0) (2025-06-08)
+
+
+### Bug Fixes
+
+* remove overflow-x-clip for BusinessCard ([4846a3d](https://github.com/Lunacea/lunacea-portfolio/commit/4846a3d624948d95f41e28fb03ec4bf9a42b670f))
+
+
+### Features
+
+* add color to SocialIcons ([ea95a68](https://github.com/Lunacea/lunacea-portfolio/commit/ea95a68a83199588b8db0bda3f2116e0a7125ac6))
+* support dark mode for ConsentModal ([f080783](https://github.com/Lunacea/lunacea-portfolio/commit/f08078331f14c83f88d86466c63d6d520a8361b8))
+
 # [1.8.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.7.1...v1.8.0) (2025-06-02)
 
 
