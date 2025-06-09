@@ -1,15 +1,15 @@
 'use client';
 
-import { LocaleSwitcher } from '@/components/core/LocaleSwitcher';
 import { Header } from '@/components/templates/Header';
+import { LocaleSwitcher } from '@/components/templates/LocaleSwitcher';
 import { MusicController } from '@/components/templates/MusicController';
-import { Navigation } from '@/components/templates/Navigation';
+import { NavigationLinks } from '@/components/templates/NavigationLinks';
 import { SocialLinks } from '@/components/templates/SocialLinks';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { AppConfig } from '@/utils/AppConfig';
 
 export const BaseTemplate = (props: {
-  leftNav: React.ReactNode;
+  leftNav?: React.ReactNode;
   rightNav?: React.ReactNode;
   children: React.ReactNode;
 }) => {
@@ -18,16 +18,11 @@ export const BaseTemplate = (props: {
       {/* テーマ対応背景画像 */}
       <div className="absolute inset-0 bg-theme-paper bg-theme-overlay"></div>
 
-      {/* 固定位置のLocaleSwitcher */}
-      <div className="fixed top-6 right-6 lg:right-6 z-99">
-        <LocaleSwitcher />
-      </div>
-
-      {/* ヘッダー */}
-      <Header rightNav={props.rightNav} />
-
-      {/* ナビゲーション */}
-      <Navigation leftNav={props.leftNav} />
+      {/* ヘッダー（ナビゲーションとロケールスイッチャーを含む） */}
+      <Header
+        leftNav={<NavigationLinks />}
+        rightNav={<LocaleSwitcher />}
+      />
 
       {/* メインコンテンツエリア */}
       <main className="relative lg:ml-64">
@@ -61,10 +56,14 @@ export const BaseTemplate = (props: {
       </main>
 
       {/* 音楽コントローラー */}
-      <MusicController />
+      <div className="fixed bottom-6 right-6 z-1 flex items-center gap-2">
+        <MusicController />
+      </div>
 
       {/* ソーシャルリンク */}
-      <SocialLinks />
+      <div className="flex fixed bottom-6 left-6 z-99 flex-row gap-2">
+        <SocialLinks />
+      </div>
     </div>
   );
 };

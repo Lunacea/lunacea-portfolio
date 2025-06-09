@@ -26,7 +26,7 @@ export const SocialLinks = () => {
   ];
 
   return (
-    <div className="flex fixed bottom-6 left-6 z-99 flex-row gap-2">
+    <>
       {socialLinks.map(link => (
         <a
           key={link.name}
@@ -42,6 +42,6 @@ export const SocialLinks = () => {
           />
         </a>
       ))}
-    </div>
+    </>
   );
 };

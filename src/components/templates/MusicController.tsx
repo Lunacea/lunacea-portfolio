@@ -108,12 +108,7 @@ export const MusicController = () => {
   const volumePercentage = volume * 100;
 
   return (
-    <div className="fixed bottom-6 right-6 z-1 flex items-center gap-2">
-      {/* デバッグ表示 */}
-      <div className="hidden">
-        {JSON.stringify(animationValues.map(v => Math.round(v * 100)))}
-      </div>
-
+    <>
       {/* 音量スライダー - デスクトップのみ */}
       <div className="hidden md:flex items-center gap-2 p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg">
         <Icon icon={<FaVolumeUp />} className="text-slate-600 dark:text-white/70 text-xs flex-shrink-0" />
@@ -173,6 +168,6 @@ export const MusicController = () => {
           })}
         </div>
       </button>
-    </div>
+    </>
   );
 };

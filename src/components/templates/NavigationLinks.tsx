@@ -9,7 +9,11 @@ type NavItem = {
   label: string;
 };
 
-export function ClientNavigation() {
+export type NavigationLinksProps = {
+  className?: string;
+};
+
+export function NavigationLinks({ className = '' }: NavigationLinksProps = {}) {
   const pathname = usePathname();
 
   // 現在のパスがアクティブかどうか判定
@@ -51,16 +55,6 @@ export function ClientNavigation() {
     return normalizedBasePath === normalizedHref || normalizedBasePath.startsWith(`${normalizedHref}/`);
   };
 
-  // アクティブリンクのスタイル
-  const getActiveLinkStyle = (href: string) => {
-    const isActive = isActivePath(href);
-    return `group relative transition-all duration-300 text-lg font-medium inline-block py-3 px-4 rounded-lg ${
-      isActive
-        ? 'text-primary font-semibold cursor-default pointer-events-none'
-        : 'text-theme-secondary'
-    }`;
-  };
-
   // ナビゲーションアイテムのデータ
   const navItems: NavItem[] = [
     { href: '/', label: 'Home' },
@@ -70,21 +64,33 @@ export function ClientNavigation() {
   ];
 
   return (
-    <ul className="space-y-4 text-xl">
-      {navItems.map(item => (
-        <li key={item.href} className="relative">
-          <Link
-            href={item.href} // Link の href はロケールなしのまま
-            className={`${getActiveLinkStyle(item.href)} ${isActivePath(item.href) ? 'active-nav-highlight' : ''}`}
-            {...(isActivePath(item.href) ? { 'aria-current': 'page' } : {})}
-          >
-            {!isActivePath(item.href) && (
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
-            )}
-            {item.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <div className={`space-y-6 
+      [&_.nav-link]:transition-all [&_.nav-link]:duration-200 [&_.nav-link]:ease-linear 
+      [&_.nav-link:hover:not(.active-nav-link)]:translate-x-1 
+      [&_.active-nav-link]:text-primary [&_.active-nav-link]:font-semibold  [&_.active-nav-link]:relative [&_.active-nav-link]:pointer-events-none [&_.active-nav-link]:cursor-default 
+      [&_.active-nav-link]:before:content-[''] [&_.active-nav-link]:before:absolute [&_.active-nav-link]:before:-left-0.5 [&_.active-nav-link]:before:top-1/2 [&_.active-nav-link]:before:-translate-y-1/2 [&_.active-nav-link]:before:w-0.5 [&_.active-nav-link]:before:h-3/5 [&_.active-nav-link]:before:bg-primary [&_.active-nav-link]:before:rounded-r-sm
+      ${className}`}
+    >
+      <ul className="space-y-4 text-xl">
+        {navItems.map(item => (
+          <li key={item.href} className="relative">
+            <Link
+              href={item.href}
+              className={`nav-link group relative text-lg font-medium inline-block py-3 px-4 rounded-lg ${
+                isActivePath(item.href)
+                  ? 'active-nav-link'
+                  : 'text-theme-secondary hover:text-foreground'
+              }`}
+              {...(isActivePath(item.href) ? { 'aria-current': 'page' } : {})}
+            >
+              {!isActivePath(item.href) && (
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
+              )}
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
