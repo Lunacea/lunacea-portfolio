@@ -1,3 +1,29 @@
+# [2.0.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.9.0...v2.0.0) (2025-06-09)
+
+
+### Bug Fixes
+
+* adapt style of Header ([3a3032d](https://github.com/Lunacea/lunacea-portfolio/commit/3a3032d91e5dd4515545afdb67498e254444ed90))
+* **DraggableBusinessCard:** handle touch events by adding handleTouchMove to dependencies ([96553ac](https://github.com/Lunacea/lunacea-portfolio/commit/96553accecaa0922bd70a0e178135e4a39126381))
+* fix: update markdown links and improve styling in blog posts ([e0412c9](https://github.com/Lunacea/lunacea-portfolio/commit/e0412c9cc99d0a5a94a2bd013fd7c2d8ff3e728b))
+
+
+### Features
+
+* add BackToTop component and integrate it into the profile page ([8a0513a](https://github.com/Lunacea/lunacea-portfolio/commit/8a0513a719f04c763c43bc74d7035ccb0a122456))
+* add handwriting font and hint of toggleTheme ([290c978](https://github.com/Lunacea/lunacea-portfolio/commit/290c978a63838ac7326218e8b47b8fce962b1262))
+* add openGraph info ([80389c7](https://github.com/Lunacea/lunacea-portfolio/commit/80389c70b2877b414af4a6558b1d1c3ade6e9002))
+* add ProjectGallery in Works ([82ac536](https://github.com/Lunacea/lunacea-portfolio/commit/82ac536e4d6a7627727c4b28ed413f62cd9865ce))
+* add ScrollHint and ScrollHintContainer components to enhance user experience on profile page ([0241a3c](https://github.com/Lunacea/lunacea-portfolio/commit/0241a3cfeb2c4f0350c380411287d851ac9f49ff))
+* **BaseTemplate:** add space for controller in BaseTemplate component ([644e65f](https://github.com/Lunacea/lunacea-portfolio/commit/644e65fd122b15fce6ba58b62fbe9598dc072771))
+* **LatestUpdates:** add info about works ([3baae43](https://github.com/Lunacea/lunacea-portfolio/commit/3baae4331e4ee6ab1605d7ea55ebadb1d1d2d010))
+* **ScrollController:** make home be unable to scroll ([e1bcc23](https://github.com/Lunacea/lunacea-portfolio/commit/e1bcc23fa862ae3f51dbee92cbebe19d38e2d357))
+
+
+### BREAKING CHANGES
+
+* works page is published
+
 # [1.9.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.8.0...v1.9.0) (2025-06-08)
 
 
