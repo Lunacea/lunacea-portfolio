@@ -51,6 +51,8 @@ export const BaseTemplate = (props: {
           {/* 子コンテンツ */}
           <div className="w-full max-w-6xl">
             {props.children}
+            {/* コントローラー用のスペース */}
+            <div className="w-full h-16"></div>
           </div>
         </div>
       </main>
