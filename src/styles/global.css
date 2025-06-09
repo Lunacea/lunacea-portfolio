@@ -233,13 +233,13 @@
 }
 
 .blog-content h1 {
-  @apply text-3xl font-semibold text-foreground border-b border-border/30 pb-2;
+  @apply text-3xl font-semibold text-foreground border-b border-border pb-2;
   margin: 24px 0 16px 0;
   font-weight: 600;
 }
 
 .blog-content h2 {
-  @apply text-2xl font-semibold text-foreground border-b border-border/30 pb-2;
+  @apply text-2xl font-semibold text-foreground border-b border-border pb-2;
   margin: 24px 0 16px 0;
   font-weight: 600;
 }
