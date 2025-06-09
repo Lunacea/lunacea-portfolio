@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* First Time Writing! 手書き風フォントの定義 */
+@font-face {
+  font-family: 'First Time Writing';
+  src: url('/fonts/FirstTimeWriting.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -12,6 +21,9 @@
   /* 背景画像のURL定義 */
   --bg-image-light: url(/assets/images/bg-paper-white.jpg);
   --bg-image-dark: url(/assets/images/bg-paper-bk.jpg);
+
+  /* フォント定義 */
+  --font-family-handwriting: 'First Time Writing', cursive;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -60,6 +72,9 @@
 
   /* Rajdhaniフォント用 */
   --font-family-rajdhani: var(--font-rajdhani), 'Rajdhani', sans-serif;
+
+  /* 手書き風フォント用 */
+  --font-family-handwriting: var(--font-handwriting), 'cursive';
 
   /* ライトモードの色設定 */
   --background: oklch(0.98 0.005 85);
@@ -162,6 +177,10 @@
   .font-rajdhani {
     font-family: var(--font-rajdhani), 'Rajdhani', sans-serif;
   }
+  /* 手書き風フォントのサポート確認 */
+  .font-handwriting {
+    font-family: 'First Time Writing', cursive;
+  }
 
   /* 背景画像クラス */
   .bg-theme-paper {
@@ -186,16 +205,6 @@
   .dark .text-neumorphism-theme {
     text-shadow: var(--text-shadow-dark);
     color: var(--title-color-dark);
-  }
-
-  /* 旧ニューモルフィズムクラス（互換性のため残す） */
-  .text-neumorphism-inset {
-    text-shadow:
-      2px 2px 4px rgba(0, 0, 0, 0.3),
-      -2px -2px 4px rgba(255, 255, 255, 0.1),
-      inset 2px 2px 6px rgba(0, 0, 0, 0.4),
-      inset -2px -2px 6px rgba(255, 255, 255, 0.05);
-    color: #1f2937;
   }
 
   /* オーバーレイクラス */

@@ -30,7 +30,7 @@ export const BaseTemplate = (props: {
         <div className="flex flex-col w-full items-center justify-center pt-28 sm:pt-24 lg:pt-20">
           <div className="text-center w-full flex flex-col items-center overflow-x-clip">
             <h1
-              className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-bold leading-none
+              className="text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] xl:text-[14rem] font-semibold leading-none
                 mb-4 tracking-widest uppercase text-neumorphism-theme whitespace-nowrap
                lg:translate-x-0 text-center font-rajdhani"
             >
