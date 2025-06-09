@@ -17,6 +17,7 @@ import {
   SiTailwindcss,
   SiTypescript,
 } from 'react-icons/si';
+import { BackToTop } from '@/components/BackToTop';
 import { DraggableBusinessCard } from '@/components/DraggableBusinessCard';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
@@ -321,14 +322,10 @@ export default async function Profile(props: IProfileProps) {
             </section>
           </ScrollReveal>
 
+          {/* Back to Top */}
+          <BackToTop />
+
           {/* Footer */}
-          {/* <ScrollReveal direction="fade" delay={100}>
-          <footer className="text-center pt-8 border-t border-border/30">
-            <p className="text-sm text-muted-foreground">
-              常に成長し続けています
-            </p>
-          </footer>
-        </ScrollReveal> */}
         </div>
       </div>
     </div>
