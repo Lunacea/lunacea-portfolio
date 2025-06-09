@@ -221,7 +221,7 @@ export function DraggableBusinessCard() {
       };
     }
     return undefined;
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove]);
 
   const cardStyle = useMemo(() => ({
     transform: `translate3d(${position.x}px, ${position.y}px, 0) rotate(${-2 + slideRotation}deg)`,
