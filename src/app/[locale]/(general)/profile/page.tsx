@@ -19,6 +19,7 @@ import {
 } from 'react-icons/si';
 import { BackToTop } from '@/components/BackToTop';
 import { DraggableBusinessCard } from '@/components/DraggableBusinessCard';
+import { ScrollHintContainer } from '@/components/ScrollHintContainer';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
 type IProfileProps = {
@@ -73,7 +74,7 @@ export default async function Profile(props: IProfileProps) {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-16 max-w-4xl relative">
+      <ScrollHintContainer className="container mx-auto px-4 py-16 max-w-4xl">
         {/* Draggable Business Card */}
         <ScrollReveal direction="fade" delay={100} className="relative z-1">
           <DraggableBusinessCard />
@@ -324,10 +325,8 @@ export default async function Profile(props: IProfileProps) {
 
           {/* Back to Top */}
           <BackToTop />
-
-          {/* Footer */}
         </div>
-      </div>
+      </ScrollHintContainer>
     </div>
   );
 }
