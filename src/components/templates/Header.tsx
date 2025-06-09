@@ -29,7 +29,7 @@ export const Header = ({ leftNav, rightNav }: HeaderProps) => {
       </header>
 
       {/* モバイルヘッダー - 右上固定 (LocaleSwitcher + ハンバーガーメニュー) */}
-      <header className="lg:hidden fixed top-6 right-6 z-50 flex items-center gap-2">
+      <header className="lg:hidden fixed top-6 right-6 z-50 flex items-center gap-3">
         {/* LocaleSwitcher */}
         {rightNav}
 
@@ -37,7 +37,7 @@ export const Header = ({ leftNav, rightNav }: HeaderProps) => {
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group z-50"
+          className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group z-99"
           aria-label={isMobileMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
         >
           <div className="w-6 h-6 flex flex-col justify-center items-center">
