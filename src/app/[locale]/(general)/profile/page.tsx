@@ -288,7 +288,7 @@ export default async function Profile(props: IProfileProps) {
                 </ScrollReveal>
 
                 {/* Certifications */}
-                <ScrollReveal direction="left" delay={200}>
+                <ScrollReveal direction="right" delay={200}>
                   <div>
                     <h3 className="text-lg font-medium text-foreground mb-6">{t('certifications_section_title')}</h3>
                     <div className="space-y-4">
