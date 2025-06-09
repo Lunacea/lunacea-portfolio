@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ModernAudioVisualizer from '@/components/core/ModernAudioVisualizer';
+import { ScrollController } from '@/components/core/ScrollController';
 import { LatestUpdates } from '@/components/templates/LatestUpdates';
 
 type IIndexPageProps = {
@@ -25,6 +26,7 @@ export default async function Index(props: IIndexPageProps) {
 
   return (
     <div className="overflow-hidden">
+      <ScrollController disableScroll={true} />
       <div className="w-full h-full flex items-center justify-center overflow-hidden">
         <ModernAudioVisualizer size={600} className="mx-auto" />
       </div>
