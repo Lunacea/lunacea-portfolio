@@ -85,10 +85,8 @@
   "Works": {
     "meta_title": "Works | Lunacea portfolio",
     "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。",
-    "preparing_title": "ごめんなさい！準備中です…",
-    "preparing_description": "近日公開予定です。",
-    "status_developing": "開発中",
-    "footer_message": "今後、さらに多くのプロジェクトが追加される予定です。"
+    "project_description_1": "Next.js 15を使用して構築されたポートフォリオサイト。多言語対応、ダークモード、レスポンシブデザインを実装。",
+    "project_description_2": "Takizawa Hackathon 7 にて市長賞を受賞。農家さんの紹介ページおよびQRコードを生成するアプリ。"
   },
   "WorksSlug": {
     "meta_title": "{slug} | Lunacea portfolio",

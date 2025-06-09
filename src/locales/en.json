@@ -92,10 +92,8 @@
   "Works": {
     "meta_title": "Works | Lunacea portfolio",
     "meta_description": "Showcasing web development projects and applications portfolio.",
-    "preparing_title": "Coming Soon",
-    "preparing_description": "New projects are being planned and developed. Stay tuned for updates!",
-    "status_developing": "Under Development",
-    "footer_message": "More projects will be added soon."
+    "project_description_1": "Built with Next.js 15 and Tailwind CSS. Multi-language support, dark mode, and responsive design.",
+    "project_description_2": "Won the Mayor's Award at Takizawa Hackathon 7. A web app for generating QR codes for farmer profiles."
   },
   "WorksSlug": {
     "meta_title": "{slug} | Lunacea portfolio",

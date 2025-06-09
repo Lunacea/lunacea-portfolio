@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { ScrollReveal } from '@/components/ScrollReveal';
+import { WorksGallery } from '@/components/WorksGallery';
 
 type IWorksProps = {
   params: Promise<{ slug: string; locale: string }>;
@@ -21,57 +21,33 @@ export async function generateMetadata(props: IWorksProps) {
 export default async function Works(props: IWorksProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'Works' });
+  const t = await getTranslations({
+    locale,
+    namespace: 'Works',
+  });
+
+  // プロジェクトデータ
+  const projects = [
+    {
+      id: 'lunacea-portfolio',
+      title: 'Lunacea Portfolio',
+      description: t('project_description_1'),
+      image: '/assets/images/screencapture-lunacea-jp-en-2025-06-10-01_16_24.png',
+      technologies: ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+      url: 'https://lunacea.jp',
+      github: 'https://github.com/lunacea/lunacea-portfolio',
+    },
+    {
+      id: 'tsuna-agri',
+      title: 'TsunaAgri',
+      description: t('project_description_2'),
+      image: '/assets/images/tsuna-agri.png',
+      technologies: ['Svelte', 'Drizzlekit', 'Hono.js', 'Docker'],
+      github: 'https://github.com/lunacea/takizawa-hackathon7',
+    },
+  ];
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
-        {/* ページヘッダー */}
-        <ScrollReveal direction="fade" delay={100}>
-          <header className="text-center mb-20">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              WORKS
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              {t('preparing_title')}
-              <br />
-              {t('meta_description')}
-            </p>
-          </header>
-        </ScrollReveal>
-
-        {/* プロジェクト準備中エリア */}
-        <ScrollReveal direction="up" delay={200}>
-          <section className="mb-20">
-            {/* 将来のプロジェクトグリッド用スペース */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-
-              <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-12 md:p-16 border border-border/30 shadow-xl">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-6 max-w-md mx-auto">
-                </p>
-              </div>
-              <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-12 md:p-16 border border-border/30 shadow-xl">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                </h2>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-6 max-w-md mx-auto">
-                </p>
-              </div>
-
-            </div>
-          </section>
-        </ScrollReveal>
-
-        {/* フッター */}
-        {/* <ScrollReveal direction="fade" delay={100}>
-          <footer className="text-center pt-8 border-t border-border/30">
-            <p className="text-sm text-muted-foreground">
-              {t('footer_message')}
-            </p>
-          </footer>
-        </ScrollReveal> */}
-      </div>
-    </div>
+    <WorksGallery projects={projects} />
   );
-};
+}
