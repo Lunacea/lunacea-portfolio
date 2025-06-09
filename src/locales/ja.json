@@ -21,7 +21,9 @@
     "latest_updates_1": "ポートフォリオサイト公開",
     "latest_updates_1_description": "Next.js 15とTailwind CSSで構築",
     "latest_updates_2": "ブログサイト公開",
-    "latest_updates_2_description": "mdxによる記事を読むことができます。"
+    "latest_updates_2_description": "mdxによる記事を読むことができます。",
+    "latest_updates_3": "作品一覧公開",
+    "latest_updates_3_description": "作品一覧を公開しました。"
   },
   "BusinessCard": {
     "university_name": "岩手県立大学",

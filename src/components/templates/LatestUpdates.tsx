@@ -23,6 +23,12 @@ export async function LatestUpdates({ locale }: ILatestUpdatesProps) {
       url: '/blog',
       description: t('latest_updates_2_description'),
     },
+    {
+      title: t('latest_updates_3'),
+      date: '2025-06-10',
+      url: '/works',
+      description: t('latest_updates_3_description'),
+    },
   ];
 
   // 日付降順でソートし、最新2件のみ取得

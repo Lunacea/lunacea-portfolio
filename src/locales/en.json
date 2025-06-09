@@ -21,7 +21,9 @@
     "latest_updates_1": "Portfolio site released",
     "latest_updates_1_description": "Built with Next.js 15 and Tailwind CSS",
     "latest_updates_2": "Blog site released",
-    "latest_updates_2_description": "You can read articles by mdx."
+    "latest_updates_2_description": "You can read articles by mdx.",
+    "latest_updates_3": "Works site released",
+    "latest_updates_3_description": "Works site released."
   },
   "BusinessCard": {
     "university_name": "Iwate Prefectural University",
