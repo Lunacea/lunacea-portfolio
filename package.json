@@ -7,8 +7,7 @@
   },
   "scripts": {
     "dev:spotlight": "spotlight-sidecar",
-    "dev:next": "next dev --turbo",
-    "dev": "run-p dev:*",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "build-stats": "cross-env ANALYZE=true bun run build",

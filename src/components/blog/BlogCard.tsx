@@ -44,7 +44,7 @@ export function BlogCard({ post }: BlogCardProps) {
         >
         </div>
 
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-1 flex flex-col h-full">
           {/* タグ（最大2個まで表示） */}
           {post.tags.length > 0 && (
             <div className="flex items-start gap-2 mb-4">
