@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/Lunacea/lunacea-portfolio/compare/v2.0.0...v2.0.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* **Button:** fix linterror ([b4257dc](https://github.com/Lunacea/lunacea-portfolio/commit/b4257dc58a36fe15f8f1983911bba06b50a33a3d))
+
 # [2.0.0](https://github.com/Lunacea/lunacea-portfolio/compare/v1.9.0...v2.0.0) (2025-06-09)
 
 
