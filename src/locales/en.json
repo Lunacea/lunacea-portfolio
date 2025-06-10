@@ -102,6 +102,13 @@
     "meta_description": "{slug} introduction",
     "header": "{slug}"
   },
+  "PortfolioSlug": {
+    "meta_title": "{slug} | Lunacea portfolio",
+    "meta_description": "{slug} project introduction",
+    "header": "{slug}",
+    "content": "This is the {slug} project page.",
+    "code_review_powered_by": "Code review powered by"
+  },
   "Blog": {
     "meta_title": "Blog | Lunacea portfolio",
     "meta_description": "Technical blog posts",

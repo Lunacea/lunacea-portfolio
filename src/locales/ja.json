@@ -95,6 +95,13 @@
     "meta_description": "{slug} のご紹介",
     "header": "{slug}"
   },
+  "PortfolioSlug": {
+    "meta_title": "{slug} | Lunacea portfolio",
+    "meta_description": "{slug} プロジェクトの紹介",
+    "header": "{slug}",
+    "content": "{slug} プロジェクトのページです。",
+    "code_review_powered_by": "コードレビューは"
+  },
   "Blog": {
     "meta_title": "Blog | Lunacea portfolio",
     "meta_description": "技術ブログ記事一覧",
