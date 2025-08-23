@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.4...v3.2.0) (2025-08-23)
+
+
+### Features
+
+* profileとworksページにruntimeを'edge'として追加 ([0391805](https://github.com/Lunacea/lunacea-portfolio/commit/0391805772966d51da5ed102aa1b95b62f5b955d))
+
 ## [3.1.4](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.1.4) (2025-08-23)
 
 
