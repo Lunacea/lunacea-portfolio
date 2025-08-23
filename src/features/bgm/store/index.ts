@@ -27,7 +27,7 @@ type BGMStore = BGMState & BGMActions;
 let howlInstance: Howl | null = null;
 let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
-let dataArray: Uint8Array | null = null;
+let dataArray: Uint8Array<ArrayBuffer> | null = null;
 
 const initAudioAnalysis = (): void => {
   if (!howlInstance || audioContext) {
@@ -43,7 +43,8 @@ const initAudioAnalysis = (): void => {
       const source = audioContext.createMediaElementSource(audioElement);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      // ArrayBuffer を明示し、型を Uint8Array<ArrayBuffer> に統一
+      dataArray = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount)) as Uint8Array<ArrayBuffer>;
     }
   } catch {
     // ignore
