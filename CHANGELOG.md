@@ -1,3 +1,10 @@
+## [3.4.4](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.3...v3.4.4) (2025-08-23)
+
+
+### Bug Fixes
+
+* blogページのruntimeをSSGで事前レンダリングに変更し、generateStaticParamsを使用 ([c481990](https://github.com/Lunacea/lunacea-portfolio/commit/c4819902a66b5dd848210573b2e764f447844fff))
+
 ## [3.4.3](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.2...v3.4.3) (2025-08-23)
 
 
