@@ -12,8 +12,8 @@ type BlogPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-// 非静的要素を含むため Edge Runtime として実行
-export const runtime = 'edge';
+// Edge では node:fs 等が使えないため、ブログ一覧はSSG化
+export const dynamic = 'force-static';
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
