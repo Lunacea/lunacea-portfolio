@@ -12,8 +12,8 @@ type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-// Build-time SSG を強制し、Edge SSR バンドルを回避
-export const dynamic = 'force-static';
+// Edge Runtime に統一（Cloudflare Pages 要件）
+export const runtime = 'edge';
 
 // サーバーサイド用の日付フォーマット関数
 function formatDate(dateString: string, locale: string = 'ja'): string {
