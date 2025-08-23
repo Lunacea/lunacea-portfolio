@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.1.4) (2025-08-23)
+
+
+### Bug Fixes
+
+* deploy error ([d4c1cfb](https://github.com/Lunacea/lunacea-portfolio/commit/d4c1cfb27c1bb15a8f7c8eaf7318830496462a46))
+
 ## [3.1.3](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.2...v3.1.3) (2025-08-23)
 
 
