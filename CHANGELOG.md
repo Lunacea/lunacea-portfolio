@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/Lunacea/lunacea-portfolio/compare/v2.0.1...v3.0.0) (2025-08-23)
+
+
+### Features
+
+* **src:** change architecture and fix bugs ([bd33660](https://github.com/Lunacea/lunacea-portfolio/commit/bd336603544ef6067089317d9f0523532a424956))
+
+
+### BREAKING CHANGES
+
+* **src:** architecture
+
 ## [2.0.1](https://github.com/Lunacea/lunacea-portfolio/compare/v2.0.0...v2.0.1) (2025-06-10)
 
 
