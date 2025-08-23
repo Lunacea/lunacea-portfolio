@@ -1,7 +1,7 @@
 import { enUS, frFR } from '@clerk/localizations';
-import { ClerkProvider } from '@clerk/nextjs';
-
 import { setRequestLocale } from 'next-intl/server';
+
+import ClientClerkProvider from '@/shared/components/ClientClerkProvider';
 import { routing } from '@/shared/libs/i18nNavigation';
 
 export const runtime = 'edge';
@@ -30,15 +30,14 @@ export default async function AuthLayout(props: {
   }
 
   return (
-    <ClerkProvider
+    <ClientClerkProvider
       localization={clerkLocale}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={dashboardUrl}
-      signUpFallbackRedirectUrl={dashboardUrl}
+      dashboardUrl={dashboardUrl}
       afterSignOutUrl={afterSignOutUrl}
     >
       {props.children}
-    </ClerkProvider>
+    </ClientClerkProvider>
   );
 }
