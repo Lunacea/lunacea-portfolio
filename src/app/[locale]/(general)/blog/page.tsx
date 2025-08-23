@@ -14,7 +14,6 @@ type BlogPageProps = {
 
 // Build-time SSG を強制
 export const dynamic = 'force-static';
-export const runtime = 'edge';
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
