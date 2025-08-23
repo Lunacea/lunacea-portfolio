@@ -19,6 +19,18 @@ A web application is aimed to be built with interactive 3D elements and modern U
 This project serves as a portfolio site showcasing Lunacea's technical skills and creative works.
 It is built with a modern tech stack centered around Next.js, focusing on both performance and developer experience.
 
+### i18n and Navigation
+
+- Uses `next-intl`. Locale-aware `Link`/hooks are exported from `src/shared/libs/i18nNavigation.ts` and used across the app to preserve the current locale during navigation and when switching languages. A `NEXT_LOCALE` cookie is set on language change.
+
+### Background Music (BGM) Consent
+
+- BGM consent is persisted in `localStorage` as `bgmUserConsent` and respected across page transitions and language changes. The consent modal overlay keeps header controls (e.g., language switcher) visible and clickable.
+
+### BGM Single-Instance Loop
+
+- BGM playback uses a single Howler instance with `loop: true`. The store tracks the current `soundId` to avoid duplicate playback on loop or repeated `play()` calls. `pause()` targets the tracked sound id.
+
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js (v15.x), React (v19.x)

@@ -3,10 +3,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
-import { BlogPostContent } from '@/components/blog/BlogPostContent';
-import { SideTableOfContents } from '@/components/blog/SideTableOfContents';
-import Icon from '@/components/Icon';
-import { getAllBlogPosts, getBlogPost } from '@/lib/blog';
+import BlogPostContent from '@/features/blog/components/BlogPostContent';
+import SideTableOfContents from '@/features/blog/components/SideTableOfContents';
+import Icon from '@/shared/components/ui/Icon';
+import { getAllBlogPosts, getBlogPost } from '@/shared/libs/blog';
 
 type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;

@@ -1,0 +1,130 @@
+.modalRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: color-mix(in oklab, white 90%, transparent);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1.2s ease-out;
+}
+
+:global(.dark) .modalRoot {
+  background-color: color-mix(in oklab, black 70%, transparent);
+}
+.hiddenState {
+  opacity: 0;
+  pointer-events: none;
+}
+.visibleState {
+  opacity: 1;
+}
+.rippleContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.mainRipple,
+.secondaryRipple {
+  position: absolute;
+  border-radius: 9999px;
+  left: var(--ripple-x);
+  top: var(--ripple-y);
+  transform: translate(-50%, -50%);
+}
+.mainRipple {
+  background-color: color-mix(in oklab, black 3%, transparent);
+  animation: gentle-ripple 1.5s ease-out forwards;
+}
+.secondaryRipple {
+  background-color: color-mix(in oklab, black 2%, transparent);
+  animation: gentle-ripple-2 1.5s ease-out forwards;
+  animation-delay: 0.2s;
+}
+.backgroundGlow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.glowLayer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x) var(--ripple-y), rgba(255, 255, 255, 0.01) 0%, transparent 60%);
+  animation: gentle-glow 1.5s ease-out forwards;
+}
+
+:global(.dark) .glowLayer {
+  background: radial-gradient(circle at var(--ripple-x) var(--ripple-y), rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+}
+.content {
+  text-align: center;
+  max-width: 28rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  transition: all 1s ease-out;
+}
+.content a,
+.content button,
+.content [role='button'] {
+  position: relative;
+  z-index: 50;
+}
+.contentHidden {
+  transform: translateY(0.5rem);
+  opacity: 0;
+  scale: 0.98;
+}
+.contentVisible {
+  transform: translateY(0);
+  opacity: 1;
+  scale: 1;
+}
+@keyframes gentle-ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.3;
+  }
+  100% {
+    width: 300vmax;
+    height: 300vmax;
+    opacity: 0;
+  }
+}
+@keyframes gentle-ripple-2 {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.2;
+  }
+  100% {
+    width: 350vmax;
+    height: 350vmax;
+    opacity: 0;
+  }
+}
+@keyframes gentle-glow {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}

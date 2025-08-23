@@ -21,42 +21,42 @@
 
 ### コンポーネント構成
 
-```
+```tsx
 src/components/audio/
 ├── BGMPlayer.tsx           # メインコンポーネント
 ├── BGMClientWrapper.tsx    # クライアントサイド専用ラッパー
 ├── BGMPermissionDialog.tsx # 許可ダイアログ
 └── BGMControlPanel.tsx     # コントロールパネル
-```
+```tsx
 
 ### 状態管理
 
-```
+```tsx
 src/stores/bgm/
 ├── index.ts               # メインストア（Zustand）
 ├── types.ts               # 型定義
 ├── config.ts              # 設定値
 └── utils.ts               # ユーティリティ関数
-```
+```text
 
 ### ユーティリティ
 
-```
+```text
 src/utils/
 ├── bgmErrorHandler.ts     # エラーハンドリング
 └── bgmTestUtils.ts        # テスト用ユーティリティ
-```
+```text
 
 ### カスタムフック
 
-```
+```text
 src/hooks/
 └── useDebounce.ts         # デバウンス機能
-```
+```text
 
 ### 型定義
 
-```
+```text
 src/types/
 └── bgm.ts                 # BGM関連の型定義
 ```
@@ -66,14 +66,14 @@ src/types/
 ### 基本的な設定
 
 1. **BGMファイルの配置**
-   ```
+   ```text
    public/assets/sound/bgm.mp3
    ```
 
-2. **コンポーネントの配置**
+1. **コンポーネントの配置**
    ```tsx
    // app/layout.tsx
-   import BGMClientWrapper from '@/components/audio/BGMClientWrapper';
+   import BGMClientWrapper from '@/features/bgm/components/BGMClientWrapper';
 
    export default function RootLayout({ children }) {
      return (
@@ -119,7 +119,7 @@ export const STORAGE_KEYS: StorageKeys = {
 ### BGMStore
 
 ```tsx
-import { useBGMStore } from '@/stores/bgm';
+import { useBGMStore } from '@/features/bgm/store';
 
 // 状態の取得
 const permissionStatus = useBGMStore(state => state.permissionStatus);
@@ -240,7 +240,7 @@ const pauseAudio = () => {
 ### モック環境の使用
 
 ```tsx
-import { createBGMTestEnvironment, MockBGMPlayer } from '@/utils/bgmTestUtils';
+import { createBGMTestEnvironment, MockBGMPlayer } from '@/shared/utils/bgmTestUtils';
 
 describe('BGMシステム', () => {
   let testEnv: ReturnType<typeof createBGMTestEnvironment>;
@@ -306,7 +306,7 @@ describe('BGMシステム', () => {
 ### エラー監視
 
 ```tsx
-import { BGMErrorHandler } from '@/utils/bgmErrorHandler';
+import { BGMErrorHandler } from '@/shared/utils/bgmErrorHandler';
 
 // エラー履歴の確認
 const errors = BGMErrorHandler.getErrors();
@@ -326,7 +326,7 @@ const hasRecentErrors = BGMErrorHandler.hasRecentErrors(5); // 5分以内
 ### メモリ管理
 
 ```tsx
-import { cleanupBGM } from '@/stores/bgm';
+import { cleanupBGM } from '@/features/bgm/store';
 
 // コンポーネントアンマウント時のクリーンアップ
 useEffect(() => {

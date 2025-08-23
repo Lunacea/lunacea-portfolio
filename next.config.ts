@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
-import './src/libs/Env';
+import './src/shared/libs/Env';
 
 // ベースのNext.js設定
 const baseConfig: NextConfig = {
@@ -16,7 +16,7 @@ const baseConfig: NextConfig = {
 };
 
 // Next-Intlプラグインの初期化
-let configWithPlugins = createNextIntlPlugin('./src/libs/i18n.ts')(baseConfig);
+let configWithPlugins = createNextIntlPlugin('./src/shared/libs/i18n.ts')(baseConfig);
 
 // バンドル分析の条件付き有効化
 if (process.env.ANALYZE === 'true') {

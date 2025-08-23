@@ -8,3 +8,21 @@ failOnConsole({
   shouldFailOnLog: true,
   shouldFailOnWarn: true,
 });
+
+// Mock next/navigation for next-intl testing in jsdom
+vi.mock('next/navigation', async () => {
+  return {
+    Router: () => ({ push: () => {}, replace: () => {}, prefetch: () => {}, back: () => {} }),
+    Pathname: () => '/',
+    SearchParams: () => new URLSearchParams(),
+  } as any;
+});
+
+// Some builds import the ESM entry explicitly
+vi.mock('next/navigation.js', async () => {
+  return {
+    Router: () => ({ push: () => {}, replace: () => {}, prefetch: () => {}, back: () => {} }),
+    Pathname: () => '/',
+    SearchParams: () => new URLSearchParams(),
+  } as any;
+});

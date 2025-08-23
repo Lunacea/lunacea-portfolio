@@ -1,0 +1,35 @@
+.base {
+  transition:
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0);
+}
+
+.hiddenFade {
+  opacity: 0;
+  transform: translateY(0) translateX(0);
+}
+
+.hiddenUp {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiddenDown {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.hiddenLeft {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.hiddenRight {
+  opacity: 0;
+  transform: translateX(-30px);
+}

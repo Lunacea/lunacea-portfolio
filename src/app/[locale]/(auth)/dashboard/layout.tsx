@@ -1,8 +1,8 @@
 import { SignOutButton } from '@clerk/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
-import { BaseTemplate } from '@/components/templates/BaseTemplate';
-import { LocaleSwitcher } from '@/components/templates/LocaleSwitcher';
+import BaseTemplate from '@/shared/components/layouts/BaseTemplate';
+import LocaleSwitcher from '@/shared/components/layouts/LocaleSwitcher';
 
 export default async function DashboardLayout(props: {
   children: React.ReactNode;

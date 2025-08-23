@@ -1,4 +1,4 @@
-import { BaseTemplate } from '@/components/templates/BaseTemplate';
+import BaseTemplate from '@/shared/components/layouts/BaseTemplate';
 
 /**
  * バックグラウンドエフェクトと色調整機能

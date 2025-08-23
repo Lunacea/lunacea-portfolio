@@ -18,10 +18,10 @@ import {
   SiTailwindcss,
   SiTypescript,
 } from 'react-icons/si';
-import { BackToTop } from '@/components/BackToTop';
-import { DraggableBusinessCard } from '@/components/DraggableBusinessCard';
-import { ScrollHintContainer } from '@/components/ScrollHintContainer';
-import { ScrollReveal } from '@/components/ScrollReveal';
+import DraggableBusinessCard from '@/features/businessCard/components/DraggableBusinessCard';
+import BackToTop from '@/shared/components/ui/BackToTop';
+import ScrollHintContainer from '@/shared/components/ui/ScrollHintContainer';
+import ScrollReveal from '@/shared/components/ui/ScrollReveal';
 
 type IProfileProps = {
   params: Promise<{ locale: string }>;

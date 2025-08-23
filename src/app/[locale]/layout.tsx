@@ -1,30 +1,10 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { ThemeProvider } from 'next-themes';
-import { Inter, Rajdhani } from 'next/font/google';
 import { notFound } from 'next/navigation';
 
-import { PostHogProvider } from '@/components/analytics/PostHogProvider';
-import { routing } from '@/libs/i18nNavigation';
-import '@/styles/global.css'; // グローバルCSSのインポート
-
-// Interフォントの設定（パフォーマンス最適化）
-const inter = Inter({
-  subsets: ['latin', 'latin-ext'],
-  display: 'swap',
-  variable: '--font-inter',
-  preload: true,
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
-});
-
-// Rajdhaniフォント（heading用・技術的でクリーンなフォント）
-const rajdhani = Rajdhani({
-  subsets: ['latin', 'latin-ext'],
-  display: 'swap',
-  variable: '--font-rajdhani',
-  preload: true,
-  weight: ['300', '400', '500', '600', '700'],
-});
+import PostHogProvider from '@/shared/components/analytics/PostHogProvider';
+import { routing } from '@/shared/libs/i18nNavigation';
+// Root layout handles ThemeProvider, fonts, and global CSS
 
 export const metadata = {
   keywords: ['Lunacea', 'Portfolio', 'Lunacea Portfolio'],
@@ -88,21 +68,10 @@ export default async function LocaleLayout(props: {
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={`${inter.variable} ${rajdhani.variable} font-sans`} suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange={false}
-        >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <PostHogProvider>
-              {props.children}
-            </PostHogProvider>
-          </NextIntlClientProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <PostHogProvider>
+        {props.children}
+      </PostHogProvider>
+    </NextIntlClientProvider>
   );
 }
