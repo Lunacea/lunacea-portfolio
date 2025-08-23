@@ -1,3 +1,10 @@
+# [3.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.0...v3.4.0) (2025-08-23)
+
+
+### Features
+
+* blogページからruntimeを削除 ([f6886aa](https://github.com/Lunacea/lunacea-portfolio/commit/f6886aa7347f2c3652f1281682e9144efb457d40))
+
 # [3.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.2.0...v3.3.0) (2025-08-23)
 
 
