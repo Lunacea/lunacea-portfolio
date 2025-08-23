@@ -1,3 +1,10 @@
+## [3.4.3](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.2...v3.4.3) (2025-08-23)
+
+
+### Bug Fixes
+
+* blogページのruntimeをEdge Runtimeに統一し、Cloudflare Pagesの要件に対応 ([2317732](https://github.com/Lunacea/lunacea-portfolio/commit/23177321cf3c888f1de1d9070736eeebc256962a))
+
 ## [3.4.2](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.1...v3.4.2) (2025-08-23)
 
 
