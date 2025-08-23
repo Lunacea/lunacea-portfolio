@@ -1,3 +1,10 @@
+## [3.4.5](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.4...v3.4.5) (2025-08-23)
+
+
+### Bug Fixes
+
+* blogページとworksページのruntimeをEdge Runtimeに統一し、setRequestLocaleの不要性を明記 ([7125889](https://github.com/Lunacea/lunacea-portfolio/commit/71258894f22c2d55a9f4da810500d188ecfed977))
+
 ## [3.4.4](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.3...v3.4.4) (2025-08-23)
 
 
