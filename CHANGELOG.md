@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-23)
+
+
+### Features
+
+* set up to move to cloudflare ([9acad76](https://github.com/Lunacea/lunacea-portfolio/commit/9acad76ed61b0f1c4f03b2b274dad770c2349ca4))
+
 # [3.0.0](https://github.com/Lunacea/lunacea-portfolio/compare/v2.0.1...v3.0.0) (2025-08-23)
 
 
