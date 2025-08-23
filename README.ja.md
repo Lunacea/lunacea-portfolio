@@ -116,7 +116,7 @@ bun run start
 このプロジェクトは Cloudflare Pages の GitHub 連携でデプロイします（Secrets不要）。
 
 1. GitHub リポジトリを Cloudflare Pages に接続します（GitHub App）。
-2. Build コマンド: `npm ci && npm run build`（`postbuild` で Next on Pages を自動実行）。
+2. Build コマンド: `npm ci && npm run pages:build`（`next build` は `next-on-pages` 内部で実行されます）。
 3. Output directory: `.vercel/output/static`（`wrangler.toml` の `pages_build_output_dir` と一致）
 4. DB/ストレージ: Cloudflare ダッシュボードで D1 と R2 を作成し、`wrangler.toml` の `DB` / `R2_BUCKET` としてバインドします。
 5. `main` にプッシュすると、Cloudflare Pages が自動で Preview/Production をビルドします。

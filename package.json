@@ -10,7 +10,6 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "pages:build": "next-on-pages",
-    "postbuild": "npm run pages:build",
     "start": "next start",
     "build-stats": "cross-env ANALYZE=true bun run build",
     "clean": "rimraf .next out coverage",
