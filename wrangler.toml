@@ -1,6 +1,5 @@
 name = "lunacea-portfolio"
 compatibility_date = "2025-08-23"
-pages_build_output_dir = ".vercel/output/static"
 
 [[d1_databases]]
 binding = "DB"
