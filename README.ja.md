@@ -116,10 +116,15 @@ bun run start
 このプロジェクトは Cloudflare Pages の GitHub 連携でデプロイします（Secrets不要）。
 
 1. GitHub リポジトリを Cloudflare Pages に接続します（GitHub App）。
-2. Build コマンド: `bun install --frozen-lockfile && bun run build`（Next on Pages が自動検出）。
-3. DB/ストレージ: Cloudflare ダッシュボードで D1 と R2 を作成し、`wrangler.toml` の `DB` / `R2_BUCKET` としてバインドします。
-4. `main` にプッシュすると、Cloudflare Pages が自動で Preview/Production をビルドします。
-5. DNS を切り替えると、[https://lunacea.jp](https://lunacea.jp) で公開されます。
+2. Build コマンド: `npm ci && npm run build`（`postbuild` で Next on Pages を自動実行）。
+3. Output directory: `.vercel/output/static`（`wrangler.toml` の `pages_build_output_dir` と一致）
+4. DB/ストレージ: Cloudflare ダッシュボードで D1 と R2 を作成し、`wrangler.toml` の `DB` / `R2_BUCKET` としてバインドします。
+5. `main` にプッシュすると、Cloudflare Pages が自動で Preview/Production をビルドします。
+6. DNS を切り替えると、[https://lunacea.jp](https://lunacea.jp) で公開されます。
+
+補足:
+- `@cloudflare/next-on-pages` は安定版を `devDependencies` に固定。`canary` 指定は不要で、Pages のログに出たエラーを回避します。
+- ランタイムは Edge 実行（`export const runtime = 'edge'`）または SSG（`export const dynamic = 'force-static'`）に統一し、Node API はビルド時のみに利用しています。
 
 ## 📧 Contact
 
