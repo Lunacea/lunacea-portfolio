@@ -23,6 +23,8 @@ import BackToTop from '@/shared/components/ui/BackToTop';
 import ScrollHintContainer from '@/shared/components/ui/ScrollHintContainer';
 import ScrollReveal from '@/shared/components/ui/ScrollReveal';
 
+export const runtime = 'edge';
+
 type IProfileProps = {
   params: Promise<{ locale: string }>;
 };

@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { WorksGallery } from '@/features/project/components/WorksGallery';
 import { getProjects } from '@/features/project/server/getProjects';
 
+export const runtime = 'edge';
+
 type IWorksProps = {
   params: Promise<{ slug: string; locale: string }>;
 };
