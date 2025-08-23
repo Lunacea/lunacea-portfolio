@@ -1,5 +1,4 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-
+import { getTranslations } from 'next-intl/server';
 import { routing } from '@/shared/libs/i18nNavigation';
 
 type IPortfolioDetailProps = {
@@ -32,7 +31,7 @@ export async function generateMetadata(props: IPortfolioDetailProps) {
 
 export default async function PortfolioDetail(props: IPortfolioDetailProps) {
   const { locale, slug } = await props.params;
-  setRequestLocale(locale);
+  // SSG: setRequestLocale は不要
   const t = await getTranslations({
     locale,
     namespace: 'PortfolioSlug',

@@ -8,6 +8,8 @@ type IIndexPageProps = {
   params: Promise<{ locale: string }>;
 };
 
+export const runtime = 'edge';
+
 export async function generateMetadata(props: IIndexPageProps) {
   const { locale } = await props.params;
   const t = await getTranslations({

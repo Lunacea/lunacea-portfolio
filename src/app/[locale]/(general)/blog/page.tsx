@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { FaEdit } from 'react-icons/fa';
 import BlogCard from '@/features/blog/components/BlogCard';
 import ContributionGraph from '@/features/blog/components/ContributionGraph';
@@ -12,8 +12,8 @@ type BlogPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-// SSGで事前レンダリング
-export const dynamic = 'force-static';
+// 非静的要素を含むため Edge Runtime として実行
+export const runtime = 'edge';
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { locale } = await params;
-  setRequestLocale(locale);
+  // Edge runtime では setRequestLocale は不要
   const t = await getTranslations({ locale, namespace: 'Blog' });
 
   const posts = await getAllBlogPosts();

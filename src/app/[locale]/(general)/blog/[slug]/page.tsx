@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
-  setRequestLocale(locale);
+  // SSG: setRequestLocale は不要
 
   const post = await getBlogPost(slug);
   const t = await getTranslations({ locale, namespace: 'Blog' });
