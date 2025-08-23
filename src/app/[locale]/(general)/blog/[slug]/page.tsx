@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* パンくずナビ */}
       <nav className="container mx-auto px-4 py-6 max-w-7xl">
         <Link
-          href="/blog"
+          href={`/${locale}/blog`}
           className="inline-flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 rounded-lg hover:bg-card/50 backdrop-blur-sm"
         >
           <Icon icon={<FaAngleLeft />} className="text-primary" />
@@ -154,7 +154,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* フッター */}
       {/* <footer className="container mx-auto px-4 py-12 max-w-7xl text-center">
         <Link
-          href="/blog"
+          href={`/${locale}/blog`}
           className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-2xl hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-300 font-medium"
         >
           <Icon icon={<FaCalendar />} />
