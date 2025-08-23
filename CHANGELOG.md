@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.0...v3.4.1) (2025-08-23)
+
+
+### Bug Fixes
+
+* middlewareのmatcherを最小範囲に限定し、blogページのリンクをロケールに基づいて修正 ([64f57a1](https://github.com/Lunacea/lunacea-portfolio/commit/64f57a191e9dc30b1be34040a37692dffe0e52d6))
+
 # [3.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.0...v3.4.0) (2025-08-23)
 
 
