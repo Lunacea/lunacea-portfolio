@@ -12,6 +12,9 @@ type BlogPageProps = {
   params: Promise<{ locale: string }>;
 };
 
+// Build-time SSG を強制
+export const dynamic = 'force-static';
+
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Blog' });
