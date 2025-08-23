@@ -3,6 +3,8 @@ import { ThemeProvider } from 'next-themes';
 import { Inter, Rajdhani } from 'next/font/google';
 import '@/shared/styles/global.css';
 
+export const runtime = 'edge';
+
 type Props = { children: ReactNode };
 
 const inter = Inter({

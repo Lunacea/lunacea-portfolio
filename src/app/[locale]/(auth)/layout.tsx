@@ -4,6 +4,8 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
 import { routing } from '@/shared/libs/i18nNavigation';
 
+export const runtime = 'edge';
+
 export default async function AuthLayout(props: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;

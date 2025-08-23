@@ -1,5 +1,7 @@
 import BaseTemplate from '@/shared/components/layouts/BaseTemplate';
 
+export const runtime = 'edge';
+
 /**
  * バックグラウンドエフェクトと色調整機能
  */
