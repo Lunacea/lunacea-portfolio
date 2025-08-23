@@ -1,3 +1,10 @@
+## [3.4.6](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.5...v3.4.6) (2025-08-23)
+
+
+### Bug Fixes
+
+* blogページのruntimeをEdge RuntimeからSSGに変更し、node:fsの使用制限に対応 ([7531168](https://github.com/Lunacea/lunacea-portfolio/commit/75311681b2eeb5880007b48a8c33d18017d0ec45))
+
 ## [3.4.5](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.4...v3.4.5) (2025-08-23)
 
 
