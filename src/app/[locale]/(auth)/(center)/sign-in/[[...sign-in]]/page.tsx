@@ -1,5 +1,5 @@
-import { SignIn } from '@clerk/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import ClientSignIn from '@/shared/components/auth/ClientSignIn';
 import { getI18nPath } from '@/shared/utils/Helpers';
 
 type ISignInPageProps = {
@@ -23,7 +23,5 @@ export default async function SignInPage(props: ISignInPageProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
-  return (
-    <SignIn path={getI18nPath('/sign-in', locale)} />
-  );
+  return <ClientSignIn path={getI18nPath('/sign-in', locale)} />;
 };
