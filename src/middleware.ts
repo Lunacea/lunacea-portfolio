@@ -1,6 +1,5 @@
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { detectBot } from '@arcjet/next';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import arcjet from '@/shared/libs/Arcjet';
@@ -8,17 +7,7 @@ import { routing } from '@/shared/libs/i18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/:locale/dashboard(.*)',
-]);
-
-const isAuthPage = createRouteMatcher([
-  '/sign-in(.*)',
-  '/:locale/sign-in(.*)',
-  '/sign-up(.*)',
-  '/:locale/sign-up(.*)',
-]);
+// Remove Clerk route matchers. Admin is protected via Cloudflare Access.
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -36,7 +25,7 @@ const aj = arcjet.withRule(
 
 export default async function middleware(
   request: NextRequest,
-  event: NextFetchEvent,
+  _event: NextFetchEvent,
 ) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
@@ -48,23 +37,14 @@ export default async function middleware(
     }
   }
 
-  // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  if (
-    isAuthPage(request) || isProtectedRoute(request)
-  ) {
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
-
-        const signInUrl = new URL(`${locale}/sign-in`, req.url);
-
-        await auth.protect({
-          unauthenticatedUrl: signInUrl.toString(),
-        });
-      }
-
-      return handleI18nRouting(request);
-    })(request, event);
+  // Cloudflare Access JWT required for /admin
+  const p = request.nextUrl.pathname;
+  const isAdmin = /^\/[a-z]{2}(?:-[A-Z]{2})?\/admin(?:\/.*)?$/.test(p) || /^\/admin(?:\/.*)?$/.test(p);
+  if (isAdmin) {
+    const cfJwt = request.headers.get('Cf-Access-Jwt-Assertion');
+    if (!cfJwt) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
   }
 
   return handleI18nRouting(request);
