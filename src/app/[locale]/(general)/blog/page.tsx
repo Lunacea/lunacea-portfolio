@@ -12,8 +12,8 @@ type BlogPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-// Edge Runtime に統一（Cloudflare Pages 要件）
-export const runtime = 'edge';
+// SSGで事前レンダリング
+export const dynamic = 'force-static';
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
