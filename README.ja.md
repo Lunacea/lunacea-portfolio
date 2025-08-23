@@ -111,13 +111,15 @@ bun run build
 bun run start
 ```
 
-## 🌐 Deploy
+## 🌐 デプロイ
 
-このプロジェクトは[Sevalla](https://sevalla.com/)にGitHub経由でデプロイされています。
+このプロジェクトは Cloudflare Pages の GitHub 連携でデプロイします（Secrets不要）。
 
-1. 変更をコミットし、`main` ブランチにプッシュします。
-2. SevallaがGitHubリポジトリの変更を検知し、自動的にビルドとデプロイを実行します。
-3. デプロイ後、[https://lunacea.jp](https://lunacea.jp) で最新版が公開されます。
+1. GitHub リポジトリを Cloudflare Pages に接続します（GitHub App）。
+2. Build コマンド: `bun install --frozen-lockfile && bun run build`（Next on Pages が自動検出）。
+3. DB/ストレージ: Cloudflare ダッシュボードで D1 と R2 を作成し、`wrangler.toml` の `DB` / `R2_BUCKET` としてバインドします。
+4. `main` にプッシュすると、Cloudflare Pages が自動で Preview/Production をビルドします。
+5. DNS を切り替えると、[https://lunacea.jp](https://lunacea.jp) で公開されます。
 
 ## 📧 Contact
 

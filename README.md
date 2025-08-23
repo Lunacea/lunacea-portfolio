@@ -131,11 +131,13 @@ bun run start
 
 ## 🌐 Deploy
 
-This project is deployed to [Sevalla](https://sevalla.com/) via GitHub.
+This project is deployed to Cloudflare Pages via GitHub integration.
 
-1. Commit your changes and push to the `main` branch.
-2. Sevalla detects changes in the GitHub repository and automatically triggers a build and deployment.
-3. After deployment, the latest version is available at [https://lunacea.jp](https://lunacea.jp).
+1. Connect this GitHub repository to Cloudflare Pages (GitHub App). No secrets required.
+2. Build command: `bun install --frozen-lockfile && bun run build`. Output is auto-detected for Next on Pages.
+3. Database/Storage: create D1 and R2 on Cloudflare and bind them as `DB` and `R2_BUCKET` (see `wrangler.toml`).
+4. Push to `main`; Cloudflare Pages builds Preview/Production automatically.
+5. The site is available at [https://lunacea.jp](https://lunacea.jp) after DNS cutover.
 
 ## 📧 Contact
 
