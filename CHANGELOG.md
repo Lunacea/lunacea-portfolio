@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.2.0...v3.3.0) (2025-08-23)
+
+
+### Features
+
+* blogページにruntimeを'edge'として追加 ([95f252c](https://github.com/Lunacea/lunacea-portfolio/commit/95f252ca2f68d82f27403425b332436afad3a2a4))
+
 # [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.4...v3.2.0) (2025-08-23)
 
 
