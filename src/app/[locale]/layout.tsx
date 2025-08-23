@@ -6,8 +6,6 @@ import PostHogProvider from '@/shared/components/analytics/PostHogProvider';
 import { routing } from '@/shared/libs/i18nNavigation';
 // Root layout handles ThemeProvider, fonts, and global CSS
 
-export const runtime = 'edge';
-
 export const metadata = {
   keywords: ['Lunacea', 'Portfolio', 'Lunacea Portfolio'],
   robots: {
