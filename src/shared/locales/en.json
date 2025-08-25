@@ -120,7 +120,19 @@
     "published_on": "Published on {date}",
     "tags": "Tags: ",
     "all_posts": "All posts",
-    "latest_posts": "Latest posts"
+    "latest_posts": "Latest posts",
+    "tags_meta_title": "Tags | Blog",
+    "tags_meta_description": "Browse posts by tag",
+    "all_tags_title": "All Tags",
+    "all_tags_description": "Browse articles by tag",
+    "no_tags_title": "No tags yet",
+    "no_tags_description": "Tags will appear when posts are published",
+    "view_tag": "View tag",
+    "all_tags_link": "All tags",
+    "tag_meta_title": "{tag} | Tags",
+    "tag_meta_description": "Articles tagged with {tag}",
+    "tag_heading_description": "Articles tagged with {tag}",
+    "no_posts_for_tag": "No posts for {tag}"
   },
   "ContributionGraph": {
     "past_week_count": "Past {count} weeks of update frequency",

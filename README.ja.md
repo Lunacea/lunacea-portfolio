@@ -119,6 +119,13 @@ bun run start
 2. SevallaがGitHubリポジトリの変更を検知し、自動的にビルドとデプロイを実行します。
 3. デプロイ後、[https://lunacea.jp](https://lunacea.jp) で最新版が公開されます。
 
+### 🏷️ Blog タグ機能
+
+- 一覧: `/[locale]/blog/tag`（`localePrefix: as-needed` のため既定ロケールは `/blog/tag`）
+- 詳細: `/[locale]/blog/tag/[tag]`
+- 記事の `frontmatter` の `tags: string[]` を元に自動生成されます。
+- i18n キーは `src/shared/locales/{ja,en}.json` の `Blog` 名前空間に追加済み。
+
 ## 📧 Contact
 
 質問やフィードバックは以下のメールアドレスまでお願いします：

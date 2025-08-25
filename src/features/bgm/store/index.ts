@@ -27,7 +27,7 @@ type BGMStore = BGMState & BGMActions;
 let howlInstance: Howl | null = null;
 let audioContext: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
-let dataArray: Uint8Array | null = null;
+let dataArray: Uint8Array<ArrayBuffer> | null = null;
 
 const initAudioAnalysis = (): void => {
   if (!howlInstance || audioContext) {
@@ -43,7 +43,9 @@ const initAudioAnalysis = (): void => {
       const source = audioContext.createMediaElementSource(audioElement);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      // The constructor creates a Uint8Array backed by an ArrayBuffer in JS runtime.
+      // TS 5.9 generics infer ArrayBufferLike; assert the concrete ArrayBuffer variant here.
+      dataArray = new Uint8Array(analyser.frequencyBinCount) as Uint8Array<ArrayBuffer>;
     }
   } catch {
     // ignore

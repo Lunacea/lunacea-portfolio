@@ -113,7 +113,19 @@
     "published_on": "公開日: {date}",
     "tags": "タグ: ",
     "all_posts": "すべての記事",
-    "latest_posts": "最新の記事"
+    "latest_posts": "最新の記事",
+    "tags_meta_title": "タグ一覧 | Blog",
+    "tags_meta_description": "タグから記事を探す",
+    "all_tags_title": "タグ一覧",
+    "all_tags_description": "タグごとに記事を閲覧できます",
+    "no_tags_title": "タグがありません",
+    "no_tags_description": "記事にタグが付与されるとここに表示されます",
+    "view_tag": "タグを見る",
+    "all_tags_link": "タグ一覧へ",
+    "tag_meta_title": "{tag} | タグ",
+    "tag_meta_description": "{tag} のタグが付いた記事",
+    "tag_heading_description": "{tag} のタグが付いた記事",
+    "no_posts_for_tag": "{tag} の記事はまだありません"
   },
   "ContributionGraph": {
     "past_week_count": "過去 {count} 週間の更新頻度",
