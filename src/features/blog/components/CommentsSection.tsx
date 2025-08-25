@@ -2,6 +2,9 @@
 
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { FaComment } from 'react-icons/fa';
+import { useComments } from '../hooks/useComments';
+import { CommentForm } from './CommentForm';
 
 type Comment = {
   id: number;
@@ -20,133 +23,87 @@ type CommentsSectionProps = {
 
 export default function CommentsSection({ slug }: CommentsSectionProps) {
   const t = useTranslations('Comments');
-  const [comments, setComments] = useState<Comment[] | null>(null);
-  const [author, setAuthor] = useState('');
-  const [body, setBody] = useState('');
+  const { comments, isLoading, error, fetchComments, createComment } = useComments(slug);
   const [replyTo, setReplyTo] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
-    fetch(`/api/v1/comments?slug=${encodeURIComponent(slug)}`)
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error('failed');
-        }
-        const json = await res.json();
-        if (mounted) {
-          setComments(json.data ?? []);
-        }
-      })
-      .catch(() => {
-        if (mounted) {
-          setError('failed');
-          setComments([]);
-        }
-      })
-      .finally(() => {
-        // no-op
-      });
-    return () => {
-      mounted = false;
-    };
-  }, [slug]);
+    fetchComments();
+  }, [slug, fetchComments]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/v1/comments', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ slug, author, body, parentId: replyTo ?? undefined }),
-      });
-      if (!res.ok) {
-        throw new Error('failed');
-      }
-      const json = await res.json();
-      // 返信含めてリスト再取得して整合性を保つ
-      const refreshed = await fetch(`/api/v1/comments?slug=${encodeURIComponent(slug)}`).then(r => r.json()).catch(() => null);
-      if (refreshed?.data) {
-        setComments(refreshed.data);
-      } else {
-        setComments(prev => [json.data, ...((prev ?? []) as Comment[])]);
-      }
-      setBody('');
+  const handleSubmit = async (data: { author?: string; body: string; parentId?: number }) => {
+    const result = await createComment({
+      ...data,
+      parentId: replyTo ?? undefined,
+    });
+
+    if (result.success) {
       setReplyTo(null);
-    } catch {
-      setError('failed');
-    } finally {
-      setIsSubmitting(false);
+    }
+    return result;
+  };
+
+  const getRelativeTime = (dateString: string): string => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMs = now.getTime() - date.getTime();
+
+    // 負の値（未来の時間）の場合は「今」と表示
+    if (diffInMs < 0) {
+      return '今';
+    }
+
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) {
+      return '今';
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes}分前`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours}時間前`;
+    } else {
+      return `${diffInDays}日前`;
     }
   };
 
   return (
     <section aria-labelledby="comments-title" className="mt-12">
-      <h2 id="comments-title" className="text-xl font-semibold mb-4">{t('title')}</h2>
+      <h2 id="comments-title" className="text-xl font-semibold mb-4">
+        {t('title')}
+      </h2>
+
       {replyTo === null && (
-        <form onSubmit={onSubmit} className="mb-6 space-y-3">
-          <div>
-            <label htmlFor="comment-author" className="block text-sm mb-1">{t('name_label')}</label>
-            <input
-              id="comment-author"
-              value={author}
-              onChange={e => setAuthor(e.target.value)}
-              maxLength={80}
-              placeholder={t('name_placeholder')}
-              className="w-full rounded-md border border-border bg-background px-3 py-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="comment-body" className="block text-sm mb-1">{t('comment_label')}</label>
-            <textarea
-              id="comment-body"
-              value={body}
-              onChange={e => setBody(e.target.value)}
-              required
-              maxLength={4000}
-              rows={4}
-              placeholder={t('comment_placeholder')}
-              className="w-full rounded-md border border-border bg-background px-3 py-2"
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex items-center px-4 py-2 rounded-md bg-primary text-primary-foreground disabled:opacity-50"
-            >
-              {isSubmitting ? t('posting') : t('post')}
-            </button>
-            {error && <p className="text-sm text-destructive">{t('failed')}</p>}
-          </div>
-        </form>
+        <div className="mb-6">
+          <CommentForm
+            onSubmit={handleSubmit}
+            submitLabel={t('post')}
+          />
+        </div>
       )}
 
-      {comments === null
+      {isLoading
         ? (
             <p className="text-muted-foreground">{t('loading')}</p>
           )
-        : (comments?.length ?? 0) === 0
-            ? (
-                <p className="text-muted-foreground">{t('empty')}</p>
-              )
-            : (
-                <ThreadedList
-                  comments={comments ?? []}
-                  replyTo={replyTo}
-                  setReplyTo={setReplyTo}
-                  author={author}
-                  setAuthor={setAuthor}
-                  body={body}
-                  setBody={setBody}
-                  isSubmitting={isSubmitting}
-                  onSubmit={onSubmit}
-                  t={t}
-                />
-              )}
+        : error
+          ? (
+              <p className="text-sm text-destructive">{t('failed')}</p>
+            )
+          : (comments?.length ?? 0) === 0
+              ? (
+                  <p className="text-muted-foreground">{t('empty')}</p>
+                )
+              : (
+                  <ThreadedList
+                    comments={comments ?? []}
+                    replyTo={replyTo}
+                    setReplyTo={setReplyTo}
+                    onSubmit={handleSubmit}
+                    t={t}
+                    getRelativeTime={getRelativeTime}
+                  />
+                )}
     </section>
   );
 }
@@ -155,17 +112,13 @@ type ThreadedListProps = {
   comments: Comment[];
   replyTo: number | null;
   setReplyTo: (id: number | null) => void;
-  author: string;
-  setAuthor: (v: string) => void;
-  body: string;
-  setBody: (v: string) => void;
-  isSubmitting: boolean;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (data: { author?: string; body: string; parentId?: number }) => Promise<{ success: boolean; error?: string }>;
   t: (key: string) => string;
+  getRelativeTime: (dateString: string) => string;
 };
 
 function ThreadedList(props: ThreadedListProps) {
-  const { comments, replyTo, setReplyTo, author, setAuthor, body, setBody, isSubmitting, onSubmit, t } = props;
+  const { comments, replyTo, setReplyTo, onSubmit, t, getRelativeTime } = props;
   const byParent = new Map<number | null, Comment[]>();
   for (const c of comments) {
     const key = c.parentId ?? null;
@@ -179,65 +132,50 @@ function ThreadedList(props: ThreadedListProps) {
     return (
       <ul className={depth === 0 ? 'space-y-4' : 'mt-3 space-y-3 pl-4 border-l border-border/50'}>
         {nodes.map(node => (
-          <li key={node.id} className="rounded-lg border border-border p-4">
-            <div className="mb-2 text-xs text-muted-foreground">
-              <span className="font-medium">{node.author || 'anonymous'}</span>
-              <span className="mx-2">
-                ID:
-                {(node.dailyId ?? '').slice(0, 8)}
-              </span>
-              <span className="mx-2">
-                ◆
-                {(node.tripcode ?? '').slice(0, 6)}
-              </span>
-              <span className="mx-2">{new Date(node.createdAt).toLocaleString()}</span>
+          <li key={node.id} className="border-t border-b border-border p-2">
+            <div className="mb-3">
+              <div className="text-base font-medium mb-1 flex items-baseline gap-2">
+                <span>{node.author || 'anonymous'}</span>
+                <span className="text-sm text-muted-foreground">
+                  {getRelativeTime(node.createdAt)}
+                </span>
+              </div>
+              <div className="text-xs text-muted-foreground space-x-3">
+                <span>
+                  ID:
+                  {(node.dailyId ?? '').slice(0, 8)}
+                </span>
+                <span>
+                  ◆
+                  {(node.tripcode ?? '').slice(0, 6)}
+                </span>
+              </div>
+            </div>
+
+            <p className="whitespace-pre-wrap leading-relaxed my-2">{node.body}</p>
+
+            <div className="flex justify-between items-center py-2">
               <button
                 type="button"
-                className="ml-2 text-primary hover:underline"
+                className="text-sm text-primary hover:underline hover:text-primary/80 transition-colors flex items-center gap-1"
                 onClick={() => setReplyTo(node.id)}
               >
-                Reply
+                <FaComment className="text-xs" />
+                {t('reply')}
               </button>
             </div>
 
             {replyTo === node.id && (
-              <form onSubmit={onSubmit} className="mb-4 space-y-2">
-                <div>
-                  <label htmlFor={`reply-author-${node.id}`} className="sr-only">{t('name_label')}</label>
-                  <input
-                    id={`reply-author-${node.id}`}
-                    value={author}
-                    onChange={e => setAuthor(e.target.value)}
-                    maxLength={80}
-                    placeholder={t('name_placeholder')}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2"
-                  />
-                </div>
-                <div>
-                  <label htmlFor={`reply-body-${node.id}`} className="sr-only">{t('comment_label')}</label>
-                  <textarea
-                    id={`reply-body-${node.id}`}
-                    value={body}
-                    onChange={e => setBody(e.target.value)}
-                    required
-                    maxLength={4000}
-                    rows={3}
-                    placeholder={t('comment_placeholder')}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <button type="submit" disabled={isSubmitting} className="px-3 py-1 rounded-md bg-primary text-primary-foreground disabled:opacity-50">
-                    {isSubmitting ? t('posting') : t('post')}
-                  </button>
-                  <button type="button" className="px-3 py-1 rounded-md border" onClick={() => setReplyTo(null)}>
-                    Cancel
-                  </button>
-                </div>
-              </form>
+              <div className="my-4">
+                <CommentForm
+                  onSubmit={onSubmit}
+                  onCancel={() => setReplyTo(null)}
+                  submitLabel={t('post')}
+                  cancelLabel="Cancel"
+                />
+              </div>
             )}
 
-            <p className="whitespace-pre-wrap leading-relaxed">{node.body}</p>
             {renderBranch(node.id, depth + 1)}
           </li>
         ))}
