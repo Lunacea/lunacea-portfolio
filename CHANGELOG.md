@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-25)
+
+
+### Features
+
+* **blog:** タグ機能を追加し、関連するメタデータを設定 ([7236ccc](https://github.com/Lunacea/lunacea-portfolio/commit/7236ccc76abc16c926c88e29c0574ee6ebf6ce9f))
+
 # [3.0.0](https://github.com/Lunacea/lunacea-portfolio/compare/v2.0.1...v3.0.0) (2025-08-23)
 
 
