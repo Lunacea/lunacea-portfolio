@@ -49,6 +49,22 @@
 # [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-26)
 
 
+### Bug Fixes
+
+* **music-controller:** 音量調整機能のアクセシビリティを調整 ([8899ef4](https://github.com/Lunacea/lunacea-portfolio/commit/8899ef456195660d13e26a2075f51addfe629590))
+
+
+### Features
+
+* **AudioCanvas:** 多様な装飾パターンと美しいカラーパレットを追加 ([bc6d0a2](https://github.com/Lunacea/lunacea-portfolio/commit/bc6d0a2a58437d7b392819bbeddf59cca39434cf))
+* **blog:** タグ機能を追加し、関連するメタデータを設定 ([7236ccc](https://github.com/Lunacea/lunacea-portfolio/commit/7236ccc76abc16c926c88e29c0574ee6ebf6ce9f))
+* **blog:** ページの一番上に戻るボタンを追加 ([0317d88](https://github.com/Lunacea/lunacea-portfolio/commit/0317d8815534de651852a756fb46e56f7888b283))
+* **comments:** コメントフォームとカスタムフックを追加 ([e760d24](https://github.com/Lunacea/lunacea-portfolio/commit/e760d24cababafcc6439f6fce5b3b9ad49b1d6eb))
+* **comments:** コメント機能を追加し、データベーススキーマを更新 ([713b1bf](https://github.com/Lunacea/lunacea-portfolio/commit/713b1bfde6f55c536fe24f37c2b275e764d3b03e))
+
+# [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-26)
+
+
 ### Features
 
 * **blog:** タグ機能を追加し、関連するメタデータを設定 ([7236ccc](https://github.com/Lunacea/lunacea-portfolio/commit/7236ccc76abc16c926c88e29c0574ee6ebf6ce9f))
