@@ -1,13 +1,14 @@
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 
-const _commentSchema = z.object({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const commentSchema = z.object({
   author: z.string().max(80).optional(),
   body: z.string().min(1).max(4000),
   parentId: z.number().int().positive().optional(),
 });
 
-type CommentFormData = z.infer<typeof _commentSchema>;
+type CommentFormData = z.infer<typeof commentSchema>;
 
 type Comment = {
   id: number;

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { FaComment } from 'react-icons/fa';
-import { useComments } from '../hooks/useComments';
+import { useComments } from '@/features/blog/hooks/useComments';
 import { CommentForm } from './CommentForm';
 
 type Comment = {
@@ -76,7 +76,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
       {replyTo === null && (
         <div className="mb-6">
           <CommentForm
-            onSubmit={handleSubmit}
+            onSubmitAction={handleSubmit}
             submitLabel={t('post')}
           />
         </div>
@@ -168,8 +168,8 @@ function ThreadedList(props: ThreadedListProps) {
             {replyTo === node.id && (
               <div className="my-4">
                 <CommentForm
-                  onSubmit={onSubmit}
-                  onCancel={() => setReplyTo(null)}
+                  onSubmitAction={onSubmit}
+                  onCancelAction={() => setReplyTo(null)}
                   submitLabel={t('post')}
                   cancelLabel="Cancel"
                 />

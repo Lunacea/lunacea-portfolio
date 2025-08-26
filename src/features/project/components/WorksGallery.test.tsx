@@ -3,17 +3,17 @@ import React from 'react';
 import { WorksGallery } from './WorksGallery';
 
 vi.mock('./ProjectNavigation', () => ({
-  ProjectNavigation: (props: any) => (
+  ProjectNavigation: (props: { currentProject: number; projectCount: number }) => (
     <div data-testid="project-nav">{`${props.currentProject + 1}/${props.projectCount}`}</div>
   ),
 }));
 
 vi.mock('./HorizontalScrollContainer', () => ({
-  HorizontalScrollContainer: (props: any) => <div data-testid="h-scroll">{props.children}</div>,
+  HorizontalScrollContainer: (props: { children: React.ReactNode }) => <div data-testid="h-scroll">{props.children}</div>,
 }));
 
 vi.mock('./ProjectCard', () => ({
-  ProjectCard: (props: any) => <div data-testid="project-card">{props.project.title}</div>,
+  ProjectCard: (props: { project: { title: string } }) => <div data-testid="project-card">{props.project.title}</div>,
 }));
 
 describe('WorksGallery', () => {

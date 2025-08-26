@@ -30,7 +30,7 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
       type="button"
       onClick={handleToggle}
       onDragStart={handleDragStart}
-      draggable={true}
+      draggable
       className={`${className} theme-toggle-button cursor-pointer transition-all duration-500 hover:scale-105 active:scale-95 opacity-100`}
       aria-label="テーマを切り替え"
       title="ドラッグして 'C' をコピー、クリックでテーマ切り替え"

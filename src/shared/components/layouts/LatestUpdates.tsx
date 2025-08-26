@@ -58,7 +58,7 @@ export default async function LatestUpdates({ locale }: ILatestUpdatesProps) {
                 </p>
               </a>
               {index < sortedLatestUpdates.length - 1 && (
-                <div className="w-full h-px bg-border/10 mt-3 lg:mt-4"></div>
+                <div className="w-full h-px bg-border/10 mt-3 lg:mt-4" />
               )}
             </div>
           ))}

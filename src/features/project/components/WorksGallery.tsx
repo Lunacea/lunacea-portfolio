@@ -1,8 +1,7 @@
 'use client';
 
-import type { HorizontalScrollContainerRef } from '@/features/project/components/HorizontalScrollContainer';
 import { useCallback, useRef, useState } from 'react';
-import { HorizontalScrollContainer } from '@/features/project/components/HorizontalScrollContainer';
+import { HorizontalScrollContainer, type HorizontalScrollContainerRef } from '@/features/project/components/HorizontalScrollContainer';
 import { ProjectCard } from '@/features/project/components/ProjectCard';
 import { ProjectNavigation } from '@/features/project/components/ProjectNavigation';
 

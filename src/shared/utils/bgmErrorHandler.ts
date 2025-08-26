@@ -1,3 +1,5 @@
+import { logger } from '@/shared/libs/Logger';
+
 export enum BGMErrorType {
   LOAD_ERROR = 'LOAD_ERROR',
   PLAY_ERROR = 'PLAY_ERROR',
@@ -9,7 +11,7 @@ export enum BGMErrorType {
 export type BGMError = {
   type: BGMErrorType;
   message: string;
-  originalError?: any;
+  originalError?: unknown;
   timestamp: Date;
 };
 
@@ -17,20 +19,23 @@ export class BGMErrorHandler {
   private static errors: BGMError[] = [];
   private static maxErrors = 50;
 
-  static logError(type: BGMErrorType, message: string, originalError?: any): void {
+  static logError(type: BGMErrorType, message: string, originalError?: unknown): void {
     const error: BGMError = { type, message, originalError, timestamp: new Date() };
     this.errors.unshift(error);
     if (this.errors.length > this.maxErrors) {
       this.errors = this.errors.slice(0, this.maxErrors);
     }
-    console.error(`[BGM ${type}] ${message}`, originalError);
+    
+    // 本番環境ではエラーのみ、開発環境では詳細ログを出力
     if (process.env.NODE_ENV === 'development') {
-      console.warn(`BGM Error Details - ${type}`);
-      console.warn('Message:', message);
-      console.warn('Timestamp:', error.timestamp.toISOString());
-      if (originalError) {
-        console.warn('Original Error:', originalError);
-      }
+      logger.warn({ 
+        type, 
+        message, 
+        timestamp: error.timestamp.toISOString(),
+        originalError: originalError instanceof Error ? originalError.message : String(originalError)
+      }, `BGM Error Details - ${type}`);
+    } else {
+      logger.error({ type, message }, `[BGM ${type}] ${message}`);
     }
   }
 
@@ -50,15 +55,15 @@ export class BGMErrorHandler {
     return this.errors[0] || null;
   }
 
-  static hasRecentErrors(minutes: number = 5): boolean {
+  static hasRecentErrors(minutes = 5): boolean {
     const cutoff = new Date(Date.now() - minutes * 60 * 1000);
     return this.errors.some(error => error.timestamp > cutoff);
   }
 }
 
 export const logBGMError = BGMErrorHandler.logError.bind(BGMErrorHandler);
-export const logLoadError = (message: string, error?: any) => logBGMError(BGMErrorType.LOAD_ERROR, message, error);
-export const logPlayError = (message: string, error?: any) => logBGMError(BGMErrorType.PLAY_ERROR, message, error);
-export const logAudioContextError = (message: string, error?: any) => logBGMError(BGMErrorType.AUDIO_CONTEXT_ERROR, message, error);
-export const logPermissionError = (message: string, error?: any) => logBGMError(BGMErrorType.PERMISSION_ERROR, message, error);
-export const logStorageError = (message: string, error?: any) => logBGMError(BGMErrorType.STORAGE_ERROR, message, error);
+export const logLoadError = (message: string, error?: unknown) => logBGMError(BGMErrorType.LOAD_ERROR, message, error);
+export const logPlayError = (message: string, error?: unknown) => logBGMError(BGMErrorType.PLAY_ERROR, message, error);
+export const logAudioContextError = (message: string, error?: unknown) => logBGMError(BGMErrorType.AUDIO_CONTEXT_ERROR, message, error);
+export const logPermissionError = (message: string, error?: unknown) => logBGMError(BGMErrorType.PERMISSION_ERROR, message, error);
+export const logStorageError = (message: string, error?: unknown) => logBGMError(BGMErrorType.STORAGE_ERROR, message, error);

@@ -1,32 +1,56 @@
-import type { PgliteDatabase } from 'drizzle-orm/pglite';
 import path from 'node:path';
-import { PGlite } from '@electric-sql/pglite';
-import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
-import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
-import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
-import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator';
-import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants';
 import { Client } from 'pg';
+import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { PHASE_PRODUCTION_BUILD } from 'next/dist/shared/lib/constants';
 import { Env } from '@/shared/libs/Env';
 import * as schema from '@/shared/models/Schema';
 
 let client: Client | undefined;
-let drizzle: any;
+let pgDrizzle: NodePgDatabase<typeof schema> | undefined;
 
+// ビルド時はDB接続を試行しない
 if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD && Env.DATABASE_URL) {
-  client = new Client({ connectionString: Env.DATABASE_URL });
-  await client.connect();
-  drizzle = drizzlePg(client, { schema });
-  await migratePg(drizzle, { migrationsFolder: path.join(process.cwd(), 'migrations') });
-} else {
-  const global = globalThis as unknown as { client: PGlite; drizzle: PgliteDatabase<typeof schema> };
-  if (!global.client) {
-    global.client = new PGlite();
-    await global.client.waitReady;
-    global.drizzle = drizzlePglite(global.client, { schema });
+  try {
+    client = new Client({ connectionString: Env.DATABASE_URL });
+    await client.connect();
+    pgDrizzle = drizzle(client, { schema });
+    if (pgDrizzle) {
+      await migrate(pgDrizzle, { migrationsFolder: path.join(process.cwd(), 'migrations') });
+    }
+  } catch (error) {
+    // Development only - will be removed in production
+    // eslint-disable-next-line no-console
+    console.warn('Database connection failed during development:', error);
   }
-  drizzle = global.drizzle;
-  await migratePglite(global.drizzle, { migrationsFolder: path.join(process.cwd(), 'migrations') });
 }
 
-export const db = drizzle;
+// データベースインスタンスの取得（遅延初期化）
+const getDb = async (): Promise<NodePgDatabase<typeof schema>> => {
+  if (pgDrizzle) {
+    return pgDrizzle;
+  }
+
+  if (!Env.DATABASE_URL) {
+    throw new Error('DATABASE_URL environment variable is not set');
+  }
+
+  try {
+    client = new Client({ connectionString: Env.DATABASE_URL });
+    await client.connect();
+    pgDrizzle = drizzle(client, { schema });
+    return pgDrizzle;
+  } catch (error) {
+    throw new Error(`Failed to initialize database connection: ${error}`);
+  }
+};
+
+export const db = {
+  // 既存のpgDrizzleがある場合はそれを使用、なければ新しく接続
+  get: async () => {
+    if (pgDrizzle) {
+      return pgDrizzle;
+    }
+    return await getDb();
+  }
+};

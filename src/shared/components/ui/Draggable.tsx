@@ -117,12 +117,18 @@ export const Draggable = (
   const handleMouseMove = useCallback((e: MouseEvent) => handleInteractionMove(e.clientX, e.clientY), [handleInteractionMove]);
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches.length === 1) {
-      handleInteractionStart(e.touches[0]!.clientX, e.touches[0]!.clientY);
+      const touch = e.touches[0];
+      if (touch) {
+        handleInteractionStart(touch.clientX, touch.clientY);
+      }
     }
   }, [handleInteractionStart]);
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (e.touches.length === 1) {
-      handleInteractionMove(e.touches[0]!.clientX, e.touches[0]!.clientY);
+      const touch = e.touches[0];
+      if (touch) {
+        handleInteractionMove(touch.clientX, touch.clientY);
+      }
     }
   }, [handleInteractionMove]);
 

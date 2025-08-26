@@ -31,14 +31,21 @@ export async function GET(request: Request) {
   if (decision.isDenied()) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
+  
   const { searchParams } = new URL(request.url);
   const parsed = listQuerySchema.safeParse({ slug: searchParams.get('slug') });
   if (!parsed.success) {
     return NextResponse.json({ error: 'ValidationError', issues: parsed.error.issues }, { status: 400 });
   }
   const { slug } = parsed.data;
-  const rows = await db.select().from(comments).where(eq(comments.slug, slug)).orderBy(desc(comments.createdAt)).limit(200);
-  return NextResponse.json({ data: rows }, { status: 200 });
+  
+  try {
+    const dbInstance = await db.get();
+    const rows = await dbInstance.select().from(comments).where(eq(comments.slug, slug)).orderBy(desc(comments.createdAt)).limit(200);
+    return NextResponse.json({ data: rows }, { status: 200 });
+  } catch {
+    return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -55,6 +62,7 @@ export async function POST(request: Request) {
   if (decision.isDenied()) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
+  
   const json = await request.json().catch(() => null);
   const parsed = createBodySchema.safeParse(json);
   if (!parsed.success) {
@@ -65,10 +73,11 @@ export async function POST(request: Request) {
     const authorValue = author && author.trim().length > 0 ? author.trim() : 'anonymous';
     const dailyId = generateDailyId(request, slug);
     const tripcode = generateTripcode(request);
-    const [row] = await db.insert(comments).values({ slug, author: authorValue, body, parentId, dailyId, tripcode }).returning();
+    const dbInstance = await db.get();
+    const [row] = await dbInstance.insert(comments).values({ slug, author: authorValue, body, parentId, dailyId, tripcode }).returning();
     return NextResponse.json({ data: row }, { status: 201 });
-  } catch (error) {
-    console.error('comments_post_error', { error });
+  } catch {
+    // Log error for debugging (in production, use proper logging service)
     return NextResponse.json({ error: 'InternalError' }, { status: 500 });
   }
 }

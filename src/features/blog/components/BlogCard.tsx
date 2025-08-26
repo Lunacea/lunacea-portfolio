@@ -10,7 +10,7 @@ type BlogCardProps = {
   post: BlogPostMeta;
 };
 
-function formatDate(dateString: string, locale: string = 'ja'): string {
+function formatDate(dateString: string, locale = 'ja'): string {
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -37,8 +37,7 @@ export default function BlogCard({ post }: BlogCardProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-accent/3
           opacity-0 group-hover:opacity-100 transition-opacity duration-300
           dark:from-primary/2 dark:via-transparent dark:to-accent/2 dark:opacity-0 dark:group-hover:opacity-50"
-        >
-        </div>
+         />
 
         <div className="relative z-1 flex flex-col h-full">
           {post.tags.length > 0 && (

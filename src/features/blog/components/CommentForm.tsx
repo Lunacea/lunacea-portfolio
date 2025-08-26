@@ -13,8 +13,8 @@ const commentFormSchema = z.object({
 type CommentFormData = z.infer<typeof commentFormSchema>;
 
 type CommentFormProps = {
-  onSubmit: (data: CommentFormData) => Promise<{ success: boolean; error?: string }>;
-  onCancel?: () => void;
+  onSubmitAction: (data: CommentFormData) => Promise<{ success: boolean; error?: string }>;
+  onCancelAction?: () => void;
   isSubmitting?: boolean;
   defaultValues?: Partial<CommentFormData>;
   submitLabel?: string;
@@ -22,8 +22,8 @@ type CommentFormProps = {
 };
 
 export const CommentForm = ({
-  onSubmit,
-  onCancel,
+  onSubmitAction,
+  onCancelAction,
   isSubmitting = false,
   defaultValues,
   submitLabel,
@@ -42,7 +42,7 @@ export const CommentForm = ({
   });
 
   const handleFormSubmit = async (data: CommentFormData) => {
-    const result = await onSubmit(data);
+    const result = await onSubmitAction(data);
     if (result.success) {
       reset();
     }
@@ -98,10 +98,10 @@ export const CommentForm = ({
         >
           {isSubmitting ? t('posting') : submitLabel || t('post')}
         </button>
-        {onCancel && (
+        {onCancelAction && (
           <button
             type="button"
-            onClick={onCancel}
+            onClick={onCancelAction}
             className="px-3 py-2 rounded-md border hover:bg-muted transition-colors"
           >
             {cancelLabel || 'Cancel'}

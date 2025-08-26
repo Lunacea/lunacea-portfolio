@@ -27,7 +27,7 @@ export default async function Index(props: IIndexPageProps) {
 
   return (
     <>
-      <ScrollController disableScroll={true} />
+      <ScrollController disableScroll />
       {/* ThemeToggleへのクリックヒント */}
       <ThemeToggleHint />
       <div className="w-full h-full flex items-center justify-center overflow-hidden">

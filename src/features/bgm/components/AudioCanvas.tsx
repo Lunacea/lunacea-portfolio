@@ -50,13 +50,15 @@ function getDecorativePattern(time: number, bandCount: number): number[] {
 function drawSmoothCurve(
   ctx: CanvasRenderingContext2D,
   points: { x: number; y: number }[],
-  tension: number = 0.5,
+  tension = 0.5,
 ): void {
   if (points.length < 3) {
     return;
   }
   ctx.beginPath();
-  ctx.moveTo(points[0]!.x, points[0]!.y);
+  const firstPoint = points[0];
+  if (!firstPoint) return;
+  ctx.moveTo(firstPoint.x, firstPoint.y);
   for (let i = 0; i < points.length - 1; i++) {
     const p0 = points[i === 0 ? points.length - 1 : i - 1];
     const p1 = points[i];
@@ -72,7 +74,6 @@ function drawSmoothCurve(
     ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
   }
   const lastPoint = points[points.length - 1];
-  const firstPoint = points[0];
   const secondPoint = points[1];
   const secondLastPoint = points[points.length - 2];
   if (lastPoint && firstPoint && secondPoint && secondLastPoint) {

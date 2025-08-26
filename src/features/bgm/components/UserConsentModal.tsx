@@ -20,19 +20,16 @@ export default function UserConsentModal() {
     try {
       const visited = sessionStorage.getItem('visitedAnyRoute');
       if (!visited) {
-        // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
         setIsFirstPageLoad(true);
         sessionStorage.setItem('visitedAnyRoute', '1');
       }
     } catch {
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setIsFirstPageLoad(true);
     }
   }, []);
   // consent 未決定かつ (ホーム以外 or 初回ページロードのホーム) のとき表示
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setIsMounted(true);
   }, []);
   const shouldShowOverlay = isMounted && hasUserConsent === null && (!isHome || isFirstPageLoad);
@@ -77,11 +74,11 @@ export default function UserConsentModal() {
       {isAnimating && rippleOrigin && (
         <>
           <div ref={rippleRef} className={styles.rippleContainer}>
-            <div className={styles.mainRipple}></div>
-            <div className={styles.secondaryRipple}></div>
+            <div className={styles.mainRipple} />
+            <div className={styles.secondaryRipple} />
           </div>
           <div className={styles.backgroundGlow}>
-            <div ref={glowRef} className={styles.glowLayer}></div>
+            <div ref={glowRef} className={styles.glowLayer} />
           </div>
         </>
       )}
@@ -90,7 +87,7 @@ export default function UserConsentModal() {
         <p className="text-black/70 dark:text-white/70 text-sm leading-relaxed mb-8">{t('dialog_message_1')}</p>
         <div className="flex gap-3 justify-center">
           <button type="button" onClick={e => onChoose(e, true)} className="px-6 py-2 text-sm font-medium text-black dark:text-white hover:text-purple-300 transition-colors duration-200">{t('allow')}</button>
-          <div className="w-px h-8 bg-black/20 dark:bg-white/20 self-center"></div>
+          <div className="w-px h-8 bg-black/20 dark:bg-white/20 self-center" />
           <button type="button" onClick={e => onChoose(e, false)} className="px-6 py-2 text-sm font-medium text-black/70 dark:text-white/70 hover:text-black transition-colors duration-200">{t('deny')}</button>
         </div>
       </div>

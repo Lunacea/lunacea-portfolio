@@ -71,7 +71,7 @@ export function ProjectNavigation({
         {/* ナビゲーション */}
         <div className="relative">
           {/* 下の横線 */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-border/40"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-border/40" />
 
           <div className="flex items-center gap-6 pt-4 relative">
             {Array.from({ length: projectCount }, (_, index) => {
@@ -81,7 +81,7 @@ export function ProjectNavigation({
                 <div key={`project-nav-${index}`} className="relative">
                   {/* アクティブアイテムの上線ハイライト */}
                   {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-primary transition-all duration-200"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-px bg-primary transition-all duration-200" />
                   )}
 
                   <button

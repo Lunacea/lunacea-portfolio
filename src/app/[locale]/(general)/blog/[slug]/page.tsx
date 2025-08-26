@@ -14,7 +14,7 @@ type BlogPostPageProps = {
 };
 
 // サーバーサイド用の日付フォーマット関数
-function formatDate(dateString: string, locale: string = 'ja'): string {
+function formatDate(dateString: string, locale = 'ja'): string {
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',

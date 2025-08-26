@@ -11,7 +11,7 @@ import { AppConfig } from '@/shared/utils/AppConfig';
 export default function BaseTemplate(props: { leftNav?: React.ReactNode; rightNav?: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground relative">
-      <div className="absolute inset-0 bg-theme-paper bg-theme-overlay"></div>
+      <div className="absolute inset-0 bg-theme-paper bg-theme-overlay" />
       <Header leftNav={<NavigationLinks />} rightNav={<LocaleSwitcher />} />
       <main className="relative lg:ml-64">
         <div className="flex flex-col w-full items-center justify-center pt-28 sm:pt-24 lg:pt-20">
@@ -31,7 +31,7 @@ export default function BaseTemplate(props: { leftNav?: React.ReactNode; rightNa
           </div>
           <div className="w-full max-w-6xl">
             {props.children}
-            <div className="w-full h-16"></div>
+            <div className="w-full h-16" />
           </div>
         </div>
       </main>

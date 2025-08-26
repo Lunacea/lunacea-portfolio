@@ -3,7 +3,7 @@ import React from 'react';
 import { ProjectCard } from './ProjectCard';
 
 vi.mock('next/image', () => ({
-  default: (props: any) => {
+  default: (props: { alt?: string }) => {
     const { alt } = props;
 
     return React.createElement('img', { alt });
@@ -11,7 +11,7 @@ vi.mock('next/image', () => ({
 }));
 
 vi.mock('@/shared/components/ui/ScrollReveal', () => ({
-  ScrollReveal: (props: any) => <div data-testid="reveal">{props.children}</div>,
+  ScrollReveal: (props: { children: React.ReactNode }) => <div data-testid="reveal">{props.children}</div>,
 }));
 
 describe('ProjectCard', () => {

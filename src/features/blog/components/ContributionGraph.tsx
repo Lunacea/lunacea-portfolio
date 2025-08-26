@@ -30,7 +30,7 @@ export default function ContributionGraph({ posts, weekCount = 20 }: Contributio
       <div className="overflow-x-auto">
         <div className="flex items-start gap-1 p-3 pt-6 bg-card/30 rounded-xl border border-border/30 min-w-fit">
           <div className="flex flex-col gap-1 text-xs text-muted-foreground mr-2 flex-shrink-0">
-            <div className="h-4 flex items-end"></div>
+            <div className="h-4 flex items-end" />
             <div className="h-3 flex items-center">Sun</div>
             <div className="h-3 flex items-center">Mon</div>
             <div className="h-3 flex items-center">Tue</div>
@@ -58,10 +58,10 @@ export default function ContributionGraph({ posts, weekCount = 20 }: Contributio
       <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <span>low</span>
         <div className="flex items-center gap-1">
-          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(0)}`}></div>
-          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(1)}`}></div>
-          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(2)}`}></div>
-          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(3)}`}></div>
+          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(0)}`} />
+          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(1)}`} />
+          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(2)}`} />
+          <div className={`w-2.5 h-2.5 rounded-md ${getIntensityClass(3)}`} />
         </div>
         <span>high</span>
       </div>

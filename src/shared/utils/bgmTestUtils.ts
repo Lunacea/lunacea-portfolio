@@ -75,7 +75,11 @@ export class MockBGMPlayer {
 
   private startAutoToggle(): void {
     this.toggleTimer = setInterval(() => {
-      this.isPlaying ? this.pause() : this.play();
+      if (this.isPlaying) {
+        this.pause();
+      } else {
+        this.play();
+      }
     }, this.options.toggleInterval);
   }
 }
@@ -102,7 +106,9 @@ export const mockLocalStorage = () => {
       delete storage[key];
     },
     clear: () => {
-      Object.keys(storage).forEach(key => delete storage[key]);
+      Object.keys(storage).forEach(key => {
+        delete storage[key];
+      });
     },
     get length() {
       return Object.keys(storage).length;
