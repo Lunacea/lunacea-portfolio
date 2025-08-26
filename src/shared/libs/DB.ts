@@ -22,6 +22,17 @@ if (process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD && Env.DATABASE_URL) {
     // Development only - will be removed in production
     // eslint-disable-next-line no-console
     console.warn('Database connection failed during development:', error);
+    // より詳細なエラー情報を出力
+    if (error instanceof Error) {
+      const errorDetails = {
+        message: error.message,
+        code: (error as NodeJS.ErrnoException).code,
+        errno: (error as NodeJS.ErrnoException).errno,
+        syscall: (error as NodeJS.ErrnoException).syscall
+      };
+      // eslint-disable-next-line no-console
+      console.warn('Error details:', errorDetails);
+    }
   }
 }
 
