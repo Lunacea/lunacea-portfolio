@@ -7,6 +7,7 @@ import BlogPostContent from '@/features/blog/components/BlogPostContent';
 import CommentsSection from '@/features/blog/components/CommentsSection';
 import SideTableOfContents from '@/features/blog/components/SideTableOfContents';
 import Icon from '@/shared/components/ui/Icon';
+import BackToTop from '@/shared/components/ui/BackToTop';
 import { getAllBlogPosts, getBlogPost } from '@/shared/libs/blog';
 
 type BlogPostPageProps = {
@@ -152,6 +153,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         </div>
       )}
+
+      {/* Back to Top */}
+      <BackToTop />
 
       {/* フッター */}
       {/* <footer className="container mx-auto px-4 py-12 max-w-7xl text-center">
