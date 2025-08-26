@@ -23,6 +23,7 @@ export default function MusicController() {
   const progressRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
+  const volumeSliderRef = useRef<HTMLInputElement>(null);
 
   const toggleMusic = useCallback(() => {
     if (isPlaying) {
@@ -116,33 +117,97 @@ export default function MusicController() {
     });
   }, [animationValues, isPlaying]);
 
+  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = Number(e.target.value) / 100;
+    setVolume(newVolume);
+  }, [setVolume]);
+
+  const handleVolumeKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    const step = e.shiftKey ? 10 : 1;
+    let newVolume = volume;
+    
+    switch (e.key) {
+      case 'ArrowUp':
+      case 'ArrowRight':
+        e.preventDefault();
+        newVolume = Math.min(1, volume + (step / 100));
+        break;
+      case 'ArrowDown':
+      case 'ArrowLeft':
+        e.preventDefault();
+        newVolume = Math.max(0, volume - (step / 100));
+        break;
+      case 'Home':
+        e.preventDefault();
+        newVolume = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        newVolume = 1;
+        break;
+      case 'PageUp':
+        e.preventDefault();
+        newVolume = Math.min(1, volume + 0.1);
+        break;
+      case 'PageDown':
+        e.preventDefault();
+        newVolume = Math.max(0, volume - 0.1);
+        break;
+      default:
+        return;
+    }
+    
+    setVolume(newVolume);
+    if (volumeSliderRef.current) {
+      volumeSliderRef.current.value = String(Math.round(newVolume * 100));
+    }
+  }, [volume, setVolume]);
+
   return (
-    <>
-      <div className="hidden md:flex items-center gap-2 p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg">
-        <Icon icon={<FaVolumeUp />} className="text-slate-600 dark:text-white/70 text-xs flex-shrink-0" />
+    <div className="flex items-center gap-2" role="group" aria-label="音楽コントロール">
+      {/* 音量コントロール */}
+      <div className="hidden md:flex items-center gap-2 p-3 hover:bg-black/10 dark:hover:bg-white/5 focus-within:bg-black/15 dark:focus-within:bg-white/10 transition-all duration-200 rounded-lg focus-within:ring-2 focus-within:ring-ring/50 focus-within:ring-offset-2 focus-within:ring-offset-background">
+        <Icon 
+          icon={<FaVolumeUp />} 
+          className="text-slate-600 dark:text-white/70 text-xs flex-shrink-0" 
+          aria-hidden="true"
+        />
         <div className="relative w-20 h-6 flex items-center">
           <div className={styles.sliderTrack} />
           <div ref={progressRef} className={styles.sliderProgress} />
           <div ref={handleRef} className={styles.sliderHandle} />
           <input
+            ref={volumeSliderRef}
             type="range"
             min="0"
             max="100"
+            step="1"
             value={volumePercentage}
-            onChange={e => setVolume(Number(e.target.value) / 100)}
+            onChange={handleVolumeChange}
+            onKeyDown={handleVolumeKeyDown}
             aria-label="音量調整"
-            className="absolute w-full h-6 opacity-0 cursor-pointer"
+            aria-valuetext={`音量 ${volumePercentage}%`}
+            className="absolute w-full h-6 opacity-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            title={`音量: ${volumePercentage}%`}
           />
         </div>
+        <span className="sr-only">音量: {volumePercentage}%</span>
       </div>
 
+      {/* 再生/停止ボタン */}
       <button
         type="button"
         onClick={toggleMusic}
-        className="p-3 hover:bg-black/10 dark:hover:bg-white/5 transition-all duration-200 rounded-lg group"
+        className="p-3 hover:bg-black/10 dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-within:bg-black/15 dark:focus-within:bg-white/10 transition-all duration-200 rounded-lg group focus-within:ring-2 focus-within:ring-ring/50 focus-within:ring-offset-2 focus-within:ring-offset-background"
         aria-label={isPlaying ? '音楽を停止' : '音楽を再生'}
+
+        title={isPlaying ? '音楽を停止する' : '音楽を再生する'}
       >
-        <div className="w-6 h-6 flex justify-center items-end gap-1.5">
+        <div 
+          className="w-6 h-6 flex justify-center items-end gap-1.5"
+          role="img"
+          aria-label={isPlaying ? '音楽再生中のビジュアライザー' : '音楽停止中のビジュアライザー'}
+        >
           {VISUALIZER_KEYS.map((key, index) => {
             const barClassName = styles.bar;
             return (
@@ -152,12 +217,16 @@ export default function MusicController() {
                   barsRef.current[index] = el;
                 }}
                 className={barClassName}
-                title={`Bar ${index}`}
+                aria-hidden="true"
+                title={`ビジュアライザーバー ${index + 1}`}
               />
             );
           })}
         </div>
+        <span className="sr-only">
+          {isPlaying ? '音楽再生中 - クリックで停止' : '音楽停止中 - クリックで再生'}
+        </span>
       </button>
-    </>
+    </div>
   );
-};
+}
