@@ -12,17 +12,27 @@ failOnConsole({
 // Mock next/navigation for next-intl testing in jsdom
 vi.mock('next/navigation', async () => {
   return {
-    Router: () => ({ push: () => {}, replace: () => {}, prefetch: () => {}, back: () => {} }),
+    Router: () => ({ 
+      push: () => Promise.resolve(), 
+      replace: () => Promise.resolve(), 
+      prefetch: () => Promise.resolve(), 
+      back: () => Promise.resolve() 
+    }),
     Pathname: () => '/',
     SearchParams: () => new URLSearchParams(),
-  } as any;
+  } as const;
 });
 
 // Some builds import the ESM entry explicitly
 vi.mock('next/navigation.js', async () => {
   return {
-    Router: () => ({ push: () => {}, replace: () => {}, prefetch: () => {}, back: () => {} }),
+    Router: () => ({ 
+      push: () => Promise.resolve(), 
+      replace: () => Promise.resolve(), 
+      prefetch: () => Promise.resolve(), 
+      back: () => Promise.resolve() 
+    }),
     Pathname: () => '/',
     SearchParams: () => new URLSearchParams(),
-  } as any;
+  } as const;
 });

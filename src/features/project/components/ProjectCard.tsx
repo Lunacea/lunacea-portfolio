@@ -169,8 +169,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-accent/3
                   opacity-0 group-hover:opacity-100 transition-opacity duration-300
                   dark:from-primary/2 dark:via-transparent dark:to-accent/2 dark:opacity-0 dark:group-hover:opacity-50"
-                >
-                </div>
+                 />
 
                 <ProjectImage
                   src={project.image}

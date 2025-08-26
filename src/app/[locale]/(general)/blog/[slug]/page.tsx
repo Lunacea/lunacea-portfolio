@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
 import BlogPostContent from '@/features/blog/components/BlogPostContent';
+import CommentsSection from '@/features/blog/components/CommentsSection';
 import SideTableOfContents from '@/features/blog/components/SideTableOfContents';
 import Icon from '@/shared/components/ui/Icon';
 import { getAllBlogPosts, getBlogPost } from '@/shared/libs/blog';
@@ -13,7 +14,7 @@ type BlogPostPageProps = {
 };
 
 // サーバーサイド用の日付フォーマット関数
-function formatDate(dateString: string, locale: string = 'ja'): string {
+function formatDate(dateString: string, locale = 'ja'): string {
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -131,6 +132,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <aside className="hidden lg:block w-64 xl:w-80 flex-shrink-0">
             <SideTableOfContents items={post.tableOfContents || []} />
           </aside>
+        </div>
+        {/* コメント */}
+        <div className="mt-12 max-w-4xl">
+          <CommentsSection slug={post.slug} />
         </div>
       </div>
 

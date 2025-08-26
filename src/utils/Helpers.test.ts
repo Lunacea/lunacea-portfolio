@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { getI18nPath } from '@/shared/utils/Helpers';
 
 // next-intl -> next/navigation の依存を避けるため局所モック
 vi.mock('@/shared/libs/i18nNavigation', () => ({
@@ -8,8 +9,6 @@ vi.mock('@/shared/libs/i18nNavigation', () => ({
     localePrefix: 'as-needed',
   },
 }));
-
-import { getI18nPath } from '@/shared/utils/Helpers';
 
 describe('Helpers', () => {
   describe('getI18nPath function', () => {

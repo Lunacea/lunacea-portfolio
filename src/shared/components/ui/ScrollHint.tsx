@@ -1,7 +1,6 @@
 'use client';
 
-import type { RefObject } from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 
 type ScrollHintProps = {

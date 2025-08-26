@@ -54,13 +54,13 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
       <nav className="relative py-4">
         <h3 className="text-sm font-semibold text-foreground mb-4 tracking-tight">On This Page</h3>
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-px bg-border/40"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-px bg-border/40" />
           <ul className="space-y-2 ml-4 relative">
             {topLevelItems.map((item) => {
               const isActive = activeId === item.id;
               return (
                 <li key={`side-toc-${item.id}`} className="relative">
-                  {isActive && <div className="absolute -left-4 top-0 bottom-0 w-px bg-primary transition-all duration-200"></div>}
+                  {isActive && <div className="absolute -left-4 top-0 bottom-0 w-px bg-primary transition-all duration-200" />}
                   <a
                     href={`#${item.id}`}
                     className={`block py-1 text-sm leading-relaxed transition-all duration-200 hover:text-foreground ${item.level === 2 ? 'ml-4' : ''} ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}

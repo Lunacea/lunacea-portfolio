@@ -164,5 +164,19 @@
   "Hello": {
     "hello_title": "Hello",
     "hello_message": "Hello, how are you?"
+  },
+  "Comments": {
+    "title": "Comments",
+    "name_label": "Name",
+    "name_placeholder": "Enter your name (optional)",
+    "comment_label": "Comment",
+    "comment_placeholder": "Enter your comment",
+    "post": "Post",
+    "posting": "Posting...",
+    "failed": "Failed to post comment",
+    "loading": "Loading...",
+    "empty": "No comments yet",
+    "reply": "Reply",
+    "cancel": "Cancel"
   }
 }

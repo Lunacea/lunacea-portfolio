@@ -21,7 +21,8 @@ const getPostCountForDate = (targetDate: string, blogPosts: BlogPostMeta[]): num
       return 0;
     }
     try {
-      const postDate = new Date(publishedDate).toISOString().split('T')[0]!;
+      const postDate = new Date(publishedDate).toISOString().split('T')[0];
+      if (!postDate) return false;
       return postDate === targetDate;
     } catch {
       return 0;
@@ -52,7 +53,7 @@ const isFirstDayOfMonth = (dateStr: string): boolean => {
   }
 };
 
-export function useContributionStats(posts: BlogPostMeta[], weekCount: number = 20) {
+export function useContributionStats(posts: BlogPostMeta[], weekCount = 20) {
   const dateRange = useMemo(() => {
     const today = new Date();
     const days: string[] = [];
@@ -60,7 +61,10 @@ export function useContributionStats(posts: BlogPostMeta[], weekCount: number = 
     for (let i = totalDays - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      days.push(date.toISOString().split('T')[0]!);
+      const dateStr = date.toISOString().split('T')[0];
+      if (dateStr) {
+        days.push(dateStr);
+      }
     }
     return days;
   }, [weekCount]);
@@ -72,7 +76,7 @@ export function useContributionStats(posts: BlogPostMeta[], weekCount: number = 
     }
     return weeksData.map((week, weekIndex) => {
       const monthLabel = getMonthLabel(week);
-      const weekKey = week[0] || `week-${weekIndex}`;
+      const weekKey = week[0] ?? `week-${weekIndex}`;
       const daysInWeek = week.map((date, dayIndex) => {
         const count = date ? getPostCountForDate(date, posts) : 0;
         const isMonthStart = date ? isFirstDayOfMonth(date) : false;

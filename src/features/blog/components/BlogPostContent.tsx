@@ -32,7 +32,7 @@ function sanitizeHtmlContent(htmlContent: string): string {
   ];
   const hasDangerousContent = dangerousPatterns.some(pattern => pattern.test(htmlContent));
   if (hasDangerousContent) {
-    console.warn('Potentially dangerous content detected in blog post HTML');
+    // Potentially dangerous content detected in blog post HTML
     return '<div class="error-fallback">安全でないコンテンツが検出されました。</div>';
   }
   return htmlContent;
@@ -60,7 +60,6 @@ export default function BlogPostContent({ post }: BlogPostContentProps) {
       <TableOfContents items={post.tableOfContents || []} className="mb-8 lg:hidden" />
       {safeHtmlContent && (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
-          {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: safeHtmlContent }} />
         </div>
       )}

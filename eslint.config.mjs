@@ -1,59 +1,83 @@
-import antfu from '@antfu/eslint-config';
-import nextPlugin from '@next/eslint-plugin-next';
-import jestDom from 'eslint-plugin-jest-dom';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
-import playwright from 'eslint-plugin-playwright';
-import testingLibrary from 'eslint-plugin-testing-library';
+import { FlatCompat } from '@eslint/eslintrc';
 
-export default antfu({
-  react: true,
-  typescript: true,
-
-  lessOpinionated: true,
-  isInEditor: false,
-
-  stylistic: {
-    semi: true,
-  },
-
-  formatters: {
-    css: true,
-  },
-
-  ignores: [
-    'migrations/**/*',
-    'next-env.d.ts',
-    'docs/**/*.md',
-    '**/*.md',
-  ],
-}, jsxA11y.flatConfigs.recommended, {
-  plugins: {
-    '@next/next': nextPlugin,
-  },
-  rules: {
-    ...nextPlugin.configs.recommended.rules,
-    ...nextPlugin.configs['core-web-vitals'].rules,
-  },
-}, {
-  files: [
-    '**/*.test.ts?(x)',
-  ],
-  ...testingLibrary.configs['flat/react'],
-  ...jestDom.configs['flat/recommended'],
-}, {
-  files: [
-    '**/*.spec.ts',
-    '**/*.e2e.ts',
-  ],
-  ...playwright.configs['flat/recommended'],
-}, {
-  rules: {
-    'antfu/no-top-level-await': 'off', // Allow top-level await
-    'style/brace-style': ['error', '1tbs'], // Use the default brace style
-    'ts/consistent-type-definitions': ['error', 'type'], // Use `type` instead of `interface`
-    'react/prefer-destructuring-assignment': 'off', // Vscode doesn't support automatically destructuring, it's a pain to add a new variable
-    'node/prefer-global/process': 'off', // Allow using `process.env`
-    'test/padding-around-all': 'error', // Add padding in test files
-    'test/prefer-lowercase-title': 'off', // Allow using uppercase titles in test titles
-  },
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
 });
+
+const eslintConfig = [
+  ...compat.config({
+    extends: [
+      'next/core-web-vitals',
+      'next/typescript',
+    ],
+    settings: {
+      next: {
+        rootDir: '.',
+      },
+    },
+  }),
+  {
+    ignores: [
+      'migrations/**/*',
+      'next-env.d.ts',
+      'docs/**/*.md',
+      '**/*.md',
+      '.next/**/*',
+      'dist/**/*',
+      'build/**/*',
+      '.storybook/**/*',
+    ],
+  },
+  {
+    rules: {
+      // 基本的な設定
+      'react/prefer-destructuring-assignment': 'off',
+      
+      // TypeScriptの厳格なルール
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-var-requires': 'error',
+      '@typescript-eslint/ban-ts-comment': 'error',
+      '@typescript-eslint/no-empty-function': 'error',
+      '@typescript-eslint/no-empty-interface': 'error',
+      '@typescript-eslint/no-inferrable-types': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      
+      // Reactの厳格なルール
+      'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/rules-of-hooks': 'error',
+      'react/jsx-no-useless-fragment': 'error',
+      'react/jsx-curly-brace-presence': ['error', 'never'],
+      'react/self-closing-comp': 'error',
+      'react/jsx-boolean-value': ['error', 'never'],
+      'react/no-array-index-key': 'error',
+      'react/no-unescaped-entities': 'error',
+      
+      // 一般的な厳格なルール
+      'no-console': 'warn',
+      'no-debugger': 'error',
+      'no-alert': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-unused-expressions': 'error',
+      'no-duplicate-imports': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*'],
+              message: 'Use absolute imports instead of relative imports',
+            },
+          ],
+        },
+      ],
+      'prefer-template': 'error',
+      'no-useless-concat': 'error',
+      'no-useless-return': 'error',
+      'no-useless-escape': 'error',
+    },
+  },
+];
+
+export default eslintConfig;

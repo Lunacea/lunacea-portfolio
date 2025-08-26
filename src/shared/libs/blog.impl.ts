@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { extractTableOfContents, parseMarkdownToHtml } from './mdx-parser';
 import 'server-only';
+import { logger } from '@/shared/libs/Logger';
 
 export type BlogPost = {
   slug: string;
@@ -21,11 +22,18 @@ export type BlogPost = {
 
 export type BlogPostMeta = Omit<BlogPost, 'content' | 'htmlContent'>;
 
-const BLOG_CONTENT_PATH = path.join(process.cwd(), 'content', 'blog');
+const BLOG_CONTENT_PATH = path.resolve(process.cwd(), 'content', 'blog');
 
 function ensureBlogDirectory(): void {
-  if (!fs.existsSync(BLOG_CONTENT_PATH)) {
-    console.warn(`ブログディレクトリが見つかりません: ${BLOG_CONTENT_PATH}`);
+  try {
+    if (!fs.existsSync(BLOG_CONTENT_PATH)) {
+      logger.warn(`ブログディレクトリが見つかりません: ${BLOG_CONTENT_PATH}`);
+      // ディレクトリが存在しない場合は作成を試行
+      fs.mkdirSync(BLOG_CONTENT_PATH, { recursive: true });
+      logger.info(`ブログディレクトリを作成しました: ${BLOG_CONTENT_PATH}`);
+    }
+  } catch (error) {
+    logger.error({ error }, 'ブログディレクトリの確認・作成に失敗');
   }
 }
 
@@ -36,17 +44,29 @@ function getSlugFromFilename(filename: string): string {
 export function getBlogPostFiles(): string[] {
   ensureBlogDirectory();
   try {
+    // パスの存在確認を追加
+    if (!fs.existsSync(BLOG_CONTENT_PATH)) {
+      logger.warn(`ブログディレクトリが存在しません: ${BLOG_CONTENT_PATH}`);
+      return [];
+    }
+
     const files = fs.readdirSync(BLOG_CONTENT_PATH);
     return files.filter(file => file.endsWith('.mdx') || file.endsWith('.md'));
   } catch (error) {
-    console.warn('ブログディレクトリの読み取りに失敗:', error);
+    logger.error({ error }, 'ブログディレクトリの読み取りに失敗');
     return [];
   }
 }
 
 export async function parseBlogPost(filename: string): Promise<BlogPost> {
-  const filePath = path.join(BLOG_CONTENT_PATH, filename);
+  const filePath = path.resolve(BLOG_CONTENT_PATH, filename);
   try {
+    // ファイルの存在確認を追加
+    if (!fs.existsSync(filePath)) {
+      logger.warn(`ファイルが見つかりません: ${filePath}`);
+      throw new Error(`ファイルが見つかりません: ${filename}`);
+    }
+
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContent);
 
@@ -67,7 +87,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       htmlContent = await parseMarkdownToHtml(content);
       tableOfContents = extractTableOfContents(content);
     } catch (parseError) {
-      console.error(`HTML変換エラー (${filename}):`, parseError);
+      logger.error({ parseError, filename }, 'HTML変換エラー');
       htmlContent = `<pre class="error-fallback">${content}</pre>`;
     }
 
@@ -85,7 +105,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       excerpt: cleanExcerpt.length > 200 ? `${cleanExcerpt.substring(0, 200)}...` : cleanExcerpt,
     };
   } catch (error) {
-    console.error(`ブログ記事の解析エラー (${filename}):`, error);
+    logger.error({ error, filename }, 'ブログ記事の解析エラー');
     const slug = getSlugFromFilename(filename);
     return {
       slug,
@@ -106,6 +126,7 @@ export async function getAllBlogPosts(): Promise<BlogPostMeta[]> {
   const files = getBlogPostFiles();
   const posts = await Promise.all(files.map(async (filename) => {
     const post = await parseBlogPost(filename);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { content, htmlContent, ...meta } = post;
     return meta;
   }));
@@ -132,7 +153,7 @@ export async function getAllTags(): Promise<string[]> {
   return Array.from(new Set(allTags)).sort();
 }
 
-export function formatDate(dateString: string, locale: string = 'ja'): string {
+export function formatDate(dateString: string, locale = 'ja'): string {
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString(locale, options);

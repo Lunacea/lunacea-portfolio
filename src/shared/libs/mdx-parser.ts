@@ -1,6 +1,5 @@
-import type { Options } from 'rehype-pretty-code';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypePrettyCode from 'rehype-pretty-code';
+import rehypePrettyCode, { type Options } from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
@@ -8,6 +7,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import remarkToc from 'remark-toc';
 import { unified } from 'unified';
+import { logger } from '@/shared/libs/Logger';
 import 'server-only';
 
 const rehypePrettyCodeOptions: Options = {
@@ -32,7 +32,7 @@ export async function parseMarkdownToHtml(markdown: string): Promise<string> {
     const result = await processor.process(markdown);
     return String(result);
   } catch (error) {
-    console.error('Markdown parsing error:', error);
+    logger.error({ error }, 'Markdown parsing error');
     return `<pre class="error-fallback">${markdown}</pre>`;
   }
 }
@@ -88,7 +88,7 @@ export function extractTableOfContents(markdown: string): Array<{ id: string; ti
               const id = cleanTitle
                 .toLowerCase()
                 .replace(/\s+/g, '-')
-                .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]/g, '')
+                .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF-]/g, '')
                 .replace(/-+/g, '-')
                 .replace(/^-+|-+$/g, '')
                 .substring(0, 50);

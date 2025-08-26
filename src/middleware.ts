@@ -1,8 +1,7 @@
-import type { NextFetchEvent, NextRequest } from 'next/server';
+import { NextResponse, type NextFetchEvent, type NextRequest } from 'next/server';
 import { detectBot } from '@arcjet/next';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
-import { NextResponse } from 'next/server';
 import arcjet from '@/shared/libs/Arcjet';
 import { routing } from '@/shared/libs/i18nRouting';
 
@@ -74,5 +73,5 @@ export const config = {
   // Match all pathnames except for
   // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!_next|_vercel|monitoring|.*\\..*).*)',
+  matcher: '/((?!api|trpc|_next|_vercel|monitoring|.*\\..*).*)',
 };
