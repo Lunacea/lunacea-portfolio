@@ -1,6 +1,6 @@
 {
   "name": "lunacea-portfolio",
-  "version": "3.4.7",
+  "version": "3.5.0",
   "author": "Lunacea",
   "engines": {
     "node": ">=20"
@@ -22,7 +22,7 @@
     "db:migrate": "dotenv -c production -- drizzle-kit migrate",
     "db:studio": "dotenv -c production -- drizzle-kit studio",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build",
+    "storybook:build": "storybook build --quiet",
     "storybook:serve": "http-server storybook-static --port 6006 --silent",
     "serve-storybook": "run-s storybook:*",
     "test-storybook:ci": "start-server-and-test serve-storybook http://127.0.0.1:6006 test-storybook",
