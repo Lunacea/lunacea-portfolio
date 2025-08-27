@@ -82,37 +82,5 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
       
-      - name: Create release
-        if: success()
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Setup Node.js
-        if: success()
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
-      - name: Cache Bun dependencies
-        if: success()
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-      
-      - name: Install semantic-release
-        if: success()
-        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
-      
-      - name: Execute semantic-release
-        if: success()
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_ENV: production
+      # Release management is handled by semantic-release in this workflow
+      # No separate release job needed
