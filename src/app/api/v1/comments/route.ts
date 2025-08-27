@@ -77,7 +77,6 @@ export async function POST(request: Request) {
     const [row] = await dbInstance.insert(comments).values({ slug, author: authorValue, body, parentId, dailyId, tripcode }).returning();
     return NextResponse.json({ data: row }, { status: 201 });
   } catch {
-
     // Log error for debugging (in production, use proper logging service)
     return NextResponse.json({ error: 'InternalError' }, { status: 500 });
   }
