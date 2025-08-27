@@ -1,6 +1,6 @@
 {
   "name": "lunacea-portfolio",
-  "version": "3.5.0",
+  "version": "3.1.0",
   "author": "Lunacea",
   "engines": {
     "node": ">=20"
@@ -171,8 +171,16 @@
         {
           "preset": "conventionalcommits",
           "releaseRules": [
-            {"type": "chore", "scope": "deps", "release": "patch"},
-            {"type": "chore", "scope": "version", "release": "patch"}
+            {
+              "type": "chore",
+              "scope": "deps",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "scope": "version",
+              "release": "patch"
+            }
           ]
         }
       ],
@@ -187,7 +195,10 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["package.json", "CHANGELOG.md"],
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
