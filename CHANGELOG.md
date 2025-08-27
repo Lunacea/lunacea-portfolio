@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.0...v3.1.1) (2025-08-27)
+
+
+### Bug Fixes
+
+* remove npm cache from Node.js setup and add Bun cache for semantic-release in CD workflow ([6439503](https://github.com/Lunacea/lunacea-portfolio/commit/6439503560ac6bdf16bc7b5d0b1a6fd8276399f6))
+
 # [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-27)
 
 
