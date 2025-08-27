@@ -23,6 +23,26 @@
 
 ### Bug Fixes
 
+* fix ClerkProviderの使用条件を環境変数に基づいて変更し、設定されていない場合は通常のレイアウトを返すように修正 ([6392d44](https://github.com/Lunacea/lunacea-portfolio/commit/6392d44459e3aef0f8e7886e902d7e55075a9c64))
+* **music-controller:** 音量調整機能のアクセシビリティを調整 ([8899ef4](https://github.com/Lunacea/lunacea-portfolio/commit/8899ef456195660d13e26a2075f51addfe629590))
+* コメントAPIのエラーハンドリングで不要な空行を削除 ([cf5b606](https://github.com/Lunacea/lunacea-portfolio/commit/cf5b6069f240eadd1c72e5dbc5638987e96cb6be))
+* コメントAPIのエラーハンドリングを改善し、デバッグ用の詳細なエラーログを追加 ([71951fb](https://github.com/Lunacea/lunacea-portfolio/commit/71951fb1a954db4fa83ee982b17df7a67e4369e2))
+
+
+### Features
+
+* **AudioCanvas:** 多様な装飾パターンと美しいカラーパレットを追加 ([bc6d0a2](https://github.com/Lunacea/lunacea-portfolio/commit/bc6d0a2a58437d7b392819bbeddf59cca39434cf))
+* **blog:** タグ機能を追加し、関連するメタデータを設定 ([7236ccc](https://github.com/Lunacea/lunacea-portfolio/commit/7236ccc76abc16c926c88e29c0574ee6ebf6ce9f))
+* **blog:** ページの一番上に戻るボタンを追加 ([0317d88](https://github.com/Lunacea/lunacea-portfolio/commit/0317d8815534de651852a756fb46e56f7888b283))
+* **comments:** コメントフォームとカスタムフックを追加 ([e760d24](https://github.com/Lunacea/lunacea-portfolio/commit/e760d24cababafcc6439f6fce5b3b9ad49b1d6eb))
+* **comments:** コメント機能を追加し、データベーススキーマを更新 ([713b1bf](https://github.com/Lunacea/lunacea-portfolio/commit/713b1bfde6f55c536fe24f37c2b275e764d3b03e))
+* set up CI/CD workflows ([e5683b5](https://github.com/Lunacea/lunacea-portfolio/commit/e5683b503f5dcf1d110171ac48e1860e38082c0d))
+
+# [3.1.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.0.0...v3.1.0) (2025-08-27)
+
+
+### Bug Fixes
+
 * **music-controller:** 音量調整機能のアクセシビリティを調整 ([8899ef4](https://github.com/Lunacea/lunacea-portfolio/commit/8899ef456195660d13e26a2075f51addfe629590))
 * コメントAPIのエラーハンドリングで不要な空行を削除 ([cf5b606](https://github.com/Lunacea/lunacea-portfolio/commit/cf5b6069f240eadd1c72e5dbc5638987e96cb6be))
 * コメントAPIのエラーハンドリングを改善し、デバッグ用の詳細なエラーログを追加 ([71951fb](https://github.com/Lunacea/lunacea-portfolio/commit/71951fb1a954db4fa83ee982b17df7a67e4369e2))
