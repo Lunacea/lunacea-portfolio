@@ -5,17 +5,24 @@ FROM oven/bun:1.2-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files first (for better layer caching)
 COPY package.json bun.lock ./
 COPY tsconfig.json ./
 COPY next.config.ts ./
 COPY postcss.config.mjs ./
+COPY tailwind.config.ts ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install dependencies (this layer will be cached if package files don't change)
+RUN bun install --frozen-lockfile --production=false
 
-# Copy source code
-COPY . .
+# Copy source code (only what's needed for build)
+COPY src/ ./src/
+COPY public/ ./public/
+COPY content/ ./content/
+COPY migrations/ ./migrations/
+COPY drizzle.config.ts ./
+COPY vitest.config.mts ./
+COPY vitest-setup.ts ./
 
 # Build application
 RUN bun run build

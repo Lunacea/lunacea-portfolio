@@ -113,3 +113,28 @@ jspm_packages/
 
 # Checkly
 checkly.config.ts
+
+# Test files (not needed for production build)
+tests/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Development tools
+.eslintrc*
+.prettierrc*
+commitlint.config.*
+lint-staged.config.*
+husky.config.*
+
+# CI/CD files
+.github/
+.github/workflows/
+.github/actions/
+playwright.config.ts
+vitest.config.mts
+vitest-setup.ts
+
+# Development scripts
+src/scripts/

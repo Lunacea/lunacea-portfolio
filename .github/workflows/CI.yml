@@ -139,7 +139,7 @@ jobs:
         with:
           name: build-output
           path: .next/
-          retention-days: 1
+          retention-days: 7
 
   e2e:
     name: E2E Tests
@@ -170,11 +170,22 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       
+      - name: Check build artifacts availability
+        run: |
+          echo "Checking if build artifacts are available..."
+          if [ ! -f ".next/BUILD_ID" ]; then
+            echo "Build artifacts not found. Building locally..."
+            bun run build
+          else
+            echo "Build artifacts found and downloaded successfully."
+          fi
+      
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-output
           path: .next/
+        continue-on-error: true
       
       - name: Install Playwright
         run: bunx playwright install --with-deps
@@ -213,7 +224,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'sarif'
+          format: 'ni'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
       
