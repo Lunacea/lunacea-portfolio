@@ -27,16 +27,22 @@ export default async function AuthLayout(props: {
     afterSignOutUrl = `/${locale}${afterSignOutUrl}`;
   }
 
-  return (
-    <ClerkProvider
-      localization={clerkLocale}
-      signInUrl={signInUrl}
-      signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={dashboardUrl}
-      signUpFallbackRedirectUrl={dashboardUrl}
-      afterSignOutUrl={afterSignOutUrl}
-    >
-      {props.children}
-    </ClerkProvider>
-  );
+  // Clerkの環境変数が設定されている場合のみClerkProviderを使用
+  if (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return (
+      <ClerkProvider
+        publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        localization={clerkLocale}
+        signInUrl={signInUrl}
+        signUpUrl={signUpUrl}
+        signInFallbackRedirectUrl={dashboardUrl}
+        signUpFallbackRedirectUrl={dashboardUrl}
+        afterSignOutUrl={afterSignOutUrl}
+      >
+        {props.children}
+      </ClerkProvider>
+    );
+  }
+  // 環境変数が設定されていない場合は通常のレイアウト
+  return props.children;
 }
