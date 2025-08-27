@@ -150,7 +150,7 @@ jobs:
           path: ./
       
       - name: Sign the published container image
-        uses: sigstore/cosign-installer@v4
+        uses: sigstore/cosign-installer@v3
         with:
           cosign-release: 'v2.2.2'
       
@@ -197,7 +197,7 @@ jobs:
     name: Prisma Migrate
     runs-on: ubuntu-latest
     needs: [terraform-apply]
-    if: success() && env.DATABASE_URL != ''
+    if: success()
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
