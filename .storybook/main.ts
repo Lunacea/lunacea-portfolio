@@ -33,6 +33,14 @@ const config: StorybookConfig = {
       };
     }
     
+    // Next.js 15との互換性を向上
+    if (config.plugins) {
+      config.plugins = config.plugins.filter(plugin => {
+        // 競合するプラグインを除外
+        return plugin && typeof plugin === 'object' && plugin.constructor.name !== 'ForkTsCheckerWebpackPlugin';
+      });
+    }
+    
     return config;
   },
 };
