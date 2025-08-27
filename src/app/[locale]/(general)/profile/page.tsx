@@ -17,6 +17,7 @@ import {
   SiSvelte,
   SiTailwindcss,
   SiTypescript,
+  SiVuedotjs,
 } from 'react-icons/si';
 import DraggableBusinessCard from '@/features/businessCard/components/DraggableBusinessCard';
 import BackToTop from '@/shared/components/ui/BackToTop';
@@ -162,7 +163,7 @@ export default async function Profile(props: IProfileProps) {
 
   const skillCategories = [
     {
-      title: 'Programming Languages',
+      title: 'Development Languages',
       delay: 100,
       items: [
         { label: 'TypeScript', icon: <SiTypescript className="w-5 h-5 text-[#3178C6]" /> },
@@ -179,6 +180,7 @@ export default async function Profile(props: IProfileProps) {
       items: [
         { label: 'React', icon: <SiReact className="w-5 h-5 text-[#61DAFB]" /> },
         { label: 'Next.js', icon: <SiNextdotjs className="w-5 h-5 text-foreground" /> },
+        { label: 'Vue.js', icon: <SiVuedotjs className="w-5 h-5 text-[#4FC08D]" /> },
         { label: 'Svelte/SvelteKit', icon: <SiSvelte className="w-5 h-5 text-[#FF3E00]" /> },
         { label: 'Tailwind CSS', icon: <SiTailwindcss className="w-5 h-5 text-[#06B6D4]" /> },
       ],

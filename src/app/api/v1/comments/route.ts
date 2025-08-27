@@ -43,12 +43,7 @@ export async function GET(request: Request) {
     const dbInstance = await db.get();
     const rows = await dbInstance.select().from(comments).where(eq(comments.slug, slug)).orderBy(desc(comments.createdAt)).limit(200);
     return NextResponse.json({ data: rows }, { status: 200 });
-  } catch (error) {
-    // デバッグ用のエラーログ
-    // eslint-disable-next-line no-console
-    console.error('Database connection failed in comments API:', error);
-    // eslint-disable-next-line no-console
-    console.error('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+  } catch {
     return NextResponse.json({ error: 'Database connection failed' }, { status: 500 });
   }
 }
@@ -81,12 +76,8 @@ export async function POST(request: Request) {
     const dbInstance = await db.get();
     const [row] = await dbInstance.insert(comments).values({ slug, author: authorValue, body, parentId, dailyId, tripcode }).returning();
     return NextResponse.json({ data: row }, { status: 201 });
-  } catch (error) {
-    // デバッグ用のエラーログ
-    // eslint-disable-next-line no-console
-    console.error('Database connection failed in comments API:', error);
-    // eslint-disable-next-line no-console
-    console.error('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+  } catch {
+
     // Log error for debugging (in production, use proper logging service)
     return NextResponse.json({ error: 'InternalError' }, { status: 500 });
   }

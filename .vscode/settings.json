@@ -21,7 +21,7 @@
   "testing.automaticallyOpenTestResults": "neverOpen", // Don't open the test results automatically
 
   // I18n
-  "i18n-ally.localesPaths": ["src/locales"],
+  "i18n-ally.localesPaths": ["src/shared/locales"],
   "i18n-ally.keystyle": "nested",
 
   // Disable the default formatter, use ESLint instead
@@ -58,5 +58,25 @@
     "pcss",
     "postcss",
     "github-actions-workflow"
+  ],
+  "cSpell.words": [
+    "ajkey",
+    "animejs",
+    "ARCJET",
+    "checkly",
+    "conventionalcommits",
+    "Hackathon",
+    "LOGTAIL",
+    "lunacea",
+    "Nextdotjs",
+    "Nodedotjs",
+    "Noll",
+    "Pkgs",
+    "POSTHOG",
+    "shiki",
+    "spotlightjs",
+    "tohoku",
+    "tripcode",
+    "Vuedotjs"
   ]
 }

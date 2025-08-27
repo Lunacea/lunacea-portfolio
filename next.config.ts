@@ -13,6 +13,7 @@ const baseConfig: NextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['@electric-sql/pglite'],
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  output: 'standalone',
 };
 
 // Next-Intlプラグインの初期化

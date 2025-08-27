@@ -1,0 +1,44 @@
+name: Setup Bun
+
+on:
+  workflow_call:
+    inputs:
+      bun-version:
+        description: 'Bun version to use'
+        required: false
+        default: 'latest'
+        type: string
+      cache-key:
+        description: 'Cache key for dependencies'
+        required: false
+        default: 'bun-lock'
+        type: string
+    outputs:
+      cache-hit:
+        description: 'Whether cache was hit'
+        value: ${{ jobs.setup.outputs.cache-hit }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
+    steps:
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version }}
+      
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ inputs.cache-key }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+      
+      - name: Install dependencies
+        run: bun install --frozen-lockfile

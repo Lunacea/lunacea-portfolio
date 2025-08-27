@@ -54,7 +54,7 @@ const eslintConfig = [
       'react/no-unescaped-entities': 'error',
       
       // 一般的な厳格なルール
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-alert': 'error',
       'no-var': 'error',
