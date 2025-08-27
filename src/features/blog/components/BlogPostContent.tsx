@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import TableOfContents from '@/features/blog/components/TableOfContents';
 
 type BlogPost = {
@@ -26,34 +27,32 @@ function sanitizeHtmlContent(htmlContent: string): string {
     return '';
   }
   
-  // より安全で正確な危険パターンの検出
-  const dangerousPatterns = [
-    // scriptタグ（開始と終了を含む）
-    /<script[^>]*>[\s\S]*?<\/script>/gi,
-    // javascript:プロトコル
-    /javascript:/gi,
-    // イベントハンドラー属性
-    /on\w+\s*=/gi,
-    // iframeタグ
-    /<iframe[^>]*>[\s\S]*?<\/iframe>/gi,
-    // objectタグ
-    /<object[^>]*>[\s\S]*?<\/object>/gi,
-    // embedタグ
-    /<embed[^>]*>/gi,
-    // データURI（危険な可能性）
-    /data:text\/html/gi,
-    // vbscript:プロトコル
-    /vbscript:/gi,
-    // 式属性（IE固有）
-    /expression\s*\(/gi,
-  ];
-  
-  const hasDangerousContent = dangerousPatterns.some(pattern => pattern.test(htmlContent));
-  if (hasDangerousContent) {
-    // Potentially dangerous content detected in blog post HTML
-    return '<div class="error-fallback">安全でないコンテンツが検出されました。</div>';
+  try {
+    // DOMPurifyを使用してHTMLを安全にサニタイズ
+    const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
+      // 許可するタグと属性を制限
+      ALLOWED_TAGS: [
+        'p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'img', 'div', 'span'
+      ],
+      ALLOWED_ATTR: [
+        'href', 'src', 'alt', 'title', 'class', 'id', 'target'
+      ],
+      // 危険なコンテンツを完全に除去
+      FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'],
+      FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'javascript:', 'vbscript:'],
+      // データURIを無効化
+      ALLOW_DATA_ATTR: false,
+      // コメントを除去
+      KEEP_CONTENT: false
+    });
+    
+    return sanitizedHtml;
+  } catch (error) {
+    console.warn('HTML sanitization failed:', error);
+    // サニタイゼーションが失敗した場合は安全なフォールバック
+    return '<div class="error-fallback">HTMLの処理中にエラーが発生しました。</div>';
   }
-  return htmlContent;
 }
 
 export default function BlogPostContent({ post }: BlogPostContentProps) {

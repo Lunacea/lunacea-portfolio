@@ -7,10 +7,6 @@ WORKDIR /app
 
 # Copy package files first (for better layer caching)
 COPY package.json bun.lock ./
-COPY tsconfig.json ./
-COPY next.config.ts ./
-COPY postcss.config.mjs ./
-COPY tailwind.config.ts ./
 
 # Install dependencies (this layer will be cached if package files don't change)
 RUN bun install --frozen-lockfile --production=false
@@ -23,6 +19,10 @@ COPY migrations/ ./migrations/
 COPY drizzle.config.ts ./
 COPY vitest.config.mts ./
 COPY vitest-setup.ts ./
+COPY postcss.config.mjs ./
+COPY tailwind.config.ts ./
+COPY next.config.ts ./
+COPY tsconfig.json ./
 
 # Build application
 RUN bun run build
