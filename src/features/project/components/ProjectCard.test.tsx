@@ -11,7 +11,7 @@ vi.mock('next/image', () => ({
 }));
 
 vi.mock('@/shared/components/ui/ScrollReveal', () => ({
-  ScrollReveal: (props: { children: React.ReactNode }) => <div data-testid="reveal">{props.children}</div>,
+  default: (props: { children: React.ReactNode }) => <div data-testid="reveal">{props.children}</div>,
 }));
 
 describe('ProjectCard', () => {

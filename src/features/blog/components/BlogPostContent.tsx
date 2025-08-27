@@ -25,11 +25,29 @@ function sanitizeHtmlContent(htmlContent: string): string {
   if (!htmlContent || typeof htmlContent !== 'string') {
     return '';
   }
+  
+  // より安全で正確な危険パターンの検出
   const dangerousPatterns = [
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    // scriptタグ（開始と終了を含む）
+    /<script[^>]*>[\s\S]*?<\/script>/gi,
+    // javascript:プロトコル
     /javascript:/gi,
+    // イベントハンドラー属性
     /on\w+\s*=/gi,
+    // iframeタグ
+    /<iframe[^>]*>[\s\S]*?<\/iframe>/gi,
+    // objectタグ
+    /<object[^>]*>[\s\S]*?<\/object>/gi,
+    // embedタグ
+    /<embed[^>]*>/gi,
+    // データURI（危険な可能性）
+    /data:text\/html/gi,
+    // vbscript:プロトコル
+    /vbscript:/gi,
+    // 式属性（IE固有）
+    /expression\s*\(/gi,
   ];
+  
   const hasDangerousContent = dangerousPatterns.some(pattern => pattern.test(htmlContent));
   if (hasDangerousContent) {
     // Potentially dangerous content detected in blog post HTML

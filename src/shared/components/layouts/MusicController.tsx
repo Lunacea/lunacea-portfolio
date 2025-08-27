@@ -124,7 +124,7 @@ export default function MusicController() {
 
   const handleVolumeKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     const step = e.shiftKey ? 10 : 1;
-    let newVolume = volume;
+    let newVolume: number;
     
     switch (e.key) {
       case 'ArrowUp':
