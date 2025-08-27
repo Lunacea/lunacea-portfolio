@@ -11,7 +11,6 @@ const baseConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ['@electric-sql/pglite'],
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   output: 'standalone',
 };

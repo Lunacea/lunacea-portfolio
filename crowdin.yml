@@ -1,5 +1,5 @@
 #
-# Your Crowdin credentials
+# Your Crowdinい１８い１８ credentials
 #
 # No need modify CROWDIN_PROJECT_ID and CROWDIN_PERSONAL_TOKEN, you can set them in GitHub Actions secrets
 project_id_env: CROWDIN_PROJECT_ID

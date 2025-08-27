@@ -10,7 +10,6 @@ COPY package.json bun.lock ./
 COPY tsconfig.json ./
 COPY next.config.ts ./
 COPY postcss.config.mjs ./
-COPY tailwind.config.ts ./
 
 # Install dependencies
 RUN bun install --frozen-lockfile
