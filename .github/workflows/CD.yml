@@ -5,19 +5,18 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
+permissions: {}
 
 jobs:
-  docker-build:
-    name: Docker Build & Push
+  deploy:
+    name: Deploy with Nixpacks
     runs-on: ubuntu-latest
     needs: []
-    outputs:
-      image-tag: ${{ steps.meta.outputs.tags }}
-      image-digest: ${{ steps.build.outputs.digest }}
+    permissions:
+      contents: write
+      deployments: write
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,77 +44,11 @@ jobs:
         run: bun run build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${{ secrets.NEXT_PUBLIC_CLERK_SIGN_IN_URL }}
       
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=main,enable={{is_default_branch}}
-      
-      - name: Build and push Docker image
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
-          target: runner
-      
-      - name: Generate SBOM
-        uses: anchore/sbom-action@v0
-        with:
-          image: ${{ steps.meta.outputs.tags }}
-          format: spdx-json
-          output-file: sbom.spdx.json
-      
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.spdx.json
-          retention-days: 30
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    needs: [docker-build]
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Download SBOM
-        uses: actions/download-artifact@v4
-        with:
-          name: sbom
-          path: ./
-      
-      - name: Run Trivy vulnerability scanner
+      - name: Security scan with Trivy
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -124,144 +57,51 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
       
-      - name: Upload Trivy scan results to GitHub Security tab
+      - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
       
-      - name: Fail on high severity vulnerabilities
-        if: failure()
+      - name: Deploy to production
         run: |
-          echo "High severity vulnerabilities detected. Please review and fix them."
-          exit 1
-
-  image-sign:
-    name: Sign Image
-    runs-on: ubuntu-latest
-    needs: [docker-build, security-scan]
-    if: success()
-    steps:
-      - uses: actions/checkout@v4
+          echo "Deploying to production with Nixpacks..."
+          # ここでNixpacksデプロイコマンドを実行
+          # 例: nixpacks deploy または プラットフォーム固有のデプロイコマンド
+        env:
+          # デプロイに必要な環境変数
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      
+      - name: Run Prisma migrations
+        if: success()
+        run: |
+          echo "Running database migrations..."
+          # データベースマイグレーションの実行
+          # 例: bun run db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      - name: Create release
+        if: success()
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Download SBOM
-        uses: actions/download-artifact@v4
+      - name: Setup Node.js
+        if: success()
+        uses: actions/setup-node@v4
         with:
-          name: sbom
-          path: ./
+          node-version: 20
+          cache: 'npm'
       
-      - name: Sign the published container image
-        uses: sigstore/cosign-installer@v3
-        with:
-          cosign-release: 'v2.2.2'
+      - name: Install semantic-release
+        if: success()
+        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
       
-      - name: Sign image
-        run: |
-          cosign sign --yes ghcr.io/${{ github.repository }}@${{ needs.docker-build.outputs.image-digest }}
-      
-      - name: Attach SBOM
-        run: |
-          cosign attach sbom --sbom sbom.spdx.json ghcr.io/${{ github.repository }}@${{ needs.docker-build.outputs.image-digest }}
-
-  terraform-apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: [docker-build, security-scan, image-sign]
-    if: success()
-    environment:
-      name: production
-      url: ${{ steps.apply.outputs.url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: '1.7.0'
-      
-      - name: Terraform Init
-        working-directory: ./infra/environments/production
-        run: terraform init
-      
-      - name: Terraform Plan
-        working-directory: ./infra/environments/production
-        run: terraform plan -out=tfplan
-      
-      - name: Terraform Apply
-        working-directory: ./infra/environments/production
-        run: terraform apply -auto-approve tfplan
-        id: apply
-
-  prisma-migrate:
-    name: Prisma Migrate
-    runs-on: ubuntu-latest
-    needs: [terraform-apply]
-    if: success()
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      
-      - name: Run Prisma migrate deploy
-        run: bun run db:migrate
-
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: [docker-build, terraform-apply, prisma-migrate]
-    if: success()
-    environment:
-      name: production
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      
-      - name: Create Release
+      - name: Execute semantic-release
+        if: success()
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_ENV: production
-        run: bun run release

@@ -5,15 +5,17 @@ aptPkgs = [
 ]
 cmds = [
   "apt update",
-  "apt upgrade -y",
   "curl -fsSL https://bun.sh/install | bash"
 ]
 
 [phases.install]
-cmds = [ "$HOME/.bun/bin/bun install" ]
+cmds = [ "$HOME/.bun/bin/bun install --frozen-lockfile" ]
 
 [phases.build]
 cmds = [ "$HOME/.bun/bin/bun run build" ]
 
 [start]
 cmd = "$HOME/.bun/bin/bun run start"
+
+[variables]
+NODE_ENV = "production"
