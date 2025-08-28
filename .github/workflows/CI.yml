@@ -199,6 +199,10 @@ jobs:
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          ARCJET_ENV: "development"
+          NODE_ENV: "test"
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "test-key"
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: "http://localhost:3000/sign-in"
       
       - name: Upload test results
         if: always()
