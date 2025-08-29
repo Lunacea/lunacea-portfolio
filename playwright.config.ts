@@ -32,6 +32,14 @@ export default defineConfig({
     url: baseURL,
     timeout: 2 * 60 * 1000,
     reuseExistingServer: !process.env.CI,
+    // テスト用の環境変数を設定
+    env: {
+      NODE_ENV: 'test',
+      ARCJET_ENV: 'development',
+      NEXT_PUBLIC_ENABLE_BGM: 'true',
+      NEXT_PUBLIC_BGM_AUTOPLAY: 'false',
+      NEXT_PUBLIC_BGM_VOLUME: '0.5',
+    },
   },
 
   // Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions.

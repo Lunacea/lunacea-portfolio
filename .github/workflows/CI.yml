@@ -134,6 +134,12 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${{ secrets.NEXT_PUBLIC_CLERK_SIGN_IN_URL }}
       
+      - name: Verify build output
+        run: |
+          echo "Build output contents:"
+          ls -la .next/
+          echo "BUILD_ID exists: $([ -f ".next/BUILD_ID" ] && echo "YES" || echo "NO")"
+      
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -203,6 +209,10 @@ jobs:
           NODE_ENV: "test"
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "test-key"
           NEXT_PUBLIC_CLERK_SIGN_IN_URL: "http://localhost:3000/sign-in"
+          # BGMプレイヤーのテスト用環境変数
+          NEXT_PUBLIC_ENABLE_BGM: "true"
+          NEXT_PUBLIC_BGM_AUTOPLAY: "false"
+          NEXT_PUBLIC_BGM_VOLUME: "0.5"
       
       - name: Upload test results
         if: always()
