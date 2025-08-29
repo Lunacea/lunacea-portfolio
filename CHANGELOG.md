@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.2...v3.1.3) (2025-08-29)
+
+
+### Bug Fixes
+
+* enhance E2E tests with build verification and BGM environment variables ([f7492d2](https://github.com/Lunacea/lunacea-portfolio/commit/f7492d2c7f60463f9ee14bb35c865a54af12bc5d))
+
 ## [3.1.2](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.1...v3.1.2) (2025-08-28)
 
 
