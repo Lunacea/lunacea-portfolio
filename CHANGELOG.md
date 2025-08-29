@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.1...v3.1.2) (2025-08-28)
+
+
+### Bug Fixes
+
+* optimize Playwright E2E tests for CI environment ([59ace84](https://github.com/Lunacea/lunacea-portfolio/commit/59ace84d9475e09314d16870e539af93523b6273))
+
 ## [3.1.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.0...v3.1.1) (2025-08-27)
 
 
