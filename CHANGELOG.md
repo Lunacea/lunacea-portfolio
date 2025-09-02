@@ -1,6 +1,28 @@
 # [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.2.0) (2025-09-02)
 
 
+### Bug Fixes
+
+* add checkout step before bun install in CI workflows ([7de87a1](https://github.com/Lunacea/lunacea-portfolio/commit/7de87a1cef86b374f8f55723e91fbd7bfdaff1aa))
+* change build-oputput to /standalone/ ([4389b8c](https://github.com/Lunacea/lunacea-portfolio/commit/4389b8c053b0a7abfa7c52a817a55ce01126aeb5))
+* correct Bun cache key back to bun.lock ([ed6e9f6](https://github.com/Lunacea/lunacea-portfolio/commit/ed6e9f660e0daa33b5497ba7e0c588325a3f66c7))
+* correct workflow name from 'CI' to 'CI Pipeline' in release and CD workflows ([3ba23ae](https://github.com/Lunacea/lunacea-portfolio/commit/3ba23ae4f736ff3032e267ebd81d835fde40a80e))
+* replace local setup-bun action with direct oven-sh/setup-bun@v2 ([baa2dbd](https://github.com/Lunacea/lunacea-portfolio/commit/baa2dbd12495b53bcd273d2e18ae4bd37e2eadff))
+* replace remaining local action references with direct actions ([2196561](https://github.com/Lunacea/lunacea-portfolio/commit/2196561a5905f16dfa94645e2510c115643da3f4))
+
+
+### Features
+
+* add GitHub Actions workflows and Dependabot configuration ([9efc7db](https://github.com/Lunacea/lunacea-portfolio/commit/9efc7db56363face505e43046d3a29693b5d1ffb))
+* add workflow_dispatch to release workflow for manual triggering ([4cb6dfe](https://github.com/Lunacea/lunacea-portfolio/commit/4cb6dfee05efff17d0e29045549d665b17fef0f0))
+* bgm関連の環境変数を追加し、モーダル表示の制御を改善 ([b47cb85](https://github.com/Lunacea/lunacea-portfolio/commit/b47cb854af4f277a8add2c90236b2c35e59ddb86))
+* optimize Playwright E2E tests with sharding and performance improvements ([897df25](https://github.com/Lunacea/lunacea-portfolio/commit/897df25bb6d7bb82de6ee71192d9d9da260c097a))
+* percy統合のための設定とe2eテストの最適化 ([70caf9f](https://github.com/Lunacea/lunacea-portfolio/commit/70caf9f62bdd6a3cca72f7f713a3708849a99335))
+* replace WebKit with Microsoft Edge for stable E2E testing ([a9446fa](https://github.com/Lunacea/lunacea-portfolio/commit/a9446fa55839d94c573512d563c2d09d4a862533))
+
+# [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.2.0) (2025-09-02)
+
+
 ### Features
 
 * bgm関連の環境変数を追加し、モーダル表示の制御を改善 ([b47cb85](https://github.com/Lunacea/lunacea-portfolio/commit/b47cb854af4f277a8add2c90236b2c35e59ddb86))
