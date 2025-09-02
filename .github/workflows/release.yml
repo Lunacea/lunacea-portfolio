@@ -1,22 +1,22 @@
-name: Release
+name: Semantic Release
 
 on:
   workflow_run:
     workflows: [CI]
-    types:
-      - completed
-    branches:
-      - main
+    types: [completed]
+    branches: [main]
+
+# 最小権限の原則
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
     name: Create a new release
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -31,9 +31,12 @@ jobs:
       - name: Cache Bun dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-release-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
+            ${{ runner.os }}-bun-release-
             ${{ runner.os }}-bun-
 
       - run: HUSKY=0 bun install

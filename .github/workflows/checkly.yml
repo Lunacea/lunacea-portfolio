@@ -1,6 +1,11 @@
-name: Checkly
+name: Checkly E2E Tests
 
 on: [deployment_status]
+
+# 最小権限の原則
+permissions:
+  contents: read
+  deployments: read
 
 env:
   CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
@@ -37,9 +42,12 @@ jobs:
       - name: Cache Bun dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-checkly-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
+            ${{ runner.os }}-bun-checkly-
             ${{ runner.os }}-bun-
 
       - name: Install dependencies

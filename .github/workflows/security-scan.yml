@@ -1,0 +1,55 @@
+name: Security Scan
+
+on:
+  workflow_call:
+    inputs:
+      scan-type:
+        description: 'Type of scan to perform'
+        required: false
+        type: string
+        default: 'fs'
+      severity:
+        description: 'Minimum severity level'
+        required: false
+        type: string
+        default: 'CRITICAL,HIGH'
+    outputs:
+      vulnerabilities-found:
+        description: 'Whether vulnerabilities were found'
+        value: ${{ jobs.trivy-scan.outputs.vulnerabilities-found }}
+
+jobs:
+  trivy-scan:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    outputs:
+      vulnerabilities-found: ${{ steps.trivy.outcome == 'failure' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Run Trivy vulnerability scanner
+        id: trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: ${{ inputs.scan-type }}
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: ${{ inputs.severity }}
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Fail on high severity vulnerabilities
+        if: failure()
+        run: |
+          echo "High severity vulnerabilities detected. Please review and fix them."
+          exit 1

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+// ビジュアルテストを有効化（Percy統合のため）
 test.describe('Visual testing', () => {
   test.describe('Static pages', () => {
     test('should take screenshot of the homepage', async ({ page }) => {
@@ -10,6 +11,11 @@ test.describe('Visual testing', () => {
 
       // ホームページのスクリーンショットを取得
       await page.screenshot({ path: 'test-results/homepage.png', fullPage: true });
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await page.screenshot({ name: 'Homepage' });
+      }
     });
 
     test('should take screenshot of the profile page', async ({ page }) => {
@@ -20,6 +26,11 @@ test.describe('Visual testing', () => {
 
       // プロフィールページのスクリーンショットを取得
       await page.screenshot({ path: 'test-results/profile.png', fullPage: true });
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await page.screenshot({ name: 'Profile Page' });
+      }
     });
 
     test('should take screenshot of the works page', async ({ page }) => {
@@ -31,6 +42,11 @@ test.describe('Visual testing', () => {
 
       // 作品ページのスクリーンショットを取得
       await page.screenshot({ path: 'test-results/works.png', fullPage: true });
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await page.screenshot({ name: 'Works Page' });
+      }
     });
 
     test('should take screenshot of the blog page', async ({ page }) => {
@@ -41,6 +57,11 @@ test.describe('Visual testing', () => {
 
       // ブログページのスクリーンショットを取得
       await page.screenshot({ path: 'test-results/blog.png', fullPage: true });
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await page.screenshot({ name: 'Blog Page' });
+      }
     });
 
     test('should take screenshot of the English homepage', async ({ page }) => {
@@ -51,6 +72,11 @@ test.describe('Visual testing', () => {
 
       // 英語版ホームページのスクリーンショットを取得
       await page.screenshot({ path: 'test-results/homepage-en.png', fullPage: true });
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await page.screenshot({ name: 'English Homepage' });
+      }
     });
 
     test('should take screenshot of music controller', async ({ page }) => {
@@ -68,6 +94,11 @@ test.describe('Visual testing', () => {
       } else {
         // フォールバック: 音楽コントロールのスクリーンショットを取得
         await musicController.screenshot({ path: 'test-results/music-controller.png' });
+      }
+      
+      // Percy用のビジュアルテスト（CI環境でのみ実行）
+      if (process.env.CI && process.env.PERCY_TOKEN) {
+        await musicController.screenshot({ name: 'Music Controller' });
       }
     });
   });

@@ -1,19 +1,21 @@
-name: Crowdin Action
+name: Crowdin Translation Sync
 
 on:
   push:
-    branches: [main] # Run on push to the main branch
+    branches: [main]
   schedule:
     - cron: '0 5 * * *' # Run every day at 5am
-  workflow_dispatch: # Run manually
+  workflow_dispatch:
+
+# 最小権限の原則
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   synchronize-with-crowdin:
     name: Synchronize with Crowdin
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4

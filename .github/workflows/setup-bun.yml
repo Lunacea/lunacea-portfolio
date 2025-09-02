@@ -1,18 +1,13 @@
-name: Setup Bun
+name: Setup Bun Environment
 
 on:
   workflow_call:
     inputs:
-      bun-version:
-        description: 'Bun version to use'
-        required: false
-        default: 'latest'
-        type: string
       cache-key:
         description: 'Cache key for dependencies'
         required: false
-        default: 'bun-lock'
         type: string
+        default: 'bun-deps'
     outputs:
       cache-hit:
         description: 'Whether cache was hit'
@@ -20,14 +15,21 @@ on:
 
 jobs:
   setup:
+    name: Setup Bun
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       cache-hit: ${{ steps.cache.outputs.cache-hit }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ inputs.bun-version }}
+          bun-version: latest
       
       - name: Cache dependencies
         id: cache
@@ -36,8 +38,9 @@ jobs:
           path: |
             ~/.bun/install/cache
             node_modules
-          key: ${{ runner.os }}-bun-${{ inputs.cache-key }}
+          key: ${{ runner.os }}-${{ inputs.cache-key }}-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
+            ${{ runner.os }}-${{ inputs.cache-key }}-
             ${{ runner.os }}-bun-
       
       - name: Install dependencies

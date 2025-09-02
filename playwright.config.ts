@@ -13,16 +13,18 @@ export default defineConfig({
   testDir: './tests',
   // Look for files with the .spec.js or .e2e.js extension
   testMatch: '*.@(spec|e2e).?(c|m)[jt]s?(x)',
-  // Timeout per test
-  timeout: 30 * 1000,
+  // Timeout per test (CI環境では短縮)
+  timeout: process.env.CI ? 20 * 1000 : 30 * 1000,
   // Fail the build on CI if you accidentally left test.only in the source code.
   forbidOnly: !!process.env.CI,
   // Reporter to use. See https://playwright.dev/docs/test-reporters
   reporter: process.env.CI ? 'github' : 'list',
+  // CI環境では並列実行数を最適化
+  workers: process.env.CI ? 2 : undefined,
 
   expect: {
-    // Set timeout for async expect matchers
-    timeout: 10 * 1000,
+    // Set timeout for async expect matchers (CI環境では短縮)
+    timeout: process.env.CI ? 5 * 1000 : 10 * 1000,
   },
 
   // Run your local dev server before starting the tests:
@@ -30,7 +32,7 @@ export default defineConfig({
   webServer: {
     command: process.env.CI ? 'bun run dev' : 'bun run dev:next',
     url: baseURL,
-    timeout: 2 * 60 * 1000,
+    timeout: process.env.CI ? 90 * 1000 : 2 * 60 * 1000, // CI環境では90秒に短縮
     reuseExistingServer: !process.env.CI,
     // テスト用の環境変数を設定
     env: {
@@ -66,11 +68,20 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    ...(process.env.CI
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    // CI環境ではEdgeテストを追加（Windows環境でのみ）
+    ...(process.env.CI && process.env.RUNNER_OS === 'Windows'
       ? [
           {
-            name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
+            name: 'msedge',
+            use: { ...devices['Desktop Edge'] },
           },
         ]
       : []),
