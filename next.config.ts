@@ -13,10 +13,10 @@ const baseConfig: NextConfig = {
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   output: 'standalone',
-  // プリロードの最適化
-  experimental: {
-    optimizeCss: true,
-  },
+  // プリロードの最適化（crittersエラーを回避するため一時的に無効化）
+  // experimental: {
+  //   optimizeCss: true,
+  // },
   // 不要なプリロードを防ぐ
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
