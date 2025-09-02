@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.2.0) (2025-09-02)
+
+
+### Features
+
+* bgm関連の環境変数を追加し、モーダル表示の制御を改善 ([b47cb85](https://github.com/Lunacea/lunacea-portfolio/commit/b47cb854af4f277a8add2c90236b2c35e59ddb86))
+
 ## [3.1.3](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.2...v3.1.3) (2025-08-29)
 
 
