@@ -5,6 +5,7 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
+  workflow_dispatch:
 
 # 最小権限の原則: リリースに必要な権限のみ
 permissions:
