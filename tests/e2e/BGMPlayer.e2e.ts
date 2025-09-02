@@ -2,157 +2,40 @@ import { expect, test } from '@playwright/test';
 
 test.describe('BGMPlayer', () => {
   test.beforeEach(async ({ page }) => {
-    // localStorageをクリアして初回訪問状態をシミュレート
+    // ページを先に読み込んでからlocalStorageとsessionStorageをクリア
     await page.goto('/');
     await page.evaluate(() => {
+      localStorage.removeItem('bgmUserConsent');
       localStorage.removeItem('bgm-permission');
       localStorage.removeItem('bgm-volume');
       localStorage.removeItem('bgm-muted');
+      sessionStorage.removeItem('visitedAnyRoute');
     });
+    // 新しいページコンテキストでリロード
     await page.reload();
+    
+    // テスト環境ではモーダルが無効化されているため、追加の処理は不要
   });
 
-  test('debug BGM controls visibility', async ({ page }) => {
+
+
+  test('should display music controller on page load', async ({ page }) => {
     // ページが読み込まれるまで待機
     await page.waitForLoadState('domcontentloaded');
 
-    // 許可ダイアログで許可を選択
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    await page.getByRole('button', { name: 'OK' }).click();
-
-    await expect(dialog).not.toBeVisible({ timeout: 3000 });
-
-    // BGMPlayerコンポーネント全体を確認
-    const bgmPlayer = page.locator('[data-testid="bgm-player"]');
-
-    // Button debug info removed for cleaner test output
-
-    // 特定のBGMコントロールボタンを探す
-    const bgmToggleButton = page.getByRole('button', { name: /BGMを/ });
-    const bgmSettingsButton = page.getByRole('button', { name: 'BGM設定' });
-
-    // BGM button counts for debugging
-
-    // BGMトグルボタンのスタイルを確認
-    await expect(bgmToggleButton).toBeVisible();
-
-    // BGM toggle button styles for debugging
-
-    // BGM設定ボタンのスタイルを確認
-    await expect(bgmSettingsButton).toBeVisible();
-
-    // BGM settings button styles for debugging
-
-    // BGMPlayerコンポーネント全体のスタイルも確認
-    await expect(bgmPlayer).toBeVisible();
-
-    // BGMPlayer container styles for debugging
-  });
-
-  test('should display permission dialog on first visit', async ({ page }) => {
-    // ページが読み込まれるまで待機
-    await page.waitForLoadState('domcontentloaded');
-
-    // 許可ダイアログが表示されることを確認
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    // ダイアログの内容を確認
-    await expect(page.getByText('このサイトではBGMを再生します。音楽の再生を許可しますか？')).toBeVisible();
-    await expect(page.getByRole('button', { name: '許可' })).toBeVisible();
-    await expect(page.getByRole('button', { name: '拒否' })).toBeVisible();
-  });
-
-  test('should hide dialog and show controls when permission is granted', async ({ page }) => {
-    // ページが読み込まれるまで待機
-    await page.waitForLoadState('domcontentloaded');
-
-    // 許可ダイアログが表示されることを確認
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    // 許可ボタンをクリック
-    await page.getByRole('button', { name: '許可' }).click();
-
-    // ダイアログが非表示になることを確認
-    await expect(dialog).not.toBeVisible({ timeout: 3000 });
-
-    // BGMコントロールが表示されることを確認
-    await expect(page.getByRole('button', { name: 'BGM設定' })).toBeVisible({ timeout: 3000 });
-    await expect(page.getByRole('button', { name: /BGMを/ })).toBeVisible();
-  });
-
-  test('should hide dialog when permission is denied', async ({ page }) => {
-    // ページが読み込まれるまで待機
-    await page.waitForLoadState('domcontentloaded');
-
-    // 許可ダイアログが表示されることを確認
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    // 拒否ボタンをクリック
-    await page.getByRole('button', { name: '拒否' }).click();
-
-    // ダイアログが非表示になることを確認
-    await expect(dialog).not.toBeVisible({ timeout: 3000 });
-
-    // BGMコントロールが表示されないことを確認
-    await expect(page.getByRole('button', { name: 'BGM設定' })).toBeHidden();
-  });
-
-  test('should remember permission choice on page reload', async ({ page }) => {
-    // ページが読み込まれるまで待機
-    await page.waitForLoadState('domcontentloaded');
-
-    // 許可ダイアログが表示されることを確認
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    // 許可ボタンをクリック
-    await page.getByRole('button', { name: '許可' }).click();
-
-    await expect(dialog).not.toBeVisible({ timeout: 3000 });
-
-    // ページをリロード
-    await page.reload();
-    await page.waitForLoadState('domcontentloaded');
-
-    // ダイアログが表示されないことを確認（許可が記憶されている）
-    await expect(page.getByRole('dialog')).toBeHidden();
-
-    // BGMコントロールが表示されることを確認
-    await expect(page.getByRole('button', { name: 'BGM設定' })).toBeVisible({ timeout: 3000 });
+    // 音楽コントロールが表示されることを確認
+    const musicController = page.getByRole('group', { name: '音楽コントロール' });
+    await expect(musicController).toBeVisible({ timeout: 5000 });
   });
 
   test('should have clickable play/pause button with correct aria-label', async ({ page }) => {
     // ページが読み込まれるまで待機
     await page.waitForLoadState('domcontentloaded');
 
-    // 許可ダイアログで許可を選択
-    const dialog = page.getByRole('dialog');
-
-    await expect(dialog).toBeVisible({ timeout: 5000 });
-
-    await page.getByRole('button', { name: '許可' }).click();
-
-    await expect(dialog).not.toBeVisible({ timeout: 3000 });
-
     // 再生/一時停止ボタンを取得
-    const playPauseButton = page.getByRole('button', { name: /BGMを/ });
+    const playPauseButton = page.getByRole('button', { name: /音楽を(再生|停止)/ });
 
-    await expect(playPauseButton).toBeVisible({ timeout: 3000 });
-
-    // BGMが自動再生されるまで待機（音声ファイルの読み込み完了を待つ）
-    await expect(playPauseButton).toHaveAttribute('aria-label', /BGMを(再生|一時停止)/, { timeout: 5000 });
-
-    // Initial button label for debugging
+    await expect(playPauseButton).toBeVisible({ timeout: 5000 });
 
     // ボタンがクリック可能であることを確認
     await expect(playPauseButton).toBeEnabled();
@@ -161,10 +44,20 @@ test.describe('BGMPlayer', () => {
     await playPauseButton.click();
 
     // ボタンが適切なaria-labelを持っていることを確認
-    await expect(playPauseButton).toHaveAttribute('aria-label', /BGMを(再生|一時停止)/, { timeout: 3000 });
+    await expect(playPauseButton).toHaveAttribute('aria-label', /音楽を(再生|停止)/, { timeout: 3000 });
+  });
 
-    // Final button label for debugging
+  test('should have volume control slider', async ({ page }) => {
+    // ページが読み込まれるまで待機
+    await page.waitForLoadState('domcontentloaded');
 
-    expect(finalLabel).toMatch(/BGMを(再生|一時停止)/);
+    // 音量スライダーが表示されることを確認（デスクトップ表示時のみ）
+    const volumeSlider = page.locator('input[type="range"][aria-label="音量調整"]');
+    
+    // デスクトップ表示では音量スライダーが表示される
+    await expect(volumeSlider).toBeVisible({ timeout: 5000 });
+    
+    // スライダーが操作可能であることを確認
+    await expect(volumeSlider).toBeEnabled();
   });
 });

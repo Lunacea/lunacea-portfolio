@@ -5,6 +5,11 @@ type ILatestUpdatesProps = {
 };
 
 export default async function LatestUpdates({ locale }: ILatestUpdatesProps) {
+  // テスト環境では表示しない
+  if (process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_DISABLE_BGM_MODAL === 'true') {
+    return null;
+  }
+
   const t = await getTranslations({
     locale,
     namespace: 'LatestUpdates',

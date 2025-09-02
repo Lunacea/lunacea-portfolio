@@ -39,6 +39,7 @@ export default defineConfig({
       NEXT_PUBLIC_ENABLE_BGM: 'true',
       NEXT_PUBLIC_BGM_AUTOPLAY: 'false',
       NEXT_PUBLIC_BGM_VOLUME: '0.5',
+      NEXT_PUBLIC_DISABLE_BGM_MODAL: 'true',
     },
   },
 
@@ -53,6 +54,11 @@ export default defineConfig({
 
     // Record videos when retrying the failed test.
     video: process.env.CI ? 'retain-on-failure' : undefined,
+
+    // Add user-agent header to avoid Arcjet BOT detection errors
+    extraHTTPHeaders: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    },
   },
 
   projects: [

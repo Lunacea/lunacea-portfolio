@@ -1,58 +1,74 @@
-// import percySnapshot from '@percy/playwright';
-// import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-// test.describe('Visual testing', () => {
-//   test.describe('Static pages', () => {
-//     test('should take screenshot of the homepage', async ({ page }) => {
-//       await page.goto('/');
+test.describe('Visual testing', () => {
+  test.describe('Static pages', () => {
+    test('should take screenshot of the homepage', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForLoadState('domcontentloaded');
 
-//       await expect(
-//         page.getByRole('heading', { name: 'Boilerplate Code for Your Next.js Project with Tailwind CSS' }),
-//       ).toBeVisible();
+      await expect(page.getByRole('main')).toBeVisible();
 
-//       await percySnapshot(page, 'Homepage');
-//     });
+      // ホームページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/homepage.png', fullPage: true });
+    });
 
-//     test('should take screenshot of the about page', async ({ page }) => {
-//       await page.goto('/about');
+    test('should take screenshot of the profile page', async ({ page }) => {
+      await page.goto('/profile');
+      await page.waitForLoadState('domcontentloaded');
 
-//       await expect(
-//         page.getByRole('link', { name: 'About' }),
-//       ).toBeVisible();
+      await expect(page.getByText('Mission')).toBeVisible();
 
-//       await percySnapshot(page, 'About');
-//     });
+      // プロフィールページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/profile.png', fullPage: true });
+    });
 
-//     test('should take screenshot of the portfolio page', async ({ page }) => {
-//       await page.goto('/portfolio');
+    test('should take screenshot of the works page', async ({ page }) => {
+      await page.goto('/works');
+      await page.waitForLoadState('domcontentloaded');
 
-//       await expect(
-//         page.getByText('ポートフォリオページへようこそ！'),
-//       ).toBeVisible();
+      // 作品ページのタイトルが表示されることを確認（最初の要素のみ）
+      await expect(page.getByText('Works', { exact: true }).first()).toBeVisible();
 
-//       await percySnapshot(page, 'Portfolio');
-//     });
+      // 作品ページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/works.png', fullPage: true });
+    });
 
-//     test('should take screenshot of the portfolio details page', async ({ page }) => {
-//       await page.goto('/portfolio');
+    test('should take screenshot of the blog page', async ({ page }) => {
+      await page.goto('/blog');
+      await page.waitForLoadState('domcontentloaded');
 
-//       await page.getByRole('link', { name: 'Portfolio 2' }).click();
+      await expect(page.getByText('Blog', { exact: true }).first()).toBeVisible();
 
-//       await expect(
-//         page.getByText('企業イベント向けのプロモーション'),
-//       ).toBeVisible();
+      // ブログページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/blog.png', fullPage: true });
+    });
 
-//       await percySnapshot(page, 'Portfolio details');
-//     });
+    test('should take screenshot of the English homepage', async ({ page }) => {
+      await page.goto('/en');
+      await page.waitForLoadState('domcontentloaded');
 
-//     test('should take screenshot of the English homepage', async ({ page }) => {
-//       await page.goto('/en');
+      await expect(page.getByRole('main')).toBeVisible();
 
-//       await expect(
-//         page.getByRole('heading', { name: 'Boilerplate Code for Your Next.js Project with Tailwind CSS' }),
-//       ).toBeVisible();
+      // 英語版ホームページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/homepage-en.png', fullPage: true });
+    });
 
-//       await percySnapshot(page, 'Homepage - English');
-//     });
-//   });
-// });
+    test('should take screenshot of music controller', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForLoadState('domcontentloaded');
+
+      // 音楽コントロールのスクリーンショットを取得
+      const musicController = page.getByRole('group', { name: '音楽コントロール' });
+      await expect(musicController).toBeVisible();
+      
+      // 音楽コントロールのスクリーンショットを取得
+      const boundingBox = await musicController.boundingBox();
+      if (boundingBox) {
+        await page.screenshot({ path: 'test-results/music-controller.png', clip: boundingBox });
+      } else {
+        // フォールバック: 音楽コントロールのスクリーンショットを取得
+        await musicController.screenshot({ path: 'test-results/music-controller.png' });
+      }
+    });
+  });
+});
