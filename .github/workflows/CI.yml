@@ -223,15 +223,18 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     needs: build
     if: ${{ !inputs.skip-e2e && needs.build.result == 'success' }}
     permissions:
       contents: read
     strategy:
       matrix:
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
         browser: [chromium, webkit, firefox]
       fail-fast: false
+      max-parallel: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -269,26 +272,20 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
+            ~/.cache/ms-playwright-browsers
           key: ${{ runner.os }}-playwright-${{ matrix.browser }}-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-${{ matrix.browser }}-
             ${{ runner.os }}-playwright-
       
-      - name: Install Playwright
+      - name: Install Playwright browsers
         run: |
-          # CI環境では依存関係のインストールをスキップして高速化
-          if [ "${{ matrix.browser }}" = "chromium" ]; then
-            bunx playwright install chromium --with-deps
-          elif [ "${{ matrix.browser }}" = "firefox" ]; then
-            bunx playwright install firefox --with-deps
-          elif [ "${{ matrix.browser }}" = "webkit" ]; then
-            bunx playwright install webkit --with-deps
-          else
-            bunx playwright install --with-deps ${{ matrix.browser }}
-          fi
+          # CI環境では必要なブラウザのみをインストールして高速化
+          # --with-depsを削除してシステム依存関係のインストールをスキップ
+          bunx playwright install ${{ matrix.browser }}
       
       - name: Run E2E tests
-        run: bunx playwright test --project=${{ matrix.browser }}
+        run: bunx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=2 --reporter=blob
         env:
           ARCJET_ENV: "development"
           NODE_ENV: "test"
@@ -301,22 +298,56 @@ jobs:
           # ビジュアルテスト用環境変数
           NEXT_PUBLIC_DISABLE_BGM_MODAL: "true"
       
-      - name: Upload test results
-        if: always()
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-test-results-${{ matrix.browser }}-${{ github.sha }}
-          path: test-results/
-          retention-days: 7
+          name: blob-report-${{ matrix.browser }}-${{ matrix.shardIndex }}-${{ github.sha }}
+          path: blob-report
+          retention-days: 1
           if-no-files-found: warn
+
+  merge-reports:
+    name: Merge Test Reports
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [e2e]
+    if: ${{ !cancelled() && needs.e2e.result != 'skipped' }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
-      - name: Upload Playwright Report
+      - name: Setup Bun Environment
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+        continue-on-error: true
+      
+      - name: Merge into HTML Report
+        run: bunx playwright merge-reports --reporter html ./all-blob-reports
+        continue-on-error: true
+      
+      - name: Upload merged HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.browser }}-${{ github.sha }}
-          path: playwright-report/
-          retention-days: 7
+          name: playwright-html-report-${{ github.sha }}
+          path: playwright-report
+          retention-days: 14
           if-no-files-found: warn
 
   security-scan:
