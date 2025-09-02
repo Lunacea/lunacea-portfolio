@@ -49,7 +49,7 @@ function sanitizeHtmlContent(htmlContent: string): string {
       'href', 'src', 'alt', 'title', 'class', 'id',
       'width', 'height', 'target', 'rel'
     ],
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
+    ALLOWED_URI_REGEXP: /^https?:\/\/|^mailto:|^tel:|^#/i,
     FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'],
     FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur']
   });
