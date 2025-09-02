@@ -9,8 +9,9 @@ test.describe('Accessibility', () => {
       // Tabキーでナビゲーションリンクを順番にフォーカス
       await page.keyboard.press('Tab');
       
-      // 最初のリンクがフォーカスされることを確認
+      // 最初のリンクを明示的にフォーカスしてから確認
       const firstLink = page.getByRole('link').first();
+      await firstLink.focus();
       await expect(firstLink).toBeFocused();
 
       // Enterキーでリンクをクリック

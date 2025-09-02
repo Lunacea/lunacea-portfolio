@@ -83,7 +83,13 @@ export default function UserConsentModal() {
     return null;
   }
   
-  const shouldShowOverlay = isMounted && hasUserConsent === null && (!isHome || isFirstPageLoad);
+  // ハイドレーションエラーを防ぐため、isMountedがtrueになるまで何もレンダリングしない
+  if (!isMounted) {
+    return null;
+  }
+  
+  // サイト内遷移以外でhomeに流入した場合のみモーダルを表示
+  const shouldShowOverlay = hasUserConsent === null && isHome && isFirstPageLoad;
 
   return (
     <div className={`${styles.modalRoot} ${(shouldShowOverlay || isAnimating) ? styles.visibleState : styles.hiddenState}`}>

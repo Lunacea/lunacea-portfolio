@@ -11,7 +11,7 @@ export default function ThemeToggleHint() {
         alt="手書き風矢印"
         width={60}
         height={60}
-        className="opacity-80 h-auto"
+        className="opacity-80 w-auto h-auto"
       />
     </div>
   );

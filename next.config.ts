@@ -13,6 +13,15 @@ const baseConfig: NextConfig = {
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
   output: 'standalone',
+  // プリロードの最適化
+  experimental: {
+    optimizeCss: true,
+  },
+  // 不要なプリロードを防ぐ
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
 };
 
 // Next-Intlプラグインの初期化

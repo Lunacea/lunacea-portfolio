@@ -11,6 +11,61 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
   const activeIdRef = useRef<string>('');
   const topLevelItems = items.filter(item => item.level <= 2);
 
+  const smoothScrollToHeading = (elementId: string) => {
+    const target = document.getElementById(elementId);
+    if (!target) return;
+
+    // より堅牢なスクロール位置の取得
+    const currentPosition = window.pageYOffset || 
+                          document.documentElement.scrollTop || 
+                          document.body.scrollTop || 
+                          0;
+    
+    const headerOffset = 100;
+    const elementPosition = target.getBoundingClientRect().top;
+    const targetPosition = elementPosition + currentPosition - headerOffset;
+    const distance = targetPosition - currentPosition;
+    const duration = 800; // 800ms
+    let start: number | null = null;
+
+    const easeInOutCubic = (t: number): number => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const animation = (currentTime: number) => {
+      if (start === null) start = currentTime;
+      const timeElapsed = currentTime - start;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const easedProgress = easeInOutCubic(progress);
+
+      const newPosition = currentPosition + distance * easedProgress;
+      
+      // より堅牢なスクロール方法
+      try {
+        // 方法1: window.scrollTo
+        if (window.scrollTo) {
+          window.scrollTo(0, newPosition);
+        }
+        // 方法2: window.scroll
+        else if (window.scroll) {
+          window.scroll(0, newPosition);
+        }
+        // 方法3: document.documentElement.scrollTop
+        else {
+          document.documentElement.scrollTop = newPosition;
+        }
+      } catch {
+        // エラーが発生した場合は静かに処理
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animation);
+      }
+    };
+
+    requestAnimationFrame(animation);
+  };
+
   const updateActiveId = useCallback(() => {
     if (!topLevelItems || topLevelItems.length === 0) {
       return;
@@ -66,13 +121,7 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
                     className={`block py-1 text-sm leading-relaxed transition-all duration-200 hover:text-foreground ${item.level === 2 ? 'ml-4' : ''} ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      const target = document.getElementById(item.id);
-                      if (target) {
-                        const headerOffset = 100;
-                        const elementPosition = target.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                      }
+                      smoothScrollToHeading(item.id);
                     }}
                   >
                     {item.title}
