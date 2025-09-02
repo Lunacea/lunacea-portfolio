@@ -76,14 +76,9 @@ export default defineConfig({
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-    // CI環境ではEdgeテストを追加（Windows環境でのみ）
-    ...(process.env.CI && process.env.RUNNER_OS === 'Windows'
-      ? [
-          {
-            name: 'msedge',
-            use: { ...devices['Desktop Edge'] },
-          },
-        ]
-      : []),
+    {
+      name: 'msedge',
+      use: { ...devices['Desktop Edge'] },
+    },
   ],
 });
