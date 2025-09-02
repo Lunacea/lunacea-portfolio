@@ -1,3 +1,11 @@
+# [3.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.2.0...v3.3.0) (2025-09-02)
+
+
+### Features
+
+* mdx/mermaid component refactoring and mermaid code block support ([7107661](https://github.com/Lunacea/lunacea-portfolio/commit/7107661337cc607a480114d355001e635e642fff))
+* ブログ記事のキーワード検索機能を実装 ([3cfa099](https://github.com/Lunacea/lunacea-portfolio/commit/3cfa099c54ff7e8d904b59753c4ab2aac356b2d1))
+
 # [3.2.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.1.3...v3.2.0) (2025-09-02)
 
 
