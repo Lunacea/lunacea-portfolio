@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import TableOfContents from '@/features/blog/components/TableOfContents';
 import MermaidRenderer from './MermaidRenderer';
 import '@/features/blog/styles/blog-content.css';
@@ -29,12 +30,29 @@ function sanitizeHtmlContent(htmlContent: string): string {
     return '';
   }
   
-  // 基本的なサニタイゼーション（サーバー・クライアント共通）
-  return htmlContent
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '');
+  // DOMPurifyを使用した包括的なサニタイゼーション
+  return DOMPurify.sanitize(htmlContent, {
+    ALLOWED_TAGS: [
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'p', 'br', 'hr',
+      'ul', 'ol', 'li',
+      'strong', 'em', 'u', 's', 'del', 'ins',
+      'code', 'pre', 'kbd', 'samp', 'var',
+      'blockquote', 'cite',
+      'a', 'img',
+      'table', 'thead', 'tbody', 'tr', 'td', 'th',
+      'div', 'span',
+      'mark', 'small', 'sub', 'sup',
+      'details', 'summary'
+    ],
+    ALLOWED_ATTR: [
+      'href', 'src', 'alt', 'title', 'class', 'id',
+      'width', 'height', 'target', 'rel'
+    ],
+    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'],
+    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur']
+  });
 }
 
 export default function BlogPostContentClient({ post }: BlogPostContentClientProps) {
