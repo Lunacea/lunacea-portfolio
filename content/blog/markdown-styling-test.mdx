@@ -11,6 +11,8 @@ tags: ['Markdown', 'スタイリング', 'MDX']
 
 この記事では、このブログで使用できる様々なMarkdown要素をまとめています。
 
+記事の下にコメントを残すことができるので、自由に試してみてください。
+
 ## 見出し
 
 ### H3見出し
@@ -224,26 +226,164 @@ print(f"処理結果: {result}")
 - [ ] 数式レンダリング
 - [ ] 検索機能
 
-## 画像（プレースホルダー）
+## 画像レンダリングテスト
 
-画像のレンダリングテスト:
+### 内部画像のテスト
 
-```markdown
+<Image 
+  src="/assets/images/test.jpg" 
+  alt="テスト画像" 
+  width={600} 
+  height={400}
+/>
 
-![サンプル画像](https://lunacea.jp/assets/images/test.jpg)
+### 外部画像のテスト
+
+<Image 
+  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
+  alt="外部画像" 
+  width={600} 
+  height={400}
+/>
+
+### カスタムコンポーネントのテスト
+
+<div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-6 my-6">
+  <h3 className="text-blue-800 font-semibold mb-3">MDXカスタムボックス</h3>
+  <p className="text-blue-700 mb-4">これはMDX内で直接記述されたJSXコンポーネントです。Tailwind CSSのクラスを使用してスタイリングされています。</p>
+  <div className="flex gap-2">
+    <span className="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-sm">MDX</span>
+    <span className="px-3 py-1 bg-purple-200 text-purple-800 rounded-full text-sm">JSX</span>
+    <span className="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm">React</span>
+  </div>
+</div>
+
+### インラインスタイルのテスト
+
+<p style={{ 
+  color: '#e11d48', 
+  fontWeight: 'bold', 
+  backgroundColor: '#fef2f2',
+  padding: '12px',
+  borderRadius: '8px',
+  border: '1px solid #fecaca'
+}}>
+  インラインスタイルも使用できます。カスタムCSSプロパティを直接指定可能です。
+</p>
+
+## Mermaid図表のテスト
+
+### フローチャート
+
+```mermaid
+graph TD
+    A[開始] --> B{条件判定}
+    B -->|Yes| C[処理A]
+    B -->|No| D[処理B]
+    C --> E[結果A]
+    D --> F[結果B]
+    E --> G[終了]
+    F --> G
 ```
+
+### シーケンス図
+
+```mermaid
+sequenceDiagram
+    participant U as ユーザー
+    participant F as フロントエンド
+    participant B as バックエンド
+    participant D as データベース
+    
+    U->>F: リクエスト送信
+    F->>B: API呼び出し
+    B->>D: データ取得
+    D-->>B: データ返却
+    B-->>F: レスポンス
+    F-->>U: 結果表示
+```
+
+### ガントチャート
+
+```mermaid
+gantt
+    title プロジェクトスケジュール
+    dateFormat  YYYY-MM-DD
+    section 設計
+    要件定義           :done,    des1, 2024-01-01,2024-01-07
+    システム設計       :done,    des2, 2024-01-08, 2024-01-14
+    詳細設計           :active,  des3, 2024-01-15, 2024-01-21
+    section 開発
+    フロントエンド     :         dev1, 2024-01-22, 2024-02-11
+    バックエンド       :         dev2, 2024-01-22, 2024-02-11
+    テスト             :         test1, 2024-02-12, 2024-02-18
+```
+
+### クラス図
+
+```mermaid
+classDiagram
+    class BlogPost {
+        +String title
+        +String content
+        +Date publishedAt
+        +String[] tags
+        +getExcerpt()
+        +render()
+    }
+    
+    class MDXContent {
+        +String compiledSource
+        +Object frontmatter
+        +render()
+    }
+    
+    class MermaidDiagram {
+        +String children
+        +render()
+    }
+    
+    BlogPost --> MDXContent : contains
+    MDXContent --> MermaidDiagram : uses
+```
+
+## MDX機能の統合
+
+この記事では、従来のMarkdown記法に加えて、MDXの新機能もテストできます：
+
+### MDXの特徴
+
+1. **JSXコンポーネント埋め込み** - Reactコンポーネントを直接記述
+2. **Next.js Image最適化** - 画像の自動最適化とレスポンシブ対応
+3. **カスタムスタイリング** - Tailwind CSSクラスの直接使用
+4. **動的コンテンツ** - インラインスタイルや条件分岐
+5. **Mermaid図表** - フローチャート、シーケンス図、ガントチャート等
+
+### 技術スタック
+
+- **MDX処理**: unified + remark/rehype パイプライン
+- **シンタックスハイライト**: Shiki (VS Code同等)
+- **スタイリング**: Tailwind CSS
+- **画像最適化**: Next.js Image コンポーネント
+- **図表レンダリング**: Mermaid.js
 
 ## 最後に
 
-このテストページでは、Shikiによる美しいシンタックスハイライトを含む様々なMarkdown要素を確認できます。
+このテストページでは、従来のMarkdown記法とMDXの新機能の両方を確認できます。MDXにより、より豊富でインタラクティブなブログ記事を作成できるようになりました。
 
-### Shikiの特徴
+### 実装完了項目
 
-1. **高性能** - サーバーサイドでレンダリング
-2. **美しい** - VS Codeと同じシンタックスハイライト
-3. **軽量** - クライアントサイドJavaScriptが不要
-4. **豊富なテーマ** - 多数のテーマから選択可能
+- [x] MDXレンダリングの実装
+- [x] JSXコンポーネントの埋め込み
+- [x] Next.js Imageコンポーネントの最適化
+- [x] シンタックスハイライト（Shiki）
+- [x] レスポンシブデザイン
+- [x] ダークモード対応
+- [x] カスタムスタイリング
+- [x] Mermaid図表サポート
+- [ ] 数式レンダリング
+- [ ] 検索機能
 
 ---
 
-*Markdown testing with Shiki completed! ✨* 
+*MDX + Markdown testing completed! ✨* 

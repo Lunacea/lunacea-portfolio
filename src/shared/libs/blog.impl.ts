@@ -3,6 +3,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import { extractTableOfContents, parseMarkdownToHtml } from './mdx-parser';
+import { parseMDXToHtml, extractTableOfContentsFromMDX } from './mdx-remote';
 import 'server-only';
 import { logger } from '@/shared/libs/Logger';
 
@@ -18,6 +19,7 @@ export type BlogPost = {
   htmlContent?: string;
   tableOfContents?: Array<{ id: string; title: string; level: number }>;
   excerpt?: string;
+  isMDX?: boolean; // MDXファイルかどうかのフラグ
 };
 
 export type BlogPostMeta = Omit<BlogPost, 'content' | 'htmlContent'>;
@@ -72,6 +74,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
 
     const slug = getSlugFromFilename(filename);
     const readingTimeResult = readingTime(content);
+    const isMDX = filename.endsWith('.mdx');
 
     const rawExcerpt = content.split('\n\n')[0]?.replace(/^#+\s/, '') || data.description || '';
     const cleanExcerpt = rawExcerpt
@@ -83,11 +86,19 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
 
     let htmlContent = '';
     let tableOfContents: Array<{ id: string; title: string; level: number }> = [];
+    
     try {
-      htmlContent = await parseMarkdownToHtml(content);
-      tableOfContents = extractTableOfContents(content);
+      if (isMDX) {
+        // MDXファイルの場合はHTMLに変換
+        htmlContent = await parseMDXToHtml(content);
+        tableOfContents = extractTableOfContentsFromMDX(content);
+      } else {
+        // Markdownファイルの場合は従来通り
+        htmlContent = await parseMarkdownToHtml(content);
+        tableOfContents = extractTableOfContents(content);
+      }
     } catch (parseError) {
-      logger.error({ parseError, filename }, 'HTML変換エラー');
+      logger.error({ parseError, filename }, 'コンテンツ変換エラー');
       htmlContent = `<pre class="error-fallback">${content}</pre>`;
     }
 
@@ -103,6 +114,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       htmlContent,
       tableOfContents,
       excerpt: cleanExcerpt.length > 200 ? `${cleanExcerpt.substring(0, 200)}...` : cleanExcerpt,
+      isMDX,
     };
   } catch (error) {
     logger.error({ error, filename }, 'ブログ記事の解析エラー');
@@ -118,6 +130,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       htmlContent: '<p>エラーが発生したため、コンテンツを読み込めませんでした。</p>',
       tableOfContents: [],
       excerpt: 'エラーが発生しました',
+      isMDX: false,
     };
   }
 }
