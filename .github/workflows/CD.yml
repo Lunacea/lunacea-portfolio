@@ -54,9 +54,23 @@ jobs:
           fetch-depth: 1
       
       - name: Setup Bun Environment
-        uses: ./.github/workflows/setup-bun.yml
+        uses: oven-sh/setup-bun@v2
         with:
-          cache-key: 'cd'
+          bun-version: latest
+      
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-cd-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-cd-
+            ${{ runner.os }}-bun-
+      
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       
       - name: Download build artifacts from CI
         uses: actions/download-artifact@v4
