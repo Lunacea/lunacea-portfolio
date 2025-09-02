@@ -196,6 +196,12 @@ jobs:
           echo "build-size=$BUILD_SIZE" >> $GITHUB_OUTPUT
           echo "Build ID: $BUILD_ID"
           echo "Build Size: $BUILD_SIZE"
+          echo "Build output structure:"
+          ls -la .next/
+          if [ -d ".next/standalone" ]; then
+            echo "Standalone build found"
+            ls -la .next/standalone/
+          fi
       
       - name: Verify build output
         run: |
@@ -208,7 +214,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-output-${{ github.sha }}
-          path: .next/
+          path: |
+            .next/
+            .next/standalone/
           retention-days: 7
           if-no-files-found: warn
 
