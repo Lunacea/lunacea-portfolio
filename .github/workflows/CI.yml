@@ -80,6 +80,7 @@ jobs:
             .eslintcache
             tsconfig.tsbuildinfo
           retention-days: 7
+          if-no-files-found: warn
 
   test:
     name: Test Suite
@@ -142,6 +143,7 @@ jobs:
             test-results/
             coverage/
           retention-days: 7
+          if-no-files-found: warn
 
   build:
     name: Build Application
@@ -202,11 +204,13 @@ jobs:
           echo "BUILD_ID exists: $([ -f ".next/BUILD_ID" ] && echo "YES" || echo "NO")"
       
       - name: Upload build artifacts
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: build-output-${{ github.sha }}
           path: .next/
           retention-days: 7
+          if-no-files-found: warn
 
   e2e:
     name: E2E Tests
@@ -296,6 +300,7 @@ jobs:
           name: e2e-test-results-${{ matrix.browser }}-${{ github.sha }}
           path: test-results/
           retention-days: 7
+          if-no-files-found: warn
       
       - name: Upload Playwright Report
         if: always()
@@ -304,6 +309,7 @@ jobs:
           name: playwright-report-${{ matrix.browser }}-${{ github.sha }}
           path: playwright-report/
           retention-days: 7
+          if-no-files-found: warn
 
   security-scan:
     name: Security Scan
@@ -315,8 +321,39 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - name: Run Security Scan
-        uses: ./.github/workflows/security-scan.yml
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Run Trivy vulnerability scanner
+        id: trivy
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Fail on high severity vulnerabilities
+        if: failure()
+        run: |
+          echo "❌ High severity vulnerabilities detected. Please review and fix them."
+          echo "Scan results: ${{ steps.trivy.outputs.output }}"
+          exit 1
+      
+      - name: Upload security scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ github.sha }}
+          path: trivy-results.sarif
+          retention-days: 30
+          if-no-files-found: warn

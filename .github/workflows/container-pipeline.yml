@@ -98,12 +98,42 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - name: Run Security Scan
-        uses: ./.github/workflows/security-scan.yml
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Run Trivy vulnerability scanner
+        id: trivy
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'image'
-          image-ref: ${{ needs.build.outputs.image-tag }}
+          scan-ref: ${{ needs.build.outputs.image-tag }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Fail on high severity vulnerabilities
+        if: failure()
+        run: |
+          echo "❌ High severity vulnerabilities detected. Please review and fix them."
+          echo "Scan results: ${{ steps.trivy.outputs.output }}"
+          exit 1
+      
+      - name: Upload security scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ github.sha }}
+          path: trivy-results.sarif
+          retention-days: 30
+          if-no-files-found: warn
 
   sign:
     name: Sign Container Image

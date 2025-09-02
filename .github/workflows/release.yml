@@ -29,10 +29,23 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Bun Environment
-        uses: ./.github/workflows/setup-bun.yml
+        uses: oven-sh/setup-bun@v2
         with:
-          cache-key: 'release'
-          install-command: 'HUSKY=0 bun install'
+          bun-version: latest
+      
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-release-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-release-
+            ${{ runner.os }}-bun-
+      
+      - name: Install dependencies
+        run: HUSKY=0 bun install
 
       - name: Release
         env:
