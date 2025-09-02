@@ -6,7 +6,7 @@ on:
     types: [completed]
     branches: [main]
 
-# 最小権限の原則
+# 最小権限の原則: リリースに必要な権限のみ
 permissions:
   contents: write
   issues: write
@@ -16,30 +16,23 @@ jobs:
   release:
     name: Create a new release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Bun Environment
+        uses: ./.github/workflows/setup-bun.yml
         with:
-          bun-version: latest
-
-      - name: Cache Bun dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-release-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-release-
-            ${{ runner.os }}-bun-
-
-      - run: HUSKY=0 bun install
+          cache-key: 'release'
+          install-command: 'HUSKY=0 bun install'
 
       - name: Release
         env:

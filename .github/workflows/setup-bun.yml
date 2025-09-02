@@ -4,10 +4,15 @@ on:
   workflow_call:
     inputs:
       cache-key:
-        description: 'Cache key for dependencies'
+        description: 'Cache key suffix for dependencies'
         required: false
         type: string
-        default: 'bun-deps'
+        default: 'default'
+      install-command:
+        description: 'Install command to run'
+        required: false
+        type: string
+        default: 'bun install --frozen-lockfile'
     outputs:
       cache-hit:
         description: 'Whether cache was hit'
@@ -22,7 +27,8 @@ jobs:
     outputs:
       cache-hit: ${{ steps.cache.outputs.cache-hit }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       
@@ -38,10 +44,10 @@ jobs:
           path: |
             ~/.bun/install/cache
             node_modules
-          key: ${{ runner.os }}-${{ inputs.cache-key }}-${{ hashFiles('**/bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ inputs.cache-key }}-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ inputs.cache-key }}-
+            ${{ runner.os }}-bun-${{ inputs.cache-key }}-
             ${{ runner.os }}-bun-
       
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: ${{ inputs.install-command }}

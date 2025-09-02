@@ -13,22 +13,31 @@ on:
         required: false
         type: string
         default: 'CRITICAL,HIGH'
+      image-ref:
+        description: 'Container image reference for image scanning'
+        required: false
+        type: string
     outputs:
       vulnerabilities-found:
         description: 'Whether vulnerabilities were found'
-        value: ${{ jobs.trivy-scan.outputs.vulnerabilities-found }}
+        value: ${{ jobs.security-scan.outputs.vulnerabilities-found }}
+      scan-results:
+        description: 'Path to scan results file'
+        value: ${{ jobs.security-scan.outputs.scan-results }}
 
 jobs:
-  trivy-scan:
-    name: Trivy Security Scan
+  security-scan:
+    name: Security Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
     outputs:
       vulnerabilities-found: ${{ steps.trivy.outcome == 'failure' }}
+      scan-results: ${{ steps.trivy.outputs.output }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
@@ -37,7 +46,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: ${{ inputs.scan-type }}
-          scan-ref: '.'
+          scan-ref: ${{ inputs.image-ref || '.' }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: ${{ inputs.severity }}
@@ -51,5 +60,14 @@ jobs:
       - name: Fail on high severity vulnerabilities
         if: failure()
         run: |
-          echo "High severity vulnerabilities detected. Please review and fix them."
+          echo "❌ High severity vulnerabilities detected. Please review and fix them."
+          echo "Scan results: ${{ steps.trivy.outputs.output }}"
           exit 1
+      
+      - name: Upload security scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results-${{ github.sha }}
+          path: trivy-results.sarif
+          retention-days: 30

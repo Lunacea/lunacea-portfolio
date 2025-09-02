@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
 name: Checkly E2E Tests
 
 on: [deployment_status]
@@ -7,10 +9,7 @@ permissions:
   contents: read
   deployments: read
 
-env:
-  CHECKLY_API_KEY: ${{ secrets.CHECKLY_API_KEY }}
-  CHECKLY_ACCOUNT_ID: ${{ secrets.CHECKLY_ACCOUNT_ID }}
-  CHECKLY_TEST_ENVIRONMENT: ${{ github.event.deployment_status.environment }}
+# 環境変数は各ステップで直接参照（警告抑制のため）
 
 jobs:
   test-e2e:
@@ -28,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: '${{ github.event.deployment_status.deployment.ref }}'
+          ref: '${{ github.ref }}'
           fetch-depth: 0
 
       - name: Set branch name # workaround to detect branch name in "deployment_status" actions
@@ -56,18 +55,19 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Run checks # run the checks passing in the ENVIRONMENT_URL and recording a test session.
-        id: run-checks
-        run: bunx checkly test --reporter=github --record
-        env:
-          VERCEL_BYPASS_TOKEN: ${{ secrets.VERCEL_BYPASS_TOKEN }}
-          ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
+      # Checklyは使用していないためコメントアウト
+      # - name: Run checks # run the checks passing in the ENVIRONMENT_URL and recording a test session.
+      #   id: run-checks
+      #   run: bunx checkly test --reporter=github --record
+      #   env:
+      #     ENVIRONMENT_URL: ${{ github.event.deployment_status.environment_url }}
 
-      - name: Create summary # export the markdown report to the job summary.
-        id: create-summary
-        run: cat checkly-github-report.md > $GITHUB_STEP_SUMMARY
+      # Checklyは使用していないためコメントアウト
+      # - name: Create summary # export the markdown report to the job summary.
+      #   id: create-summary
+      #   run: cat checkly-github-report.md > $GITHUB_STEP_SUMMARY
 
-      - name: Deploy checks # if the test run was successful and we are on Production, deploy the checks
-        id: deploy-checks
-        if: steps.run-checks.outcome == 'success' && github.event.deployment_status.environment == 'Production'
-        run: bunx checkly deploy --force
+      # - name: Deploy checks # if the test run was successful and we are on Production, deploy the checks
+      #   id: deploy-checks
+      #   if: steps.run-checks.outcome == 'success' && github.event.deployment_status.environment == 'Production'
+      #   run: bunx checkly deploy --force

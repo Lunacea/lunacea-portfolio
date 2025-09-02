@@ -1,4 +1,6 @@
-name: CI/CD Pipeline
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
+name: CI Pipeline
 
 on:
   push:
@@ -7,57 +9,42 @@ on:
     branches: [main, develop]
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Target environment for deployment'
-        required: false
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
       skip-tests:
         description: 'Skip test execution'
         required: false
         default: false
         type: boolean
+      skip-e2e:
+        description: 'Skip E2E tests'
+        required: false
+        default: false
+        type: boolean
+
+# 並行実行制御: 同一ブランチでの重複実行を防止
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # 最小権限の原則: 各Jobで必要な権限のみを個別に設定
 permissions:
   contents: read
   security-events: write
-  packages: write
-  id-token: write
+
+# 環境変数は各ステップで直接参照（警告抑制のため）
 
 jobs:
   # 並列実行可能なJob群
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup Bun Environment
+        uses: ./.github/workflows/setup-bun.yml
         with:
-          fetch-depth: 1
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-lint-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-lint-
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+          cache-key: 'lint'
       
       - name: Run linting
         run: bun run lint --max-warnings 0
@@ -69,7 +56,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: lint-results
+          name: lint-results-${{ github.sha }}
           path: |
             .eslintcache
             tsconfig.tsbuildinfo
@@ -78,6 +65,7 @@ jobs:
   test:
     name: Test Suite
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     if: ${{ !inputs.skip-tests }}
     permissions:
       contents: read
@@ -86,49 +74,31 @@ jobs:
         node-version: [18, 20]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup Bun Environment
+        uses: ./.github/workflows/setup-bun.yml
         with:
-          fetch-depth: 1
+          cache-key: 'test-${{ matrix.node-version }}'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'bun'
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-test-${{ matrix.node-version }}-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-test-${{ matrix.node-version }}-
-            ${{ runner.os }}-bun-test-
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
       
       - name: Run tests
         run: bun run test -- --coverage
       
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      # Codecovは使用していないためコメントアウト
+      # - name: Upload coverage reports to Codecov
+      #   if: ${{ env.CODECOV_TOKEN != '' }}
+      #   uses: codecov/codecov-action@v5
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.node-version }}
+          name: test-results-${{ matrix.node-version }}-${{ github.sha }}
           path: |
             test-results/
             coverage/
@@ -137,6 +107,7 @@ jobs:
   build:
     name: Build Application
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [lint, test]
     if: always() && (needs.lint.result == 'success' && (needs.test.result == 'success' || needs.test.result == 'skipped'))
     permissions:
@@ -145,37 +116,14 @@ jobs:
       build-id: ${{ steps.build-info.outputs.build-id }}
       build-size: ${{ steps.build-info.outputs.build-size }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup Bun Environment
+        uses: ./.github/workflows/setup-bun.yml
         with:
-          fetch-depth: 1
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-build-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-build-
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+          cache-key: 'build'
       
       - name: Build application
         id: build
         run: bun run build
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${{ secrets.NEXT_PUBLIC_CLERK_SIGN_IN_URL }}
       
       - name: Extract build information
         id: build-info
@@ -205,8 +153,9 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: build
-    if: ${{ !inputs.skip-tests && needs.build.result == 'success' }}
+    if: ${{ !inputs.skip-e2e && needs.build.result == 'success' }}
     permissions:
       contents: read
     strategy:
@@ -214,28 +163,10 @@ jobs:
         browser: [chromium, webkit, firefox]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup Bun Environment
+        uses: ./.github/workflows/setup-bun.yml
         with:
-          fetch-depth: 1
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-bun-e2e-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-e2e-
-            ${{ runner.os }}-bun-
-      
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+          cache-key: 'e2e'
       
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -249,7 +180,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ matrix.browser }}-${{ hashFiles('**/package-lock.json', '**/bun.lock') }}
+          key: ${{ runner.os }}-playwright-${{ matrix.browser }}-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-${{ matrix.browser }}-
             ${{ runner.os }}-playwright-
@@ -270,8 +201,6 @@ jobs:
       - name: Run E2E tests
         run: bunx playwright test --project=${{ matrix.browser }}
         env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           ARCJET_ENV: "development"
           NODE_ENV: "test"
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "test-key"
@@ -287,7 +216,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-test-results-${{ matrix.browser }}
+          name: e2e-test-results-${{ matrix.browser }}-${{ github.sha }}
           path: test-results/
           retention-days: 7
       
@@ -295,88 +224,22 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.browser }}
+          name: playwright-report-${{ matrix.browser }}-${{ github.sha }}
           path: playwright-report/
           retention-days: 7
 
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: build
     if: needs.build.result == 'success'
     permissions:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+      - name: Run Security Scan
+        uses: ./.github/workflows/security-scan.yml
         with:
           scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-      
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-      
-      - name: Fail on high severity vulnerabilities
-        if: failure()
-        run: |
-          echo "High severity vulnerabilities detected. Please review and fix them."
-          exit 1
-      
-      - name: Upload security scan results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-scan-results
-          path: trivy-results.sarif
-          retention-days: 30
-
-  # Crowdin統合は専用ワークフロー（crowdin.yml）で処理
-
-  # デプロイメント用のJob（本番環境へのデプロイは環境保護ルールを経由）
-  deploy:
-    name: Deploy to Environment
-    runs-on: ubuntu-latest
-    needs: [build, e2e, security-scan]
-    if: always() && needs.build.result == 'success' && needs.e2e.result == 'success' && needs.security-scan.result == 'success'
-    environment: ${{ inputs.environment || 'staging' }}
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output-${{ github.sha }}
-          path: .next/
-      
-      - name: Deploy to environment
-        run: |
-          echo "Deploying to ${{ inputs.environment || 'staging' }} environment"
-          echo "Build ID: ${{ needs.build.outputs.build-id }}"
-          echo "Build Size: ${{ needs.build.outputs.build-size }}"
-          # ここに実際のデプロイロジックを追加
-          # 例: Vercel, Netlify, AWS S3, etc.
-      
-      - name: Notify deployment status
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ Deployment successful to ${{ inputs.environment || 'staging' }}"
-          else
-            echo "❌ Deployment failed to ${{ inputs.environment || 'staging' }}"
-          fi

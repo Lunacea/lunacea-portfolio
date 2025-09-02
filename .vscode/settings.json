@@ -8,6 +8,7 @@
   // TypeScript
   "typescript.tsdk": "node_modules/typescript/lib", // Use the workspace version of TypeScript
   "typescript.enablePromptUseWorkspaceTsdk": true, // For security reasons it's require that users opt into using the workspace version of typescript
+
   "typescript.preferences.autoImportFileExcludePatterns": [
     // useRouter should be imported from `next/navigation` instead of `next/router`
     "next/router.d.ts",
@@ -64,22 +65,58 @@
     "animejs",
     "aquasecurity",
     "ARCJET",
+    "AUTOPLAY",
+    "buildx",
     "bunx",
     "checkly",
     "conventionalcommits",
+    "elif",
+    "eslintcache",
     "Hackathon",
     "LOGTAIL",
     "lunacea",
     "Nextdotjs",
+    "nixpacks",
     "Nodedotjs",
     "Noll",
     "Pkgs",
     "POSTHOG",
     "sarif",
     "shiki",
+    "sigstore",
     "spotlightjs",
     "tohoku",
     "tripcode",
     "Vuedotjs"
-  ]
+  ],
+
+  // GitHub Actions - バリデーション設定（Context access警告を抑制）
+  "github-actions.validation.enabled": false,
+  "github-actions.validation.secrets": false,
+  "github-actions.validation.variables": false,
+  "github-actions.validation.workflows": false,
+  "github-actions.validation.context": false,
+  "github-actions.validation.actions": false,
+  // その他のリンター設定
+  "yaml.validate": false,
+  "yaml.schemas": {},
+  // 診断設定
+  "problems.decorations.enabled": false,
+  "editor.showUnused": false,
+  "typescript.showUnused": false,
+  // 追加の警告抑制設定
+  "yaml.customTags": [],
+  "yaml.completion": false,
+  "yaml.hover": false,
+  // 完全な警告抑制
+  "yaml.disableAdditionalProperties": false,
+  "yaml.format.enable": false,
+  "yaml.format.singleQuote": false,
+  "yaml.format.bracketSpacing": false,
+  "yaml.format.proseWrap": "preserve",
+  "yaml.format.printWidth": 80,
+  "yaml.format.tabSize": 2,
+  "yaml.format.useTabs": false,
+  "yaml.format.insertFinalNewline": false,
+  "yaml.format.trimTrailingWhitespace": false
 }

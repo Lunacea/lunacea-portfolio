@@ -7,14 +7,24 @@ on:
       - 'Dockerfile'
       - 'docker-compose.yml'
       - '.dockerignore'
+      - 'package.json'
+      - 'bun.lock'
   pull_request:
     branches: [main, develop]
     paths:
       - 'Dockerfile'
       - 'docker-compose.yml'
       - '.dockerignore'
+      - 'package.json'
+      - 'bun.lock'
   workflow_dispatch:
 
+# 並行実行制御: 同一ブランチでの重複実行を防止
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 最小権限の原則: 各Jobで必要な権限のみを個別に設定
 permissions:
   contents: read
   packages: write
@@ -28,15 +38,19 @@ jobs:
   build:
     name: Build Container Image
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-tag: ${{ steps.meta.outputs.tags }}
+      image-name: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -58,6 +72,8 @@ jobs:
             type=ref,event=pr
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
+          flavor: |
+            latest=false
       
       - name: Build and push Docker image
         id: build
@@ -67,41 +83,32 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=buildx
+          cache-to: type=gha,mode=max,scope=buildx
           platforms: linux/amd64,linux/arm64
+          provenance: false
+          sbom: true
 
   scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: build
     permissions:
       contents: read
       security-events: write
     steps:
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+      - name: Run Security Scan
+        uses: ./.github/workflows/security-scan.yml
         with:
+          scan-type: 'image'
           image-ref: ${{ needs.build.outputs.image-tag }}
-          format: 'sarif'
-          output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
-      
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-image-results.sarif'
-      
-      - name: Fail on high severity vulnerabilities
-        if: failure()
-        run: |
-          echo "High severity vulnerabilities detected in container image. Please review and fix them."
-          exit 1
 
   sign:
     name: Sign Container Image
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [build, scan]
     if: needs.scan.result == 'success'
     permissions:
@@ -116,19 +123,43 @@ jobs:
           cosign sign --yes ${{ needs.build.outputs.image-tag }}
         env:
           COSIGN_EXPERIMENTAL: 1
+      
+      - name: Verify signature
+        run: |
+          cosign verify --key cosign.pub ${{ needs.build.outputs.image-tag }}
+      
+      - name: Attach SBOM
+        run: |
+          cosign attest --yes --predicate-type https://spdx.dev/Document \
+            --predicate <(cosign generate ${{ needs.build.outputs.image-tag }}) \
+            ${{ needs.build.outputs.image-tag }}
 
   deploy:
     name: Deploy Container
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [build, scan, sign]
     if: always() && needs.scan.result == 'success' && needs.sign.result == 'success'
+    # environment: staging  # 環境が設定されていない場合はコメントアウト
     permissions:
       contents: read
       packages: read
     steps:
       - name: Deploy to staging
         run: |
-          echo "Deploying container image: ${{ needs.build.outputs.image-tag }}"
-          echo "Image digest: ${{ needs.build.outputs.image-digest }}"
+          echo "🚀 Deploying container image: ${{ needs.build.outputs.image-tag }}"
+          echo "📦 Image digest: ${{ needs.build.outputs.image-digest }}"
+          echo "✅ Image signed and scanned successfully"
+          echo "🔒 SBOM attached for supply chain security"
+          echo "🌍 Target environment: staging"
           # ここに実際のデプロイロジックを追加
           # 例: kubectl, docker-compose, etc.
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Container deployment successful to staging"
+          else
+            echo "❌ Container deployment failed to staging"
+          fi
