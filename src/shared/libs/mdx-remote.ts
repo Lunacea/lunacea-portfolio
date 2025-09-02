@@ -1,9 +1,11 @@
 import { serialize } from 'next-mdx-remote/serialize';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeKatex from 'rehype-katex';
 import rehypePrettyCode, { type Options } from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import remarkToc from 'remark-toc';
@@ -22,10 +24,12 @@ const rehypePrettyCodeOptions: Options = {
 const mdxToHtmlProcessor = unified()
   .use(remarkParse)
   .use(remarkGfm)
+  .use(remarkMath)
   .use(remarkToc, { heading: '目次|Table of Contents|TOC|toc', maxDepth: 3 })
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeSlug)
   .use(rehypeAutolinkHeadings, { behavior: 'wrap', properties: { className: ['anchor-link'] } })
+  .use(rehypeKatex)
   .use(rehypePrettyCode, rehypePrettyCodeOptions)
   .use(rehypeStringify, { allowDangerousHtml: true });
 
@@ -108,11 +112,13 @@ export async function serializeMDXContent(content: string): Promise<{
       mdxOptions: {
         remarkPlugins: [
           remarkGfm,
+          [remarkMath, { singleDollarTextMath: false }],
           remarkToc,
         ],
         rehypePlugins: [
           rehypeSlug,
           [rehypeAutolinkHeadings, { behavior: 'wrap', properties: { className: ['anchor-link'] } }],
+          rehypeKatex,
           [rehypePrettyCode, rehypePrettyCodeOptions],
         ],
         format: 'mdx',

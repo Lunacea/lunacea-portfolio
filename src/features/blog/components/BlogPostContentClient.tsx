@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import TableOfContents from '@/features/blog/components/TableOfContents';
 import MermaidRenderer from './MermaidRenderer';
+import '@/features/blog/styles/blog-content.css';
 
 type BlogPost = {
   slug: string;

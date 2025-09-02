@@ -8,7 +8,6 @@ tags: ['Markdown', 'スタイリング', 'MDX']
 
 ※このテスト記事はClaudeをもとに作成しました。
 
-
 この記事では、このブログで使用できる様々なMarkdown要素をまとめています。
 
 記事の下にコメントを残すことができるので、自由に試してみてください。
@@ -56,7 +55,7 @@ tags: ['Markdown', 'スタイリング', 'MDX']
 ## 引用
 
 > これは引用文です。重要な情報や名言を強調するときに使用します。
-> 
+>
 > 複数行の引用も可能です。
 
 ## コードブロック（Shikiテスト）
@@ -71,22 +70,6 @@ function greetUser(name) {
 
 // ES6 アロー関数
 const multiply = (a, b) => a * b;
-
-// クラスの例
-class Calculator {
-  constructor() {
-    this.result = 0;
-  }
-  
-  add(value) {
-    this.result += value;
-    return this;
-  }
-  
-  getResult() {
-    return this.result;
-  }
-}
 ```
 
 ### TypeScript
@@ -98,8 +81,6 @@ interface User {
   email: string;
   isActive: boolean;
 }
-
-type UserRole = 'admin' | 'user' | 'guest';
 
 class UserService {
   private users: User[] = [];
@@ -114,92 +95,12 @@ class UserService {
         }
       });
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch user');
-      }
-      
-      return await response.json();
+      return response.ok ? await response.json() : null;
     } catch (error) {
       console.error('Error fetching user:', error);
       return null;
     }
   }
-}
-```
-
-### CSS
-
-```css
-/* モダンCSS */
-.card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-@media (max-width: 768px) {
-  .card {
-    padding: 1rem;
-    border-radius: 8px;
-  }
-}
-```
-
-### Python
-
-```python title="fibonacci.py"
-# Pythonコードのテスト
-def fibonacci(n):
-    """フィボナッチ数列を計算する関数"""
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-class DataProcessor:
-    def __init__(self, data):
-        self.data = data
-        self.processed = False
-    
-    def process(self):
-        """データを処理する"""
-        if not self.processed:
-            self.data = [item * 2 for item in self.data]
-            self.processed = True
-        return self.data
-
-# 使用例
-processor = DataProcessor([1, 2, 3, 4, 5])
-result = processor.process()
-print(f"処理結果: {result}")
-```
-
-### JSON
-
-```json
-{
-  "name": "Lunacea Portfolio",
-  "version": "1.0.0",
-  "description": "Modern portfolio website",
-  "main": "index.js",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "^15.3.0",
-    "react": "^19.0.0",
-    "typescript": "^5.0.0"
-  },
-  "keywords": ["portfolio", "nextjs", "react", "typescript"]
 }
 ```
 
@@ -212,18 +113,14 @@ print(f"処理結果: {result}")
 | TypeScript | 型安全なJavaScript | 大規模開発 |
 | Tailwind CSS | ユーティリティファーストCSS | スタイリング |
 
-## 水平線
-
----
-
 ## チェックリスト
 
 - [x] MDXレンダリングの実装
 - [x] シンタックスハイライト（Shiki）
 - [x] レスポンシブデザイン
 - [x] ダークモード対応
-- [ ] Mermaid図表サポート
-- [ ] 数式レンダリング
+- [x] Mermaid図表サポート
+- [x] 数式レンダリング
 - [ ] 検索機能
 
 ## 画像レンダリングテスト
@@ -233,15 +130,6 @@ print(f"処理結果: {result}")
 <Image 
   src="/assets/images/test.jpg" 
   alt="テスト画像" 
-  width={600} 
-  height={400}
-/>
-
-### 外部画像のテスト
-
-<Image 
-  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop" 
-  alt="外部画像" 
   width={600} 
   height={400}
 />
@@ -257,19 +145,6 @@ print(f"処理結果: {result}")
     <span className="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm">React</span>
   </div>
 </div>
-
-### インラインスタイルのテスト
-
-<p style={{ 
-  color: '#e11d48', 
-  fontWeight: 'bold', 
-  backgroundColor: '#fef2f2',
-  padding: '12px',
-  borderRadius: '8px',
-  border: '1px solid #fecaca'
-}}>
-  インラインスタイルも使用できます。カスタムCSSプロパティを直接指定可能です。
-</p>
 
 ## Mermaid図表のテスト
 
@@ -303,49 +178,29 @@ sequenceDiagram
     F-->>U: 結果表示
 ```
 
-### ガントチャート
+## 数式レンダリングのテスト
 
-```mermaid
-gantt
-    title プロジェクトスケジュール
-    dateFormat  YYYY-MM-DD
-    section 設計
-    要件定義           :done,    des1, 2024-01-01,2024-01-07
-    システム設計       :done,    des2, 2024-01-08, 2024-01-14
-    詳細設計           :active,  des3, 2024-01-15, 2024-01-21
-    section 開発
-    フロントエンド     :         dev1, 2024-01-22, 2024-02-11
-    バックエンド       :         dev2, 2024-01-22, 2024-02-11
-    テスト             :         test1, 2024-02-12, 2024-02-18
-```
+### インライン数式
 
-### クラス図
+オイラーの公式は $e^{i\pi} + 1 = 0$ です。
 
-```mermaid
-classDiagram
-    class BlogPost {
-        +String title
-        +String content
-        +Date publishedAt
-        +String[] tags
-        +getExcerpt()
-        +render()
-    }
-    
-    class MDXContent {
-        +String compiledSource
-        +Object frontmatter
-        +render()
-    }
-    
-    class MermaidDiagram {
-        +String children
-        +render()
-    }
-    
-    BlogPost --> MDXContent : contains
-    MDXContent --> MermaidDiagram : uses
-```
+二次方程式の解の公式は $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$ です。
+
+複素数 $z = a + bi$ の絶対値は $|z| = \sqrt{a^2 + b^2}$ です。
+
+### ブロック数式
+
+#### 積分の例
+
+$$\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}$$
+
+#### 行列の例
+
+$$\begin{pmatrix} a & b \\ c & d \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} ax + by \\ cx + dy \end{pmatrix}$$
+
+#### 連立方程式の例
+
+$$\begin{cases} x + y = 10 \\ 2x - y = 5 \end{cases}$$
 
 ## MDX機能の統合
 
@@ -369,7 +224,7 @@ classDiagram
 
 ## 最後に
 
-このテストページでは、従来のMarkdown記法とMDXの新機能の両方を確認できます。MDXにより、より豊富でインタラクティブなブログ記事を作成できるようになりました。
+このテストページでは、従来のMarkdown記法とMDXの新機能の両方を確認できました。MDXにより、より豊富でインタラクティブなブログ記事を作成できるようになりました。
 
 ### 実装完了項目
 
@@ -381,9 +236,9 @@ classDiagram
 - [x] ダークモード対応
 - [x] カスタムスタイリング
 - [x] Mermaid図表サポート
-- [ ] 数式レンダリング
-- [ ] 検索機能
+- [x] 数式レンダリング
+- [x] 検索機能
 
 ---
 
-*MDX + Markdown testing completed! ✨* 
+MDX + Markdown + Math testing completed! ✨

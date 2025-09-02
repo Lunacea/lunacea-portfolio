@@ -60,29 +60,81 @@
     "postcss",
     "github-actions-workflow"
   ],
+
+  // MDX設定 - 数式記法のサポート
+  "mdx.validate": false,
+  "mdx.experimental.parser": "acorn",
+  "mdx.experimental.parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "allowImportExportEverywhere": true,
+    "allowAwaitOutsideFunction": true,
+    "allowHashBang": true,
+    "allowReturnOutsideFunction": true,
+    "allowSuperOutsideMethod": true,
+    "allowUnparenthesizedArrow": true,
+    "allowReserved": true,
+    "allowReservedWords": true
+  },
+  // MDX拡張機能の診断を完全に無効化（数式記法の誤検出を防ぐ）
+  "mdx.experimental.diagnostics": false,
+  "mdx.experimental.syntaxHighlighting": false,
+  // MDXファイルの診断を無効化
+  "files.associations": {
+    "*.mdx": "markdown"
+  },
   "cSpell.words": [
     "ajkey",
     "animejs",
+    "antiscript",
     "aquasecurity",
     "ARCJET",
     "AUTOPLAY",
     "buildx",
     "bunx",
+    "Cascadia",
     "checkly",
+    "classdiagram",
     "conventionalcommits",
     "elif",
     "eslintcache",
+    "figcaption",
+    "Fira",
     "gantt",
     "Hackathon",
+    "Hiragino",
+    "infty",
+    "Kaku",
+    "katex",
     "LOGTAIL",
     "lunacea",
+    "mathcal",
+    "mathdefault",
+    "mbin",
+    "mclose",
+    "Meiryo",
+    "mopen",
+    "mord",
+    "mpunct",
+    "mrel",
+    "Neue",
     "Nextdotjs",
     "nixpacks",
     "Nodedotjs",
     "Noll",
+    "Noto",
+    "oklch",
+    "Orbitron",
     "Pkgs",
+    "pmatrix",
     "POSTHOG",
+    "rajdhani",
+    "rehype",
+    "rgba",
+    "Roboto",
     "sarif",
+    "Segoe",
+    "sequencediagram",
     "shiki",
     "sigstore",
     "spotlightjs",
@@ -105,6 +157,13 @@
   "problems.decorations.enabled": false,
   "editor.showUnused": false,
   "typescript.showUnused": false,
+  // markdownlintの設定 - MDXファイルでJSXを許可
+  "markdownlint.config": {
+    "MD033": false,  // inline HTMLを許可（MDXではJSXが正常）
+    "MD009": false,  // trailing spacesを許可
+    "MD036": false,  // emphasis as headingを許可
+    "MD047": false   // single trailing newlineを許可
+  },
   // 追加の警告抑制設定
   "yaml.customTags": [],
   "yaml.completion": false,
