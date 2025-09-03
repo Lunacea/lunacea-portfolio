@@ -1,3 +1,14 @@
+## [3.3.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.0...v3.3.1) (2025-09-03)
+
+
+### Bug Fixes
+
+* correct URI validation regex to avoid overly large character range ([74f020d](https://github.com/Lunacea/lunacea-portfolio/commit/74f020d5f338dc00f88be1043ff1bc60438bad14))
+* disable optimizeCss experimental feature to resolve build error ([79bd461](https://github.com/Lunacea/lunacea-portfolio/commit/79bd4617f7c3234301c901279b68719628bb4976))
+* enhance HTML sanitization with DOMPurify for better security ([f9cc344](https://github.com/Lunacea/lunacea-portfolio/commit/f9cc344fa4d6e5bae3971bc3f11487077b744218))
+* resolve DOMPurify server-side build error ([6cb35a8](https://github.com/Lunacea/lunacea-portfolio/commit/6cb35a807cfb2ca4c6046ae29bd1612154d22a00))
+* resolve various issues and improve functionality ([5de8892](https://github.com/Lunacea/lunacea-portfolio/commit/5de8892d1ae885b9e32e285b98e070039989513e))
+
 # [3.3.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.2.0...v3.3.0) (2025-09-02)
 
 
