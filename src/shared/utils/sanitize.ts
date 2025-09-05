@@ -8,24 +8,30 @@ export function sanitizeHtmlServerSide(htmlContent: string): string {
     return '';
   }
   
-  // 基本的なサニタイゼーション（サーバーサイド用）
-  return htmlContent
-    // 危険なタグの削除
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
-    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
-    .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, '')
-    .replace(/<input\b[^<]*(?:(?!<\/input>)<[^<]*)*<\/input>/gi, '')
-    .replace(/<textarea\b[^<]*(?:(?!<\/textarea>)<[^<]*)*<\/textarea>/gi, '')
-    .replace(/<select\b[^<]*(?:(?!<\/select>)<[^<]*)*<\/select>/gi, '')
-    .replace(/<button\b[^<]*(?:(?!<\/button>)<[^<]*)*<\/button>/gi, '')
-    // 危険なURLスキームの削除
-    .replace(/(javascript|data|vbscript|file|about):/gi, '')
-    // イベントハンドラーの削除
-    .replace(/on\w+\s*=/gi, '')
-    // 危険な属性の削除
-    .replace(/\s*(onerror|onload|onclick|onmouseover|onfocus|onblur)\s*=\s*["'][^"']*["']/gi, '');
+  // より安全なサニタイゼーション（サーバーサイド用）
+  let sanitized = htmlContent;
+  
+  // 危険なタグを繰り返し削除（入れ子構造に対応）
+  const dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'];
+  
+  for (const tag of dangerousTags) {
+    let previous;
+    do {
+      previous = sanitized;
+      sanitized = sanitized.replace(new RegExp(`<${tag}\\b[^<]*(?:(?!<\\/${tag}>)<[^<]*)*<\\/${tag}>`, 'gi'), '');
+    } while (sanitized !== previous);
+  }
+  
+  // 危険なURLスキームの削除
+  sanitized = sanitized.replace(/(javascript|data|vbscript|file|about):/gi, '');
+  
+  // イベントハンドラーの削除
+  sanitized = sanitized.replace(/on\w+\s*=/gi, '');
+  
+  // 危険な属性の削除
+  sanitized = sanitized.replace(/\s*(onerror|onload|onclick|onmouseover|onfocus|onblur)\s*=\s*["'][^"']*["']/gi, '');
+  
+  return sanitized;
 }
 
 /**

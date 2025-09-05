@@ -243,6 +243,10 @@ export default async function Profile(props: IProfileProps) {
                       <h4 className="font-medium text-foreground">{t('notification_app_dev_title')}</h4>
                       <p className="text-sm text-muted-foreground">{t('notification_app_dev_description')}</p>
                     </div>
+                    <div>
+                      <h4 className="font-medium text-foreground">{t('video_chat_app_dev_title')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('video_chat_app_dev_description')}</p>
+                    </div>
                   </div>
                 </BorderedArticle>
               </ScrollReveal>
@@ -250,12 +254,16 @@ export default async function Profile(props: IProfileProps) {
               {/* Hackathon */}
               <ScrollReveal direction="left" delay={100}>
                 <BorderedArticle title={t('hackathon_section_title')} subheader={t('hackathon_award_subheader')}>
-                  <div>
-                    <h4 className="font-medium text-foreground mb-2">{t('hackathon_project_name')}</h4>
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-foreground mb-2">{t('hackathon_project_name_1')}</h4>
                     <p className="text-muted-foreground">
                       {t('hackathon_project_description_1')}
                       <br />
                       {t('hackathon_project_description_2')}
+                    </p>
+                    <h4 className="font-medium text-foreground mb-2">{t('hackathon_project_name_2')}</h4>
+                    <p className="text-muted-foreground">
+                      {t('hackathon_project_description_3')}
                     </p>
                   </div>
                 </BorderedArticle>

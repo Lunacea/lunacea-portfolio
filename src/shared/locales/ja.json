@@ -50,7 +50,8 @@
     "hackathon_title": "ハッカソン実績",
     "hackathon_section_title": "Hackathon Achievement",
     "hackathon_award_subheader": "受賞実績",
-    "hackathon_project_name": "Takizawa Hackathon Ver.7",
+    "hackathon_project_name_1": "Takizawa Hackathon Ver.7",
+    "hackathon_project_name_2": "GIIKU HACKATHON vol.8",
     "hackathon_project_description_1": "農家さんのプロフィールQR生成アプリ「TunaAgri」をSvelteで開発。",
     "hackathon_project_description_2": "導入の容易さとコミュニティ活性化への解決策が評価され受賞。",
     "leadership_title": "リーダーシップ",
@@ -75,20 +76,24 @@
     "certification_ap_issuer": "IPA 独立行政法人 情報処理推進機構",
     "certification_fe_name": "基本情報技術者試験",
     "certification_fe_issuer": "IPA 独立行政法人 情報処理推進機構",
-    "core_strengths_title": "私のいいところ",
+    "core_strengths_title": "大切にしていること",
     "core_strength_user_centric_title": "ユーザー中心設計",
-    "core_strength_user_centric_description": "利用者の視点に立ち、直感的で使いやすいインターフェースの実現に注力。",
-    "core_strength_learning_title": "継続的学習意欲",
+    "core_strength_user_centric_description": "利用者の視点に立ち、誰にとっても直感的で使いやすいインターフェースの実現を目指す。",
+    "core_strength_learning_title": "積極的学習",
     "core_strength_learning_description": "新しい技術や知識を積極的に習得し、常に自己のスキルアップを図る。",
-    "core_strength_teamwork_title": "チームワーク",
-    "core_strength_teamwork_description": "多様なメンバーと協調し、共通の目標達成に向けて貢献。",
-    "development_values_title": "開発における価値観"
+    "core_strength_teamwork_title": "コミュニケーション",
+    "core_strength_teamwork_description": "多様な人々とのつながりを大切にし、明るく気持ちのいい環境を作る。",
+    "development_values_title": "開発における価値観",
+    "video_chat_app_dev_title": "360°テレビ会議システム開発",
+    "video_chat_app_dev_description": "Vue.js，WebRTC による接続環境を考慮した開発",
+    "hackathon_project_description_3": "海岸線収集・記録アプリ「Cooooster」をNext.jsで開発。"
   },
   "Works": {
     "meta_title": "Works | Lunacea portfolio",
     "meta_description": "Web開発プロジェクトとアプリケーションの実績を紹介します。",
     "project_description_1": "Next.js 15を使用して構築されたポートフォリオサイト。多言語対応、ダークモード、レスポンシブデザインを実装。",
-    "project_description_2": "Takizawa Hackathon 7 にて市長賞を受賞。農家さんの紹介ページおよびQRコードを生成するアプリ。"
+    "project_description_2": "Takizawa Hackathon 7 にて市長賞を受賞。農家さんの紹介ページおよびQRコードを生成するアプリ。",
+    "project_description_3": "技育ハッカソンvol.8にて努力賞を受賞。海岸線を収集・記録するWebアプリ。ユーザーが訪れた海岸の写真や情報を保存でき、コンプリート率も確認できる。"
   },
   "WorksSlug": {
     "meta_title": "{slug} | Lunacea portfolio",

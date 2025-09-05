@@ -30,5 +30,13 @@ export async function getProjects(locale: string): Promise<Project[]> {
       technologies: ['Svelte', 'Drizzlekit', 'Hono.js', 'Docker'],
       github: 'https://github.com/lunacea/takizawa-hackathon7',
     },
+    {
+      id: 'cooooster',
+      title: 'Cooooster',
+      description: t('project_description_3'),
+      image: '/assets/images/cooooster.png',
+      technologies: ['Next.js', 'TypeScript', 'Supabase', 'Cloudflare Pages', 'Drizzle'],
+      github: 'https://github.com/Lunacea/cooooster',
+    },
   ];
 }
