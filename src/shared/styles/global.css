@@ -349,6 +349,11 @@
   font-weight: 500;
 }
 
+/* 強制的にインラインコードの折返しを抑止（微粒度にスコープ） */
+.no-wrap-inline-code code:not(pre code) {
+  display: inline-block !important; /* 行内での分割をより強く抑止 */
+}
+
 .blog-content hr {
   @apply border-border;
   margin: 24px 0;

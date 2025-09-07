@@ -53,7 +53,7 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
       {/* HTMLコンテンツのレンダリング */}
       {safeHtmlContent ? (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
-          <div className="blog-content" dangerouslySetInnerHTML={{ __html: safeHtmlContent }} />
+          <div className="blog-content no-wrap-inline-code" dangerouslySetInnerHTML={{ __html: safeHtmlContent }} />
         </div>
       ) : (
         /* フォールバックコンテンツ */
