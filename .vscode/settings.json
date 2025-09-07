@@ -84,6 +84,7 @@
     "*.mdx": "markdown"
   },
   "cSpell.words": [
+    "Agri",
     "ajkey",
     "animejs",
     "antiscript",
@@ -92,18 +93,22 @@
     "AUTOPLAY",
     "buildx",
     "bunx",
+    "cand",
     "Cascadia",
     "checkly",
     "classdiagram",
     "conventionalcommits",
+    "Cooooster",
     "elif",
     "eslintcache",
     "figcaption",
     "Fira",
     "gantt",
+    "GIIKU",
     "Hackathon",
     "Hiragino",
     "infty",
+    "Iwate",
     "Kaku",
     "katex",
     "KHTML",
@@ -140,9 +145,11 @@
     "shiki",
     "sigstore",
     "spotlightjs",
+    "Takizawa",
     "tohoku",
     "tripcode",
-    "Vuedotjs"
+    "Vuedotjs",
+    "WCAG"
   ],
 
   // GitHub Actions - バリデーション設定（Context access警告を抑制）
