@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useHeadingResolver } from '@/features/blog/hooks/useHeadingResolver';
 
 type TableOfContentsItem = { id: string; title: string; level: number };
 
@@ -11,48 +12,11 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
   const [activeId, setActiveId] = useState<string>(topLevelItems[0]?.id ?? '');
   const activeIdRef = useRef<string>('');
 
-  // 見出しIDのゆらぎを吸収する解決マップ（例: "&" -> "and" / 削除 など）
-  const [resolvedIdMap, setResolvedIdMap] = useState<Record<string, string>>({});
-
-  const getIdCandidates = useCallback((rawId: string): string[] => {
-    const candidates = new Set<string>();
-    const add = (s: string) => { if (s) { candidates.add(s); } };
-    const base = rawId;
-    add(base);
-    try { add(decodeURIComponent(base)); } catch { /* noop */ }
-    add(base.replace(/&/g, 'and'));
-    add(base.replace(/&/g, ''));
-    add(base.replace(/-and-/g, '-'));
-    add(base.replace(/--+/g, '-'));
-    // 括弧付き注釈を除去した候補（例: （操作とスタイル））
-    add(base.replace(/[（(].*?[）)]/g, '').replace(/--+/g, '-'));
-    return Array.from(candidates);
-  }, []);
-
-  const resolveElementForItem = useCallback((item: TableOfContentsItem): HTMLElement | null => {
-    // 1) IDの候補から探索
-    for (const cand of getIdCandidates(item.id)) {
-      const el = document.getElementById(cand);
-      if (el) return el as HTMLElement;
-    }
-    // 2) タイトルから見出しをおおまかに特定（&/括弧/空白差異を許容）
-    const norm = (s: string) => s
-      .toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/[（()）]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    const wanted = norm(item.title);
-    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')) as HTMLElement[];
-    for (const h of headings) {
-      if (norm(h.textContent || '') === wanted) return h;
-    }
-    return null;
-  }, [getIdCandidates]);
+  const { resolvedIdMap, getResolvedId, resolveElementForItem } = useHeadingResolver(topLevelItems);
 
   const smoothScrollToHeading = (elementId: string) => {
     const item = topLevelItems.find(it => it.id === elementId);
-    const resolvedId = (item && resolvedIdMap[item.id]) || elementId;
+    const resolvedId = getResolvedId(elementId);
     const target = document.getElementById(resolvedId) || (item ? resolveElementForItem(item) : null);
     if (!target) return;
 
@@ -146,25 +110,7 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
     };
   }, [topLevelItems, updateActiveId]);
 
-  // 初期レンダリング後に見出しIDのゆらぎを解決してマップ化
-  useEffect(() => {
-    const map: Record<string, string> = {};
-    for (const item of topLevelItems) {
-      const el = resolveElementForItem(item);
-      if (el) {
-        map[item.id] = el.id;
-      }
-    }
-    // 差分がない場合は更新しない
-    const prev = resolvedIdMap;
-    const prevKeys = Object.keys(prev);
-    const nextKeys = Object.keys(map);
-    const sameLength = prevKeys.length === nextKeys.length;
-    const sameEntries = sameLength && nextKeys.every(k => prev[k] === map[k]);
-    if (!sameEntries) {
-      setResolvedIdMap(map);
-    }
-  }, [topLevelItems, resolveElementForItem, resolvedIdMap]);
+  // 解決マップの構築は useHeadingResolver が担当
 
   if (!topLevelItems || topLevelItems.length === 0) {
     return null;

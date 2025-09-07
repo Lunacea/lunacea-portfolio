@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useHeadingResolver } from '@/features/blog/hooks/useHeadingResolver';
 import { FaChevronUp, FaList } from 'react-icons/fa';
 import Icon from '@/shared/components/ui/Icon';
 
@@ -16,60 +17,7 @@ type TableOfContentsProps = {
 export default function TableOfContents({ items, className = '', maxLevel = 3, defaultExpanded = false }: TableOfContentsProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const filteredItems = useMemo(() => items.filter(item => item.level <= maxLevel && item.level >= 1), [items, maxLevel]);
-  const smoothScrollToHeading = useCallback((elementId: string) => {
-    const target = document.getElementById(elementId);
-    if (!target) return;
-
-    // より堅牢なスクロール位置の取得
-    const currentPosition = window.pageYOffset || 
-                          document.documentElement.scrollTop || 
-                          document.body.scrollTop || 
-                          0;
-    
-    const headerOffset = 100;
-    const elementPosition = target.getBoundingClientRect().top;
-    const targetPosition = elementPosition + currentPosition - headerOffset;
-    const distance = targetPosition - currentPosition;
-    const duration = 800; // 800ms
-    let start: number | null = null;
-
-    const easeInOutCubic = (t: number): number => {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    };
-
-    const animation = (currentTime: number) => {
-      if (start === null) start = currentTime;
-      const timeElapsed = currentTime - start;
-      const progress = Math.min(timeElapsed / duration, 1);
-      const easedProgress = easeInOutCubic(progress);
-
-      const newPosition = currentPosition + distance * easedProgress;
-      
-      // より堅牢なスクロール方法
-      try {
-        // 方法1: window.scrollTo
-        if (window.scrollTo) {
-          window.scrollTo(0, newPosition);
-        }
-        // 方法2: window.scroll
-        else if (window.scroll) {
-          window.scroll(0, newPosition);
-        }
-        // 方法3: document.documentElement.scrollTop
-        else {
-          document.documentElement.scrollTop = newPosition;
-        }
-      } catch {
-        // エラーが発生した場合は静かに処理
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(animation);
-      }
-    };
-
-    requestAnimationFrame(animation);
-  }, []);
+  const { getResolvedId, smoothScrollToHeading } = useHeadingResolver(filteredItems);
   if (!filteredItems || filteredItems.length === 0) {
     return null;
   }
@@ -93,7 +41,7 @@ export default function TableOfContents({ items, className = '', maxLevel = 3, d
               return (
                 <li key={item.id} className={indentClass}>
                   <a
-                    href={`#${item.id}`}
+                    href={`#${getResolvedId(item.id)}`}
                     className="block py-2 px-3 text-sm text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-all duration-200 leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-primary/5"
                     onClick={(e) => {
                       e.preventDefault();
