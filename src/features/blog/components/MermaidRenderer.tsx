@@ -61,11 +61,18 @@ export default function MermaidRenderer() {
           if (attr.name.includes('"') && attr.value === '') {
             const match = attr.name.match(/data-mermaid-c"([^"]+)"/);
             if (match && match[1]) {
-              content = decodeURIComponent(match[1]);
+              const safeDecodeURIComponent = (value: string): string => {
+                try { return decodeURIComponent(value); } catch { return value; }
+              };
+              content = safeDecodeURIComponent(match[1]);
             }
           } else if (attr.value) {
             const unescapedValue = attr.value.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-            content = decodeURIComponent(unescapedValue);
+            const hasValidPercentEscapes = /%(?:[0-9A-Fa-f]{2})/.test(unescapedValue);
+            const safeDecodeURIComponent = (value: string): string => {
+              try { return decodeURIComponent(value); } catch { return value; }
+            };
+            content = hasValidPercentEscapes ? safeDecodeURIComponent(unescapedValue) : unescapedValue;
           }
           break;
         }
