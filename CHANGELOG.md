@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.0...v3.5.0) (2025-09-08)
+
+
+### Features
+
+* アクセシブルなスライダー記事の内容を更新し、HTMLサニタイズ機能を強化 ([76e2acf](https://github.com/Lunacea/lunacea-portfolio/commit/76e2acff618470c81fe5bf7f5191f142b287a8ca))
+
 # [3.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.1...v3.4.0) (2025-09-08)
 
 
