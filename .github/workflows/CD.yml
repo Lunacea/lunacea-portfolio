@@ -73,11 +73,20 @@ jobs:
         run: bun install --frozen-lockfile
       
       - name: Download build artifacts from CI
+        id: download-artifact
         uses: actions/download-artifact@v4
         with:
           name: build-output-${{ github.sha }}
-          path: .next/
+          path: .
         continue-on-error: true
+
+      - name: Extract build artifact (if available)
+        run: |
+          if [ -f "build-artifacts-${{ github.sha }}.tgz" ]; then
+            tar -xzf build-artifacts-${{ github.sha }}.tgz
+          else
+            echo "No build artifact found; building from source"
+          fi
       
       - name: Build application (if artifacts not available)
         if: failure()
