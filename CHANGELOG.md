@@ -1,3 +1,18 @@
+# [3.4.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.1...v3.4.0) (2025-09-08)
+
+
+### Bug Fixes
+
+* add resolver index id of tables and mermaid safe decoder ([ae22452](https://github.com/Lunacea/lunacea-portfolio/commit/ae224524d64d6643f3a98c7f88ccaaa930c8674a))
+* インラインコードの折返しを抑止するスタイルを追加 ([b1bc4e3](https://github.com/Lunacea/lunacea-portfolio/commit/b1bc4e372dcdbad73ef4a8c0cb97be07c031dd09))
+
+
+### Features
+
+* add cooooster to works and fix security bugs ([bb68bca](https://github.com/Lunacea/lunacea-portfolio/commit/bb68bcada0fd3b7e5a93f32668382b9de1fdc512))
+* update localization files and add accessibility article ([2a470ad](https://github.com/Lunacea/lunacea-portfolio/commit/2a470ad1bf4005b71e5b740dfbc0d55d1fb6e597))
+* アクセシブルなスライダーに関する記事を追加 ([55aae43](https://github.com/Lunacea/lunacea-portfolio/commit/55aae437cbda4b6a87acf77416b32c19e351bb85))
+
 ## [3.3.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.3.0...v3.3.1) (2025-09-03)
 
 
