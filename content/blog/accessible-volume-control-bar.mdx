@@ -184,8 +184,6 @@ export function AccessibleSliderDemo() {
 }
 ```
 
-デザイン体系を導入する場合は、色/影/形状のトークンを定義して一貫性を担保します。
-
 ## Keyboard navigation（キーボード操作）
 
 ### 設計（Keyboard navigation）
@@ -278,13 +276,13 @@ const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
 - 非アクティブトラック背景のコントラスト比が3:1（MD3推奨）
 - 色覚多様性に配慮し、`track` と `progress` の色差・明度差を十分に確保
-- フォーカスリングは背景と十分なコントラストで視認可能に
+- フォーカスリングは背景と十分なコントラストで視認可能にする
 
 ---
 
 ## まとめ: Use cases
 
-以下は代表的なユースケースごとの最小実装テンプレートです。
+ここまでをもとに、代表的なユースケースごとの実装を以下にまとめます。
 
 ```tsx title="MinimalAccessibleSlider.tsx"
 // MinimalAccessibleSlider.tsx

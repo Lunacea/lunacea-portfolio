@@ -10,6 +10,17 @@ export function sanitizeHtmlServerSide(htmlContent: string): string {
   
   // より安全なサニタイゼーション（サーバーサイド用）
   let sanitized = htmlContent;
+
+  // 置換を安定するまで繰り返すためのユーティリティ
+  const replaceRepeatedly = (input: string, pattern: RegExp, replacement: string): string => {
+    let previous: string;
+    let output = input;
+    do {
+      previous = output;
+      output = output.replace(pattern, replacement);
+    } while (output !== previous);
+    return output;
+  };
   
   // 危険なタグを繰り返し削除（入れ子構造に対応）
   const dangerousTags = ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea', 'select', 'button'];
@@ -23,13 +34,17 @@ export function sanitizeHtmlServerSide(htmlContent: string): string {
   }
   
   // 危険なURLスキームの削除
-  sanitized = sanitized.replace(/(javascript|data|vbscript|file|about):/gi, '');
+  sanitized = replaceRepeatedly(sanitized, /(javascript|data|vbscript|file|about):/gi, '');
   
   // イベントハンドラーの削除
-  sanitized = sanitized.replace(/on\w+\s*=/gi, '');
+  // on* 属性全体 (値を含む) を削除
+  sanitized = replaceRepeatedly(sanitized, /\s*on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
   
   // 危険な属性の削除
-  sanitized = sanitized.replace(/\s*(onerror|onload|onclick|onmouseover|onfocus|onblur)\s*=\s*["'][^"']*["']/gi, '');
+  sanitized = replaceRepeatedly(sanitized, /\s*(onerror|onload|onclick|onmouseover|onfocus|onblur)\s*=\s*["'][^"']*["']/gi, '');
+
+  // コメントの除去
+  sanitized = replaceRepeatedly(sanitized, /<!--([\s\S]*?)-->/gi, '');
   
   return sanitized;
 }
