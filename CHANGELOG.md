@@ -1,3 +1,10 @@
+## [3.5.1](https://github.com/Lunacea/lunacea-portfolio/compare/v3.5.0...v3.5.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* improve ci/cd workflow ([a2d2e28](https://github.com/Lunacea/lunacea-portfolio/commit/a2d2e28092fd14d2a7405c5cdf0416c099e215e9))
+
 # [3.5.0](https://github.com/Lunacea/lunacea-portfolio/compare/v3.4.0...v3.5.0) (2025-09-08)
 
 
