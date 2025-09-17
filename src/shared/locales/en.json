@@ -220,4 +220,31 @@
     "conclusion": "Conclusion",
     "reference_materials": "Reference Materials"
   }
+  ,
+  "Quiz": {
+    "meta_title": "Quiz | Lunacea portfolio",
+    "meta_description": "Weekly one-question quiz to strengthen practical frontend skills",
+    "title": "Implementation Booster Quiz",
+    "weekly_quiz": "Weekly Quiz",
+    "start": "Start",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "try_again": "Try again",
+    "your_score": "Your score: {score}/{total}",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "explanation": "Explanation",
+    "select_one": "Select one",
+    "select_many": "Select multiple",
+    "loading": "Loading...",
+    "error": "Failed to load",
+    "empty": "No quizzes found",
+    "topics": "Topics",
+    "choose_topic": "Choose a topic",
+    "start_quiz": "Start with this topic",
+    "difficulty": "Difficulty",
+    "filter": "Filter",
+    "reset_filters": "Reset filters"
+  }
 }

@@ -212,4 +212,31 @@
     "conclusion": "まとめ",
     "reference_materials": "参考資料"
   }
+  ,
+  "Quiz": {
+    "meta_title": "Quiz | Lunacea portfolio",
+    "meta_description": "週次でフロントエンド中心の実装力を鍛える1問1答クイズ",
+    "title": "実装力向上クイズ",
+    "weekly_quiz": "Weekly Quiz",
+    "start": "はじめる",
+    "next": "次へ",
+    "previous": "前へ",
+    "submit": "解答",
+    "try_again": "もう一度",
+    "your_score": "あなたのスコア: {score}/{total}",
+    "correct": "正解",
+    "incorrect": "不正解",
+    "explanation": "解説",
+    "select_one": "1つ選択",
+    "select_many": "複数選択可",
+    "loading": "読み込み中...",
+    "error": "読み込みに失敗しました",
+    "empty": "問題が見つかりません",
+    "topics": "トピック",
+    "choose_topic": "カテゴリを選択",
+    "start_quiz": "このカテゴリで開始",
+    "difficulty": "難易度",
+    "filter": "絞り込み",
+    "reset_filters": "条件をクリア"
+  }
 }

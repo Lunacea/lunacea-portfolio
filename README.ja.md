@@ -165,6 +165,16 @@ bun run start
 - 実装: `getRelatedPosts(slug, limit)` in `src/shared/libs/blog.impl.ts`
 - 表示: 記事ページ下部にカードリンクを表示。
 
+### 週次クイズ（Quiz）
+
+- 目的: フロントエンド中心＋原理原則を鍛える1問1答形式の週次クイズ。
+- ルート: `/[locale]/quiz`（既定ロケールは `/quiz`）。
+- 実装: RSCページ + Clientコンポーネント（`QuizRunner`）。
+- データ: ローカル配列 + Zod検証（`src/features/quiz/data/sample.ts`）。
+- i18n: `src/shared/locales/{ja,en}.json` の `Quiz` 名前空間。
+- a11y: `fieldset/legend` と `radiogroup`/`group`、キーボード操作対応。
+- SEO: `generateMetadata` と JSON-LD、OGは既存設定を利用。SNS共有は `ShareButtons` 再利用。
+
 ## ✅ 検証
 
 - Lint/Typecheck/Test:
