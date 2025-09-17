@@ -29,8 +29,10 @@
   outline-offset: 2px;
 }
 .blog-content .code-copy-btn.code-copy-success {
-  background: #14532d; /* green-900 */
-  color: #dcfce7; /* green-100 */
+  /* OGPで使用しているピンク系に合わせる */
+  background: #ec4899; /* pink-500 */
+  color: #ffffff; /* white for contrast */
+  border-color: #be185d; /* rose-700-ish for a stronger edge */
 }
 
 /* KaTeX 数式レンダリングのスタイル */

@@ -2,8 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { FaLink, FaXTwitter } from 'react-icons/fa6';
-import { SiBluesky } from 'react-icons/si';
+import { FaLink, FaXTwitter, FaFacebook } from 'react-icons/fa6';
 import Icon from '@/shared/components/ui/Icon';
 
 type ShareButtonsProps = {
@@ -21,17 +20,37 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
     return absoluteUrl ?? `/blog/${encodeURIComponent(slug)}`;
   }, [absoluteUrl, slug]);
 
-  const text = useMemo(() => `"${title}"`, [title]);
+  const text = useMemo(() => `${title}`, [title]);
 
   const xUrl = useMemo(() => {
-    const params = new URLSearchParams({ text: `${text} ${url}` });
+    const params = new URLSearchParams({ text, url });
     return `https://twitter.com/intent/tweet?${params.toString()}`;
   }, [text, url]);
 
-  const bskyUrl = useMemo(() => {
-    const params = new URLSearchParams({ text: `${text} ${url}` });
-    return `https://bsky.app/intent/compose?${params.toString()}`;
-  }, [text, url]);
+  const facebookUrl = useMemo(() => {
+    const params = new URLSearchParams({ u: url });
+    return `https://www.facebook.com/sharer/sharer.php?${params.toString()}`;
+  }, [url]);
+
+  const openSharePopup = useCallback((shareUrl: string, name: string) => {
+    try {
+      const width = 600;
+      const height = 600;
+      const dualScreenLeft = window.screenLeft ?? window.screenX ?? 0;
+      const dualScreenTop = window.screenTop ?? window.screenY ?? 0;
+      const screenWidth = window.innerWidth ?? document.documentElement.clientWidth ?? screen.width;
+      const screenHeight = window.innerHeight ?? document.documentElement.clientHeight ?? screen.height;
+      const left = Math.max(0, (screenWidth - width) / 2) + dualScreenLeft;
+      const top = Math.max(0, (screenHeight - height) / 2) + dualScreenTop;
+      const features = `noopener,noreferrer,menubar=no,toolbar=no,status=no,width=${width},height=${height},top=${top},left=${left}`;
+      const newWindow = window.open(shareUrl, name, features);
+      if (!newWindow) {
+        // ポップアップブロック時は何もしない（ページ遷移はしない）
+      }
+    } catch {
+      // 例外時も遷移はしない
+    }
+  }, []);
 
   const onCopy = useCallback(async () => {
     try {
@@ -53,36 +72,36 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
 
   return (
     <div className="mt-8 flex items-center gap-3" aria-label={t('share')}>
-      <a
-        className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border hover:bg-accent/20 text-sm"
-        href={xUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Share on X"
-      >
-        <Icon icon={<FaXTwitter />} />
-        <span className="sr-only">X</span>
-      </a>
-      <a
-        className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border hover:bg-accent/20 text-sm"
-        href={bskyUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Share on Bluesky"
-      >
-        <Icon icon={<SiBluesky />} />
-        <span className="sr-only">Bluesky</span>
-      </a>
       <button
         type="button"
-        className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border hover:bg-accent/20 text-sm"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black text-white border border-border hover:bg-black/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
+        aria-label="Share on X"
+        title="X"
+        onClick={() => { openSharePopup(xUrl, 'share-x'); }}
+      >
+        <Icon className="text-[18px]" icon={<FaXTwitter />} />
+        <span className="sr-only">X</span>
+      </button>
+      <button
+        type="button"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#1877F2] text-white hover:bg-[#1877F2]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
+        aria-label="Share on Facebook"
+        title="Facebook"
+        onClick={() => { openSharePopup(facebookUrl, 'share-facebook'); }}
+      >
+        <Icon className="text-[18px]" icon={<FaFacebook />} />
+        <span className="sr-only">Facebook</span>
+      </button>
+      <button
+        type="button"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-card text-foreground border border-border hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
         onClick={onCopy}
         aria-live="polite"
-        aria-label={t('copy_link')}
-        title={t('copy_link')}
+        aria-label={copied ? t('copied') : t('copy_link')}
+        title={copied ? t('copied') : t('copy_link')}
       >
-        <Icon icon={<FaLink />} />
-        <span>{copied ? t('copied') : t('copy_link')}</span>
+        <Icon className="text-[18px]" icon={<FaLink />} />
+        <span className="sr-only">{copied ? t('copied') : t('copy_link')}</span>
       </button>
     </div>
   );
