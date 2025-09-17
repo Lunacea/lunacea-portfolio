@@ -46,8 +46,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  // OG画像のURLを生成（実際の画像ファイルを使用する改良版）
-  const ogImageUrl = `/api/og/blog?slug=${encodeURIComponent(slug)}`;
+  // リクエストヘッダから絶対オリジンを構築
+  const h = await headers();
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  const proto = h.get('x-forwarded-proto') ?? 'http';
+  const origin = `${proto}://${host}`;
+
+  // 絶対URLでOG画像
+  const ogImageUrl = `${origin}/api/og/blog?slug=${encodeURIComponent(slug)}`;
 
   return {
     title: `${post.title} | Blog`,

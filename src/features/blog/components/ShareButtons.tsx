@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { FaLink, FaXTwitter, FaFacebook } from 'react-icons/fa6';
 import Icon from '@/shared/components/ui/Icon';
 
+type NavigatorWithShare = Navigator & { share: (data: { title?: string; text?: string; url?: string }) => Promise<void> };
+
 type ShareButtonsProps = {
   slug: string;
   title: string;
@@ -52,6 +54,28 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
     }
   }, []);
 
+  const canWebShare = typeof navigator !== 'undefined' && 'share' in navigator;
+
+  const onShareX = useCallback(async () => {
+    if (canWebShare) {
+      try {
+        await (navigator as NavigatorWithShare).share({ title, text: title, url });
+        return;
+      } catch {}
+    }
+    openSharePopup(xUrl, 'share-x');
+  }, [canWebShare, title, url, xUrl, openSharePopup]);
+
+  const onShareFacebook = useCallback(async () => {
+    if (canWebShare) {
+      try {
+        await (navigator as NavigatorWithShare).share({ title, text: title, url });
+        return;
+      } catch {}
+    }
+    openSharePopup(facebookUrl, 'share-facebook');
+  }, [canWebShare, title, url, facebookUrl, openSharePopup]);
+
   const onCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -77,7 +101,7 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
         className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black text-white border border-border hover:bg-black/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
         aria-label="Share on X"
         title="X"
-        onClick={() => { openSharePopup(xUrl, 'share-x'); }}
+        onClick={onShareX}
       >
         <Icon className="text-[18px]" icon={<FaXTwitter />} />
         <span className="sr-only">X</span>
@@ -87,7 +111,7 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
         className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#1877F2] text-white hover:bg-[#1877F2]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
         aria-label="Share on Facebook"
         title="Facebook"
-        onClick={() => { openSharePopup(facebookUrl, 'share-facebook'); }}
+        onClick={onShareFacebook}
       >
         <Icon className="text-[18px]" icon={<FaFacebook />} />
         <span className="sr-only">Facebook</span>
