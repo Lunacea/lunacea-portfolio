@@ -137,7 +137,18 @@
     "tag_meta_title": "{tag} | Tags",
     "tag_meta_description": "Articles tagged with {tag}",
     "tag_heading_description": "Articles tagged with {tag}",
-    "no_posts_for_tag": "No posts for {tag}"
+    "no_posts_for_tag": "No posts for {tag}",
+    "copy": "Copy",
+    "copied": "Copied",
+    "rate_this_article": "Rate this article",
+    "like": "Helpful",
+    "dislike": "Not helpful",
+    "you_already_voted": "You already voted today",
+    "rating_failed": "Rating failed",
+    "related_articles": "Related articles",
+    "no_related_posts": "No related posts",
+    "share": "Share",
+    "copy_link": "Copy link"
   },
   "ContributionGraph": {
     "past_week_count": "Past {count} weeks of update frequency",

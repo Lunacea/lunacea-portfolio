@@ -130,7 +130,18 @@
     "tag_meta_title": "{tag} | タグ",
     "tag_meta_description": "{tag} のタグが付いた記事",
     "tag_heading_description": "{tag} のタグが付いた記事",
-    "no_posts_for_tag": "{tag} の記事はまだありません"
+    "no_posts_for_tag": "{tag} の記事はまだありません",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "rate_this_article": "この記事を評価",
+    "like": "役に立った",
+    "dislike": "役に立たなかった",
+    "you_already_voted": "本日は既に投票済みです",
+    "rating_failed": "評価に失敗しました",
+    "related_articles": "関連記事",
+    "no_related_posts": "関連記事はありません",
+    "share": "共有",
+    "copy_link": "リンクをコピー"
   },
   "ContributionGraph": {
     "past_week_count": "過去 {count} 週間の更新頻度",

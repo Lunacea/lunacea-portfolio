@@ -8,7 +8,11 @@ import CommentsSection from '@/features/blog/components/CommentsSection';
 import SideTableOfContents from '@/features/blog/components/SideTableOfContents';
 import Icon from '@/shared/components/ui/Icon';
 import BackToTop from '@/shared/components/ui/BackToTop';
-import { getAllBlogPosts, getBlogPost } from '@/shared/libs/blog';
+import { getAllBlogPosts, getBlogPost, getRelatedPosts } from '@/shared/libs/blog';
+import { headers } from 'next/headers';
+import { AppConfig } from '@/shared/utils/AppConfig';
+import PostRating from '@/features/blog/components/PostRating';
+import ShareButtons from '@/features/blog/components/ShareButtons';
 
 type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -42,6 +46,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
+  // OG画像のURLを生成（実際の画像ファイルを使用する改良版）
+  const ogImageUrl = `/api/og/blog?slug=${encodeURIComponent(slug)}`;
+
   return {
     title: `${post.title} | Blog`,
     description: post.description || post.excerpt,
@@ -52,6 +59,20 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       tags: post.tags,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description || post.excerpt,
+      images: [ogImageUrl],
     },
   };
 }
@@ -62,6 +83,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const post = await getBlogPost(slug);
   const t = await getTranslations({ locale, namespace: 'Blog' });
+  const related = post ? await getRelatedPosts(post.slug, 3) : [];
+
+  // SSR側で安定したabsolute URLを生成（Hydration mismatch回避）
+  const h = await headers();
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  const proto = h.get('x-forwarded-proto') ?? 'http';
+  const origin = `${proto}://${host}`;
+  const isDefault = locale === AppConfig.defaultLocale && AppConfig.localePrefix === 'as-needed';
+  const prefix = isDefault ? '' : `/${locale}`;
+  const absoluteUrl = `${origin}${prefix}/blog/${encodeURIComponent(slug)}`;
 
   if (!post) {
     notFound();
@@ -127,6 +158,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* 記事本文 */}
             <BlogPostContent post={post} />
+
+            {/* 記事評価 */}
+            <section aria-labelledby="rate-article" className="mt-10">
+              <h2 id="rate-article" className="sr-only">{t('rate_this_article')}</h2>
+              <PostRating slug={post.slug} />
+            </section>
+
+            {/* 共有ボタン */}
+            <section aria-labelledby="share-article" className="mt-6">
+              <h2 id="share-article" className="sr-only">{t('share')}</h2>
+              <ShareButtons slug={post.slug} title={post.title} absoluteUrl={absoluteUrl} />
+            </section>
           </article>
 
           {/* 右側目次エリア - デスクトップのみ */}
@@ -138,6 +181,27 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="mt-12 max-w-4xl">
           <CommentsSection slug={post.slug} />
         </div>
+
+        {/* 関連記事（コメントの後ろに表示） */}
+        <section aria-labelledby="related-articles" className="mt-12 max-w-4xl">
+          <h2 id="related-articles" className="text-xl font-semibold mb-4">{t('related_articles')}</h2>
+          {related.length === 0 ? (
+            <p className="text-muted-foreground text-sm">{t('no_related_posts')}</p>
+          ) : (
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {related.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}`} className="block border border-border rounded-lg p-4 hover:bg-card/50 transition-colors">
+                    <span className="text-primary hover:underline font-medium">{p.title}</span>
+                    {p.description && (
+                      <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{p.description}</p>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
 
       {/* エラーの場合のフォールバック */}

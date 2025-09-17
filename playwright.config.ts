@@ -31,6 +31,8 @@ export default defineConfig({
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: {
     command: 'bun run dev',
+  
+    
     url: baseURL,
     timeout: process.env.CI ? 90 * 1000 : 2 * 60 * 1000, // CI環境では90秒に短縮
     reuseExistingServer: !process.env.CI,

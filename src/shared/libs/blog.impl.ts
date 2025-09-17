@@ -171,3 +171,23 @@ export function formatDate(dateString: string, locale = 'ja'): string {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString(locale, options);
 }
+
+/**
+ * タグの共通数で関連記事を抽出（自身は除外）
+ */
+export async function getRelatedPosts(slug: string, limit = 3): Promise<BlogPostMeta[]> {
+  const all = await getAllBlogPosts();
+  const current = all.find(p => p.slug === slug);
+  if (!current) return [];
+  const scored = all
+    .filter(p => p.slug !== slug)
+    .map(p => {
+      const common = p.tags.filter(tag => current.tags.includes(tag)).length;
+      return { post: p, score: common };
+    })
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score || new Date(b.post.publishedAt).getTime() - new Date(a.post.publishedAt).getTime())
+    .slice(0, limit)
+    .map(x => x.post);
+  return scored;
+}

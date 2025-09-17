@@ -1,5 +1,38 @@
 /* ブログコンテンツ用のスタイル */
 
+/* コードコピー UI */
+.blog-content pre.code-copy-enabled {
+  position: relative;
+}
+.blog-content .code-copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  border-radius: 0.375rem;
+  /* テーマ非依存で視認性の高い配色 */
+  background: #0f172a; /* slate-900 */
+  color: #f8fafc; /* slate-50 */
+  border: 1px solid #1f2937; /* slate-800 */
+  cursor: pointer;
+}
+.dark .blog-content .code-copy-btn {
+  background: #0f172a;
+}
+.blog-content .code-copy-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.blog-content .code-copy-btn.code-copy-success {
+  background: #14532d; /* green-900 */
+  color: #dcfce7; /* green-100 */
+}
+
 /* KaTeX 数式レンダリングのスタイル */
 .katex {
   font-size: 1.1em;

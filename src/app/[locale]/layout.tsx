@@ -1,12 +1,15 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { Env } from '@/shared/libs/Env';
 
 import PostHogProvider from '@/shared/components/analytics/PostHogProvider';
 import { routing } from '@/shared/libs/i18nNavigation';
 // Root layout handles ThemeProvider, fonts, and global CSS
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(Env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
   keywords: ['Lunacea', 'Portfolio', 'Lunacea Portfolio'],
   robots: {
     index: true,
@@ -26,28 +29,14 @@ export const metadata = {
       },
     ],
   },
-  icons: [
-    {
-      rel: 'apple-touch-icon',
-      url: '/apple-touch-icon.png',
-    },
-    {
-      rel: 'icon',
-      type: 'image/png',
-      sizes: '32x32',
-      url: '/favicon-32x32.png',
-    },
-    {
-      rel: 'icon',
-      type: 'image/png',
-      sizes: '16x16',
-      url: '/favicon-16x16.png',
-    },
-    {
-      rel: 'icon',
-      url: '/favicon.ico',
-    },
-  ],
+  icons: {
+    apple: '/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/favicon.ico' },
+    ],
+  },
 };
 
 export function generateStaticParams() {

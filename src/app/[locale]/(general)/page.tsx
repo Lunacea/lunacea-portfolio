@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import type { Metadata } from 'next';
 import ModernAudioVisualizer from '@/features/bgm/components/ModernAudioVisualizer';
 import ScrollController from '@/shared/components/behaviors/ScrollController';
 import LatestUpdates from '@/shared/components/layouts/LatestUpdates';
@@ -8,7 +9,7 @@ type IIndexPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata(props: IIndexPageProps) {
+export async function generateMetadata(props: IIndexPageProps): Promise<Metadata> {
   const { locale } = await props.params;
   const t = await getTranslations({
     locale,

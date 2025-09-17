@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import TableOfContents from '@/features/blog/components/TableOfContents';
 import MermaidRenderer from './MermaidRenderer';
+import CodeCopyEnhancer from '@/features/blog/components/CodeCopyEnhancer';
 import { sanitizeHtmlClientSide } from '@/shared/utils/sanitize';
 import '@/features/blog/styles/blog-content.css';
 
@@ -54,6 +55,7 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
       {safeHtmlContent ? (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
           <div className="blog-content no-wrap-inline-code" dangerouslySetInnerHTML={{ __html: safeHtmlContent }} />
+          <CodeCopyEnhancer />
         </div>
       ) : (
         /* フォールバックコンテンツ */
