@@ -7,8 +7,6 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 export const runtime = 'nodejs';
-export const dynamic = 'force-static';
-export const revalidate = 60 * 60; // 1 hour CDN/ISR
 // NOTE: API Route では `alt` / `size` / `contentType` のエクスポートは不可
 // それらは `opengraph-image.tsx` 等のメタデータ画像ルートでのみ有効
 const IMAGE_SIZE = { width: 1200, height: 630 } as const;
