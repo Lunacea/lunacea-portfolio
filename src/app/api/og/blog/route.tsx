@@ -4,14 +4,24 @@ import { NextRequest } from 'next/server';
 import { getBlogPost } from '@/shared/libs/blog';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-static';
+export const revalidate = 60 * 60; // 1 hour CDN/ISR
 // NOTE: API Route では `alt` / `size` / `contentType` のエクスポートは不可
 // それらは `opengraph-image.tsx` 等のメタデータ画像ルートでのみ有効
 const IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
 // フォントを直接取得してキャッシュ（Google CSS 経由だとサブセットで日本語グリフが欠落し得る）
 const fontCache = new Map<string, ArrayBuffer>();
+
+// 最終レンダリング結果のメモリキャッシュ（プロセス存続中のみ）
+const RENDER_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const renderedCache = new Map<string, { data: ArrayBuffer; etag: string; expiresAt: number }>();
+
+// public資産のdata:URLキャッシュ
+const dataUrlCache = new Map<string, string>();
 
 async function loadFontOnce(url: string): Promise<ArrayBuffer> {
   const cached = fontCache.get(url);
@@ -23,6 +33,18 @@ async function loadFontOnce(url: string): Promise<ArrayBuffer> {
   return buf;
 }
 
+function readPublicFileAsDataUrl(relPath: string, mime: string): string {
+  const key = `${mime}:${relPath}`;
+  const cached = dataUrlCache.get(key);
+  if (cached) return cached;
+  const filePath = path.resolve(process.cwd(), 'public', relPath.replace(/^\/?/, ''));
+  const buf = fs.readFileSync(filePath);
+  const b64 = Buffer.from(buf).toString('base64');
+  const url = `data:${mime};base64,${b64}`;
+  dataUrlCache.set(key, url);
+  return url;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -32,18 +54,42 @@ export async function GET(request: NextRequest) {
       return new Response('Missing slug parameter', { status: 400 });
     }
 
-    // 実際のブログ記事データを取得
-    const post = await getBlogPost(slug);
+    // ETagバージョンキー（記事の更新に追従）
+    const postMeta = await getBlogPost(slug);
+    const versionBase = `${slug}:${postMeta?.updatedAt ?? postMeta?.publishedAt ?? ''}`;
+    const etag = `W/"${crypto.createHash('sha1').update(versionBase).digest('hex')}"`;
+
+    // If-None-Match対応（CDN/クライアントで高速304）
+    const inm = request.headers.get('if-none-match');
+    const cachedRendered = renderedCache.get(slug);
+    if (inm && cachedRendered && inm === cachedRendered.etag) {
+      return new Response(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
+        },
+      });
+    }
+
+    // メモリキャッシュ（ヒット時は最速レスポンス）
+    const now = Date.now();
+    if (cachedRendered && cachedRendered.expiresAt > now) {
+      return new Response(cachedRendered.data, {
+        status: 200,
+        headers: {
+          ETag: cachedRendered.etag,
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
+        },
+      });
+    }
+
+    // 実際のブログ記事データを取得（本文・タイトル用）
+    const post = postMeta; // 再利用
     const title = post?.title ?? slug;
 
     // Public配下の画像はローカルファイルから読み込み、data URLとして埋め込み
-    function readPublicFileAsDataUrl(relPath: string, mime: string): string {
-      const filePath = path.resolve(process.cwd(), 'public', relPath.replace(/^\/?/, ''));
-      const buf = fs.readFileSync(filePath);
-      const b64 = Buffer.from(buf).toString('base64');
-      return `data:${mime};base64,${b64}`;
-    }
-
     const bgUrl = readPublicFileAsDataUrl('/assets/images/bg-paper-bk.jpg', 'image/jpeg');
     const iconUrl = readPublicFileAsDataUrl('/assets/images/Lunacea-nobg.png', 'image/png');
 
@@ -80,7 +126,7 @@ export async function GET(request: NextRequest) {
       ...(fontOptions.length > 0 ? { fonts: fontOptions } : {}),
     };
 
-    return new ImageResponse(
+    const img = new ImageResponse(
       <div
           style={{
             width: '100%',
@@ -205,13 +251,26 @@ export async function GET(request: NextRequest) {
               </div>
             </div>
         </div>,
-      imageOptions
+      imageOptions,
     );
+
+    // バイト列へ変換してキャッシュ
+    const arrayBuf = await img.arrayBuffer();
+    renderedCache.set(slug, { data: arrayBuf, etag, expiresAt: now + RENDER_CACHE_TTL_MS });
+
+    return new Response(arrayBuf, {
+      status: 200,
+      headers: {
+        ETag: etag,
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
+      },
+    });
   } catch (error) {
     console.error('OG Image generation error:', error);
     
     // フォールバック
-    return new ImageResponse(
+    const fallback = new ImageResponse(
       (
         <div
           style={{
@@ -240,5 +299,13 @@ export async function GET(request: NextRequest) {
         height: 630,
       }
     );
+    const buf = await fallback.arrayBuffer();
+    return new Response(buf, {
+      status: 200,
+      headers: {
+        'Content-Type': 'image/png',
+        'Cache-Control': 'public, max-age=0, s-maxage=3600',
+      },
+    });
   }
 }
