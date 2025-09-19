@@ -2,6 +2,8 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { getBlogPost } from '@/shared/libs/blog';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export const runtime = 'nodejs';
 // NOTE: API Route では `alt` / `size` / `contentType` のエクスポートは不可
@@ -34,17 +36,16 @@ export async function GET(request: NextRequest) {
     const post = await getBlogPost(slug);
     const title = post?.title ?? slug;
 
-    // Public配下の画像は絶対URLで参照（fs不要・Satori互換）
-    const reqUrl = new URL(request.url);
-    const host = reqUrl.host;
-    const envOrigin = process.env.NEXT_PUBLIC_APP_URL;
-    // 本番はhttps固定、環境変数があれば最優先。ローカルはrequestのprotoを利用
-    const isLocal = host.includes('localhost') || host.startsWith('127.') || host.endsWith('.local');
-    const origin = envOrigin
-      ?? (isLocal ? `${reqUrl.protocol}//${host}` : `https://${host}`);
+    // Public配下の画像はローカルファイルから読み込み、data URLとして埋め込み
+    function readPublicFileAsDataUrl(relPath: string, mime: string): string {
+      const filePath = path.resolve(process.cwd(), 'public', relPath.replace(/^\/?/, ''));
+      const buf = fs.readFileSync(filePath);
+      const b64 = Buffer.from(buf).toString('base64');
+      return `data:${mime};base64,${b64}`;
+    }
 
-    const bgUrl = new URL('/assets/images/bg-paper-bk.jpg', origin).toString();
-    const iconUrl = new URL('/assets/images/Lunacea-nobg.png', origin).toString();
+    const bgUrl = readPublicFileAsDataUrl('/assets/images/bg-paper-bk.jpg', 'image/jpeg');
+    const iconUrl = readPublicFileAsDataUrl('/assets/images/Lunacea-nobg.png', 'image/png');
 
     // フォントのプリフェッチ（失敗時は無視）
     let rajdhani700: ArrayBuffer | null = null;
