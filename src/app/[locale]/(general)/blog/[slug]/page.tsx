@@ -53,8 +53,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const localePrefix = isDefault ? '' : `/${locale}`;
   const canonicalUrl = `https://lunacea.jp${localePrefix}/blog/${encodeURIComponent(slug)}`;
   
-  // OG画像URL（静的ファイル、ビルド時生成）
-  const ogImageUrl = `/og-images/${encodeURIComponent(slug)}.png`;
+  // OG画像URL（静的ファイル、ビルド時生成）- 絶対URLに変更
+  const ogImageUrl = `https://lunacea.jp/og-images/${encodeURIComponent(slug)}.png`;
 
   return {
     title: `${post.title} | Blog`,
