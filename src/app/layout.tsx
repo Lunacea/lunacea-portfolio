@@ -23,13 +23,14 @@ const rajdhani = Rajdhani({
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="ja" suppressHydrationWarning>
+    <html lang="ja" className="dark" suppressHydrationWarning>
       <head>
+        {/* Preload LCP-like background image used in dark theme */}
         <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-          integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
-          crossOrigin="anonymous"
+          rel="preload"
+          as="image"
+          href="/assets/images/bg-paper-bk.jpg"
+          imageSrcSet="/assets/images/bg-paper-bk.jpg 1x"
         />
       </head>
       <body className={`${inter.variable} ${rajdhani.variable} font-sans`} suppressHydrationWarning>

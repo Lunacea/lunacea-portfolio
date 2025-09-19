@@ -24,7 +24,7 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
 
   const url = useMemo(() => {
     // サーバー/クライアントで一致するURLを親から受け取る
-    return absoluteUrl ?? `/blog/${encodeURIComponent(slug)}`;
+    return absoluteUrl ?? `https://${process.env.NEXT_PUBLIC_APP_URL}/blog/${encodeURIComponent(slug)}`;
   }, [absoluteUrl, slug]);
 
   const text = useMemo(() => `${title}`, [title]);

@@ -9,10 +9,10 @@ const CommentsSection = dynamic(() => import('@/features/blog/components/Comment
 const SideTableOfContents = dynamic(() => import('@/features/blog/components/SideTableOfContents'), { loading: () => null });
 import Icon from '@/shared/components/ui/Icon';
 import BackToTop from '@/shared/components/ui/BackToTop';
+import LazyVisible from '@/shared/components/ui/LazyVisible';
 import { getAllBlogPosts, getBlogPost, getRelatedPosts } from '@/shared/libs/blog';
 // import { Env } from '@/shared/libs/Env';
 import { AppConfig } from '@/shared/utils/AppConfig';
-import { headers } from 'next/headers';
 const PostRating = dynamic(() => import('@/features/blog/components/PostRating'), { loading: () => null });
 const ShareButtons = dynamic(() => import('@/features/blog/components/ShareButtons'), { loading: () => null });
 
@@ -48,12 +48,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  // 生成ルートの絶対URLのみを使用
-  const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  const proto = h.get('x-forwarded-proto') ?? 'http';
-  const origin = `${proto}://${host}`;
-  const ogImageUrl = `${origin}/api/og/blog?slug=${encodeURIComponent(slug)}`;
+  // 生成ルートの絶対URLに依存せず、相対パスを使用
+  const ogImageUrl = `/api/og/blog?slug=${encodeURIComponent(slug)}`;
 
   return {
     title: `${post.title} | Blog`,
@@ -82,6 +78,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     },
   };
 }
+
+export const dynamicParams = false;
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
@@ -161,16 +159,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BlogPostContent post={post} />
 
             {/* 記事評価 */}
-            <section aria-labelledby="rate-article" className="mt-10">
-              <h2 id="rate-article" className="sr-only">{t('rate_this_article')}</h2>
-              <PostRating slug={post.slug} />
-            </section>
+            <LazyVisible ssrPlaceholderHeight={80} className="mt-10">
+              <section aria-labelledby="rate-article">
+                <h2 id="rate-article" className="sr-only">{t('rate_this_article')}</h2>
+                <PostRating slug={post.slug} />
+              </section>
+            </LazyVisible>
 
             {/* 共有ボタン */}
-            <section aria-labelledby="share-article" className="mt-6">
-              <h2 id="share-article" className="sr-only">{t('share')}</h2>
-              <ShareButtons slug={post.slug} title={post.title} absoluteUrl={absoluteUrl} />
-            </section>
+            <LazyVisible ssrPlaceholderHeight={56} className="mt-6">
+              <section aria-labelledby="share-article">
+                <h2 id="share-article" className="sr-only">{t('share')}</h2>
+                <ShareButtons slug={post.slug} title={post.title} absoluteUrl={absoluteUrl} />
+              </section>
+            </LazyVisible>
           </article>
 
           {/* 右側目次エリア - デスクトップのみ */}
@@ -179,9 +181,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </aside>
         </div>
         {/* コメント */}
-        <div className="mt-12 max-w-4xl">
+        <LazyVisible ssrPlaceholderHeight={200} className="mt-12 max-w-4xl">
           <CommentsSection slug={post.slug} />
-        </div>
+        </LazyVisible>
 
         {/* 関連記事（コメントの後ろに表示） */}
         <section aria-labelledby="related-articles" className="mt-12 max-w-4xl">

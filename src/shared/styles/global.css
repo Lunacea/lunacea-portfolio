@@ -152,6 +152,13 @@
   --title-color-dark: #e5e7eb;
 }
 
+/* LazyVisible placeholders (small, fixed heights to reserve space) */
+.lazy-visible-ph-56 { min-height: 56px; }
+.lazy-visible-ph-80 { min-height: 80px; }
+.lazy-visible-ph-120 { min-height: 120px; }
+.lazy-visible-ph-160 { min-height: 160px; }
+.lazy-visible-ph-200 { min-height: 200px; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

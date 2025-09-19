@@ -23,6 +23,7 @@ export type BlogPost = {
   isMDX?: boolean; // MDXファイルかどうかのフラグ
   ogImage?: string | { url: string; width?: number; height?: number; alt?: string };
   coverImage?: string;
+  hasMath?: boolean;
 };
 
 export type BlogPostMeta = Omit<BlogPost, 'content' | 'htmlContent'>;
@@ -44,6 +45,21 @@ function ensureBlogDirectory(): void {
 
 function getSlugFromFilename(filename: string): string {
   return filename.replace(/\.mdx?$/, '');
+}
+
+function detectHasMath(markdown: string): boolean {
+  try {
+    // ブロック数式 $$...$$ や \[ ... \]
+    if (/\$\$[\s\S]*?\$\$/m.test(markdown)) return true;
+    if (/\\\[[\s\S]*?\\\]/m.test(markdown)) return true;
+    // インライン数式 $...$ や \( ... \)（英数字・演算子・\command を含む場合を優先）
+    // 価格表記等の誤検出を減らすため、演算子やバックスラッシュを含むものに限定
+    if (/(^|\s)\$[^$\n]*?[+\-*/=^\\][^$\n]*?\$(?=\s|[.,;:!?)]|$)/m.test(markdown)) return true;
+    if (/\\\([^)]*?[+\-*/=^\\][^)]*?\\\)/m.test(markdown)) return true;
+    // KaTeX コマンドの気配
+    if (/\\(frac|sum|int|alpha|beta|gamma|pi|theta|phi|infty|sqrt)\b/.test(markdown)) return true;
+  } catch {}
+  return false;
 }
 
 export function getBlogPostFiles(): string[] {
@@ -89,6 +105,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
 
     let htmlContent = '';
     let tableOfContents: Array<{ id: string; title: string; level: number }> = [];
+    const hasMath = detectHasMath(content);
     
     try {
       if (isMDX) {
@@ -122,6 +139,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       isMDX,
       ogImage: data.ogImage,
       coverImage: data.coverImage,
+      hasMath,
     };
   } catch (error) {
     logger.error({ error, filename }, 'ブログ記事の解析エラー');
@@ -140,6 +158,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       isMDX: false,
       ogImage: undefined,
       coverImage: undefined,
+      hasMath: false,
     };
   }
 }
@@ -166,6 +185,7 @@ export async function parseBlogPostMeta(filename: string): Promise<BlogPostMeta>
       .replace(/\s+/g, ' ')
       .trim();
 
+    const hasMath = detectHasMath(content);
     return {
       slug,
       title: data.title || slug,
@@ -179,6 +199,7 @@ export async function parseBlogPostMeta(filename: string): Promise<BlogPostMeta>
       isMDX: filename.endsWith('.mdx'),
       ogImage: data.ogImage,
       coverImage: data.coverImage,
+      hasMath,
     };
   } catch (error) {
     logger.error({ error, filename }, 'ブログ記事メタの解析エラー');
