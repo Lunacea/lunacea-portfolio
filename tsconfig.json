@@ -97,6 +97,7 @@
     "**/*.tsx",
     ".storybook/*.ts",
     "next-env.d.ts",
-    "src/shared/types/global.d.ts"
+    "src/shared/types/global.d.ts",
+    ".next/types/**/*.ts"
   ]
 }

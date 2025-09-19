@@ -92,6 +92,7 @@ async function generateOGImage(slug: string, title: string) {
     }
   } catch (e) {
     console.warn('BIZ UDPGothic subset failed, using system fonts:', e);
+    // Docker環境でのフォールバック: フォントなしで続行
   }
 
   const fontOptions: {
