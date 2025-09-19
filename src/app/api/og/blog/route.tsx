@@ -2,45 +2,23 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { getBlogPost } from '@/shared/libs/blog';
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
 
 export const runtime = 'nodejs';
-// NOTE: API Route では `alt` / `size` / `contentType` のエクスポートは不可
-// それらは `opengraph-image.tsx` 等のメタデータ画像ルートでのみ有効
+
 const IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
-// フォントを直接取得してキャッシュ（Google CSS 経由だとサブセットで日本語グリフが欠落し得る）
+// フォントキャッシュ（プロセス起動時に一度だけロード）
 const fontCache = new Map<string, ArrayBuffer>();
-
-// 最終レンダリング結果のメモリキャッシュ（プロセス存続中のみ）
-const RENDER_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
-const renderedCache = new Map<string, { data: ArrayBuffer; etag: string; expiresAt: number }>();
-
-// public資産のdata:URLキャッシュ
-const dataUrlCache = new Map<string, string>();
 
 async function loadFontOnce(url: string): Promise<ArrayBuffer> {
   const cached = fontCache.get(url);
   if (cached) return cached;
+  
   const res = await fetch(url, { cache: 'force-cache' });
   if (!res.ok) throw new Error(`Failed to fetch font: ${url}`);
   const buf = await res.arrayBuffer();
   fontCache.set(url, buf);
   return buf;
-}
-
-function readPublicFileAsDataUrl(relPath: string, mime: string): string {
-  const key = `${mime}:${relPath}`;
-  const cached = dataUrlCache.get(key);
-  if (cached) return cached;
-  const filePath = path.resolve(process.cwd(), 'public', relPath.replace(/^\/?/, ''));
-  const buf = fs.readFileSync(filePath);
-  const b64 = Buffer.from(buf).toString('base64');
-  const url = `data:${mime};base64,${b64}`;
-  dataUrlCache.set(key, url);
-  return url;
 }
 
 export async function GET(request: NextRequest) {
@@ -52,71 +30,52 @@ export async function GET(request: NextRequest) {
       return new Response('Missing slug parameter', { status: 400 });
     }
 
-    // ETagバージョンキー（記事の更新に追従）
-    const postMeta = await getBlogPost(slug);
-    const versionBase = `${slug}:${postMeta?.updatedAt ?? postMeta?.publishedAt ?? ''}`;
-    const etag = `W/"${crypto.createHash('sha1').update(versionBase).digest('hex')}"`;
-
-    // If-None-Match対応（CDN/クライアントで高速304）
-    const inm = request.headers.get('if-none-match');
-    const cachedRendered = renderedCache.get(slug);
-    if (inm && cachedRendered && inm === cachedRendered.etag) {
-      return new Response(null, {
-        status: 304,
-        headers: {
-          ETag: etag,
-          'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
-        },
-      });
-    }
-
-    // メモリキャッシュ（ヒット時は最速レスポンス）
-    const now = Date.now();
-    if (cachedRendered && cachedRendered.expiresAt > now) {
-      return new Response(cachedRendered.data, {
-        status: 200,
-        headers: {
-          ETag: cachedRendered.etag,
-          'Content-Type': 'image/png',
-          'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
-        },
-      });
-    }
-
-    // 実際のブログ記事データを取得（本文・タイトル用）
-    const post = postMeta; // 再利用
+    // 実際のブログ記事データを取得
+    const post = await getBlogPost(slug);
     const title = post?.title ?? slug;
 
-    // Public配下の画像はローカルファイルから読み込み、data URLとして埋め込み
-    const bgUrl = readPublicFileAsDataUrl('/assets/images/bg-paper-bk.jpg', 'image/jpeg');
-    const iconUrl = readPublicFileAsDataUrl('/assets/images/Lunacea-nobg.png', 'image/png');
+    // Public配下の画像は絶対URLで参照
+    const baseUrl = new URL(request.url);
+    const origin = process.env.NEXT_PUBLIC_APP_URL || `${baseUrl.protocol}//${baseUrl.host}`;
+    const bgUrl = new URL('/assets/images/bg-paper-bk.jpg', origin).toString();
+    const iconUrl = new URL('/assets/images/Lunacea-nobg.png', origin).toString();
 
-    // フォントのプリフェッチ（失敗時は無視）
+    // サブセットフォントのプリロード（記事タイトル用文字のみ）
     let rajdhani700: ArrayBuffer | null = null;
-    let notoSansJp700: ArrayBuffer | null = null;
     let bizUdpGothic700: ArrayBuffer | null = null;
+    
     try {
-      // Rajdhani Bold (OFL)
+      // Rajdhani Bold (~500KB程度)
       rajdhani700 = await loadFontOnce('https://github.com/google/fonts/raw/main/ofl/rajdhani/Rajdhani-Bold.ttf');
     } catch {}
+    
     try {
-      // Noto Sans JP Bold (OFL)
-      notoSansJp700 = await loadFontOnce('https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansJP-Bold.otf');
-    } catch {}
-    try {
-      // BIZ UDPGothic Bold (OFL) - UD系で視認性が高い
-      bizUdpGothic700 = await loadFontOnce('https://github.com/google/fonts/raw/main/ofl/bizudpgothic/BIZUDPGothic-Bold.ttf');
-    } catch {}
+      // BIZ UDPGothic サブセット（記事タイトル + 基本文字のみ）
+      const titleChars = encodeURIComponent(`${title}テストマークダウンスタイリングブログポートフォリオLunacea`);
+      const subsetUrl = `https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@700&text=${titleChars}&display=swap`;
+      
+      // Google Fonts CSS APIからWOFF2 URLを抽出
+      const cssRes = await fetch(subsetUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OGBot)' }
+      });
+      const cssText = await cssRes.text();
+      const woff2Match = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/);
+      
+      if (woff2Match?.[1]) {
+        bizUdpGothic700 = await loadFontOnce(woff2Match[1]);
+      }
+    } catch (e) {
+      console.warn('BIZ UDPGothic subset failed, using fallback:', e);
+    }
 
-    // カードレイアウト
     const fontOptions: {
       name: string;
       data: ArrayBuffer;
       weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
       style?: 'normal' | 'italic';
     }[] = [];
+    
     if (rajdhani700) fontOptions.push({ name: 'Rajdhani', data: rajdhani700, weight: 700 as const, style: 'normal' });
-    if (notoSansJp700) fontOptions.push({ name: 'Noto Sans JP', data: notoSansJp700, weight: 700 as const, style: 'normal' });
     if (bizUdpGothic700) fontOptions.push({ name: 'BIZ UDPGothic', data: bizUdpGothic700, weight: 700 as const, style: 'normal' });
 
     const imageOptions = {
@@ -135,7 +94,7 @@ export async function GET(request: NextRequest) {
             justifyContent: 'center',
             alignItems: 'center',
             color: 'white',
-            fontFamily: 'BIZ UDPGothic, Noto Sans JP, system-ui, -apple-system, Segoe UI',
+            fontFamily: 'BIZ UDPGothic, system-ui, -apple-system, Segoe UI',
             padding: 40,
             boxSizing: 'border-box',
             backgroundColor: 'oklch(0.145 0 0)',
@@ -222,7 +181,7 @@ export async function GET(request: NextRequest) {
                   margin: 0,
                   textAlign: 'center',
                   fontSize: title.length > 36 ? 48 : 62,
-                  fontFamily: 'BIZ UDPGothic, Noto Sans JP, system-ui',
+                  fontFamily: 'BIZ UDPGothic, system-ui',
                   fontWeight: 700,
                   lineHeight: 1.25,
                   maxWidth: 920,
@@ -241,7 +200,7 @@ export async function GET(request: NextRequest) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 16,
-                  fontFamily: 'noto sans jp, system-ui',
+                  fontFamily: 'BIZ UDPGothic, system-ui',
                 }}
               >
                 <img src={iconUrl} width="72" height="72" alt="Lunacea" />
@@ -252,23 +211,22 @@ export async function GET(request: NextRequest) {
       imageOptions,
     );
 
-    // バイト列へ変換してキャッシュ
-    const arrayBuf = await img.arrayBuffer();
-    renderedCache.set(slug, { data: arrayBuf, etag, expiresAt: now + RENDER_CACHE_TTL_MS });
-
-    return new Response(arrayBuf, {
+    // CDNキャッシュヘッダーで高速化
+    const response = new Response(await img.arrayBuffer(), {
       status: 200,
       headers: {
-        ETag: etag,
         'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=604800',
+        'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
       },
     });
+    
+    return response;
+    
   } catch (error) {
     console.error('OG Image generation error:', error);
     
     // フォールバック
-    const fallback = new ImageResponse(
+    return new ImageResponse(
       (
         <div
           style={{
@@ -297,13 +255,5 @@ export async function GET(request: NextRequest) {
         height: 630,
       }
     );
-    const buf = await fallback.arrayBuffer();
-    return new Response(buf, {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=0, s-maxage=3600',
-      },
-    });
   }
 }

@@ -39,7 +39,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const post = await getBlogPost(slug);
 
   if (!post) {
@@ -48,19 +48,39 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  // 生成ルートの絶対URLに依存せず、相対パスを使用
+  // 記事の絶対URLを構築
+  const isDefault = locale === AppConfig.defaultLocale && AppConfig.localePrefix === 'as-needed';
+  const localePrefix = isDefault ? '' : `/${locale}`;
+  const canonicalUrl = `https://lunacea.jp${localePrefix}/blog/${encodeURIComponent(slug)}`;
+  
+  // OG画像URL（相対パス、metadataBaseで解決）
   const ogImageUrl = `/api/og/blog?slug=${encodeURIComponent(slug)}`;
 
   return {
     title: `${post.title} | Blog`,
     description: post.description || post.excerpt,
+    keywords: post.tags,
+    authors: [{ name: 'Lunacea', url: 'https://lunacea.jp' }],
+    creator: 'Lunacea',
+    publisher: 'Lunacea',
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        'ja': `/ja/blog/${encodeURIComponent(slug)}`,
+        'en': `/en/blog/${encodeURIComponent(slug)}`,
+      },
+    },
     openGraph: {
       title: post.title,
       description: post.description || post.excerpt,
+      url: canonicalUrl,
+      siteName: 'Lunacea Portfolio',
+      locale: locale,
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       tags: post.tags,
+      authors: ['Lunacea'],
       images: [
         {
           url: ogImageUrl,
@@ -75,6 +95,19 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: post.title,
       description: post.description || post.excerpt,
       images: [ogImageUrl],
+      creator: '@lunacea_jp',
+      site: '@lunacea_jp',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   };
 }
