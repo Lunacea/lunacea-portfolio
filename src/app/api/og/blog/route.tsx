@@ -27,27 +27,40 @@ export async function GET(request: NextRequest) {
     const slug = searchParams.get('slug');
     
     if (!slug) {
+      console.warn('OG Generation: Missing slug parameter');
       return new Response('Missing slug parameter', { status: 400 });
     }
+
+    console.warn('OG Generation: Starting for slug:', slug);
 
     // 実際のブログ記事データを取得
     const post = await getBlogPost(slug);
     const title = post?.title ?? slug;
+    
+    console.warn('OG Generation: Post data:', { 
+      found: !!post, 
+      title, 
+      slug 
+    });
 
     // Public配下の画像は絶対URLで参照
     const baseUrl = new URL(request.url);
     const origin = process.env.NEXT_PUBLIC_APP_URL || `${baseUrl.protocol}//${baseUrl.host}`;
     const bgUrl = new URL('/assets/images/bg-paper-bk.jpg', origin).toString();
     const iconUrl = new URL('/assets/images/Lunacea-nobg.png', origin).toString();
+    
+    console.warn('OG Generation: Image URLs:', { origin, bgUrl, iconUrl });
 
-    // サブセットフォントのプリロード（記事タイトル用文字のみ）
+    // フォント読み込み（本番環境での確実性を重視）
     let rajdhani700: ArrayBuffer | null = null;
     let bizUdpGothic700: ArrayBuffer | null = null;
     
     try {
       // Rajdhani Bold (~500KB程度)
       rajdhani700 = await loadFontOnce('https://github.com/google/fonts/raw/main/ofl/rajdhani/Rajdhani-Bold.ttf');
-    } catch {}
+    } catch (e) {
+      console.warn('Rajdhani font failed:', e);
+    }
     
     try {
       // BIZ UDPGothic サブセット（記事タイトル + 基本文字のみ）
@@ -56,17 +69,35 @@ export async function GET(request: NextRequest) {
       
       // Google Fonts CSS APIからWOFF2 URLを抽出
       const cssRes = await fetch(subsetUrl, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OGBot)' }
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OGBot)' },
       });
+      
+      if (!cssRes.ok) {
+        throw new Error(`CSS API failed: ${cssRes.status}`);
+      }
+      
       const cssText = await cssRes.text();
       const woff2Match = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.woff2)\)/);
       
       if (woff2Match?.[1]) {
         bizUdpGothic700 = await loadFontOnce(woff2Match[1]);
+      } else {
+        throw new Error('WOFF2 URL not found in CSS');
       }
     } catch (e) {
-      console.warn('BIZ UDPGothic subset failed, using fallback:', e);
+      console.warn('BIZ UDPGothic subset failed, using system fonts:', e);
     }
+
+    // デバッグ情報（本番環境での問題特定用）
+    console.warn('OG Generation Debug:', {
+      slug,
+      title,
+      origin,
+      bgUrl,
+      iconUrl,
+      hasRajdhani: !!rajdhani700,
+      hasBIZUDPGothic: !!bizUdpGothic700,
+    });
 
     const fontOptions: {
       name: string;
@@ -83,6 +114,12 @@ export async function GET(request: NextRequest) {
       ...(fontOptions.length > 0 ? { fonts: fontOptions } : {}),
     };
 
+    console.warn('OG Generation: Creating ImageResponse with options:', {
+      width: imageOptions.width,
+      height: imageOptions.height,
+      fontCount: fontOptions.length,
+    });
+
     const img = new ImageResponse(
       <div
           style={{
@@ -94,7 +131,7 @@ export async function GET(request: NextRequest) {
             justifyContent: 'center',
             alignItems: 'center',
             color: 'white',
-            fontFamily: 'BIZ UDPGothic, system-ui, -apple-system, Segoe UI',
+            fontFamily: bizUdpGothic700 ? 'BIZ UDPGothic, system-ui, -apple-system, Segoe UI' : 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             padding: 40,
             boxSizing: 'border-box',
             backgroundColor: 'oklch(0.145 0 0)',
@@ -181,7 +218,7 @@ export async function GET(request: NextRequest) {
                   margin: 0,
                   textAlign: 'center',
                   fontSize: title.length > 36 ? 48 : 62,
-                  fontFamily: 'BIZ UDPGothic, system-ui',
+                  fontFamily: bizUdpGothic700 ? 'BIZ UDPGothic, system-ui' : 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                   fontWeight: 700,
                   lineHeight: 1.25,
                   maxWidth: 920,
@@ -200,7 +237,7 @@ export async function GET(request: NextRequest) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 16,
-                  fontFamily: 'BIZ UDPGothic, system-ui',
+                  fontFamily: bizUdpGothic700 ? 'BIZ UDPGothic, system-ui' : 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                 }}
               >
                 <img src={iconUrl} width="72" height="72" alt="Lunacea" />
@@ -210,6 +247,8 @@ export async function GET(request: NextRequest) {
         </div>,
       imageOptions,
     );
+
+    console.warn('OG Generation: Successfully created image for slug:', slug);
 
     // CDNキャッシュヘッダーで高速化
     const response = new Response(await img.arrayBuffer(), {
