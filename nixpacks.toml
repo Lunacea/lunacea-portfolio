@@ -7,20 +7,17 @@ cmds = [
   "apt update",
   "curl -fsSL https://bun.sh/install | bash",
   "chmod +x $HOME/.bun/bin/bun",
-  "export PATH=\"$HOME/.bun/bin:$PATH\"",
-  "bun --version"
+  "export PATH=\"$HOME/.bun/bin:$PATH\" && bun --version"
 ]
 
 [phases.install]
 cmds = [ 
-  "export PATH=\"$HOME/.bun/bin:$PATH\"",
-  "bun install --frozen-lockfile" 
+  "export PATH=\"$HOME/.bun/bin:$PATH\" && bun install --frozen-lockfile" 
 ]
 
 [phases.build]
 cmds = [ 
-  "export PATH=\"$HOME/.bun/bin:$PATH\"",
-  "bun run build" 
+  "export PATH=\"$HOME/.bun/bin:$PATH\" && bun run build" 
 ]
 
 [start]
