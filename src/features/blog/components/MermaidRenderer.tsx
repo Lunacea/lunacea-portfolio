@@ -94,7 +94,8 @@ export default function MermaidRenderer() {
         continue;
       }
 
-      const containerId = `renderer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      // 安定したID生成（ハイドレーション差分を避ける）
+      const containerId = `renderer-${performance.now().toFixed(0)}-${(Math.random() * 1e9).toFixed(0)}`;
       const result = await renderDiagram(content, containerId);
       
       if (result.error) {
@@ -122,26 +123,26 @@ export default function MermaidRenderer() {
   }, [isInitialized, renderDiagram]);
 
   useEffect(() => {
+    let cancelled = false;
     const initializeAndRender = async () => {
       if (!isInitialized) {
-        // 現在のテーマを検出して初期化
         const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         await initializeMermaid(currentTheme);
       }
-      
-      // DOMが読み込まれた後に実行（複数回試行）
-      const timer1 = setTimeout(renderExistingDiagrams, 100);
-      const timer2 = setTimeout(renderExistingDiagrams, 500);
-      const timer3 = setTimeout(renderExistingDiagrams, 1000);
-      
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        clearTimeout(timer3);
+
+      const schedule = (cb: () => void, delay: number) => setTimeout(cb, delay);
+      type RequestIdleCallbackFn = (cb: () => void, opts?: { timeout?: number }) => number;
+      const idle = (cb: () => void) => {
+        const ric = (window as unknown as { requestIdleCallback?: RequestIdleCallbackFn }).requestIdleCallback;
+        if (typeof ric === 'function') return ric(cb, { timeout: 1200 });
+        return schedule(cb, 200);
       };
+
+      idle(() => { if (!cancelled) void renderExistingDiagrams(); });
     };
 
-    initializeAndRender();
+    void initializeAndRender();
+    return () => { cancelled = true; };
   }, [isInitialized, initializeMermaid, renderExistingDiagrams]);
 
   return null; // このコンポーネントは何もレンダリングしない

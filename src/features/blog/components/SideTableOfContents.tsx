@@ -117,21 +117,21 @@ export default function SideTableOfContents({ items }: SideTableOfContentsProps)
   }
 
   return (
-    <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto">
+    <div className="sticky top-24 max-h-[calc(100vh-6rem)] overflow-y-auto overflow-x-hidden">
       <nav className="relative py-4">
         <h3 className="text-sm font-semibold text-foreground mb-4 tracking-tight">On This Page</h3>
-        <div className="relative">
+        <div className="relative pr-2">
           <div className="absolute left-0 top-0 bottom-0 w-px bg-border/40" />
-          <ul className="space-y-2 ml-4 relative">
+          <ul className="space-y-2 ml-4 relative max-w-full">
             {topLevelItems.map((item) => {
               const resolvedForItem = resolvedIdMap[item.id] || item.id;
               const isActive = activeId === resolvedForItem;
               return (
-                <li key={`side-toc-${item.id}`} className="relative">
+                <li key={`side-toc-${item.id}`} className="relative max-w-full">
                   {isActive && <div className="absolute -left-4 top-0 bottom-0 w-px bg-primary transition-all duration-200" />}
                   <a
                     href={`#${resolvedForItem}`}
-                    className={`block py-1 text-sm leading-relaxed transition-all duration-200 hover:text-foreground ${item.level === 2 ? 'ml-4' : ''} ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}
+                    className={`block py-1 text-sm leading-relaxed transition-all duration-200 hover:text-foreground break-words whitespace-normal max-w-full ${item.level === 2 ? 'ml-4' : ''} ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}
                     onClick={(e) => {
                       e.preventDefault();
                       smoothScrollToHeading(item.id);

@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { FaLink, FaXTwitter, FaFacebook } from 'react-icons/fa6';
+import { FaLink, FaXTwitter, FaFacebook, FaShareNodes, FaCheck } from 'react-icons/fa6';
 import Icon from '@/shared/components/ui/Icon';
 
 type NavigatorWithShare = Navigator & { share: (data: { title?: string; text?: string; url?: string }) => Promise<void> };
@@ -16,6 +16,11 @@ type ShareButtonsProps = {
 export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsProps) {
   const t = useTranslations('Blog');
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const url = useMemo(() => {
     // サーバー/クライアントで一致するURLを親から受け取る
@@ -54,27 +59,55 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
     }
   }, []);
 
-  const canWebShare = typeof navigator !== 'undefined' && 'share' in navigator;
+  const canUseWebShare = useMemo(() => {
+    if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
+    const supportsShare = 'share' in navigator;
+    if (!supportsShare) return false;
+    const ua = navigator.userAgent || '';
+    const isMobileUA = /android|iphone|ipad|ipod|mobile/i.test(ua);
+    const isSmallScreen = window.innerWidth <= 820; // タブレット以下をモバイル扱い
+    const hasTouch = typeof navigator.maxTouchPoints === 'number' ? navigator.maxTouchPoints > 0 : false;
+    return isMobileUA || (isSmallScreen && hasTouch);
+  }, []);
 
   const onShareX = useCallback(async () => {
-    if (canWebShare) {
+    if (canUseWebShare) {
       try {
         await (navigator as NavigatorWithShare).share({ title, text: title, url });
         return;
       } catch {}
     }
     openSharePopup(xUrl, 'share-x');
-  }, [canWebShare, title, url, xUrl, openSharePopup]);
+  }, [canUseWebShare, title, url, xUrl, openSharePopup]);
 
   const onShareFacebook = useCallback(async () => {
-    if (canWebShare) {
+    if (canUseWebShare) {
       try {
         await (navigator as NavigatorWithShare).share({ title, text: title, url });
         return;
       } catch {}
     }
     openSharePopup(facebookUrl, 'share-facebook');
-  }, [canWebShare, title, url, facebookUrl, openSharePopup]);
+  }, [canUseWebShare, title, url, facebookUrl, openSharePopup]);
+
+  const onShareUnified = useCallback(async () => {
+    // モバイル等ではネイティブ共有を優先
+    if (canUseWebShare) {
+      try {
+        await (navigator as NavigatorWithShare).share({ title, text: title, url });
+        return;
+      } catch {}
+    }
+    // フォールバックはXのシェアポップアップ（任意でFacebookでも可）
+    openSharePopup(xUrl, 'share');
+  }, [canUseWebShare, title, url, xUrl, openSharePopup]);
+
+  const copyBtnClass = useMemo(() => {
+    const base = 'inline-flex h-10 w-10 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px] border';
+    return copied
+      ? `${base} bg-[#ec4899] text-white border-[#be185d] hover:bg-[#ec4899]/90 animate-pulse`
+      : `${base} bg-card text-foreground border-border hover:bg-accent/20`;
+  }, [copied]);
 
   const onCopy = useCallback(async () => {
     try {
@@ -94,39 +127,74 @@ export default function ShareButtons({ slug, title, absoluteUrl }: ShareButtonsP
     }
   }, [url]);
 
+  // サーバーとクライアントの差異を避けるため、初回ハイドレーションまでは描画しない
+  if (!mounted) {
+    return (
+      <div className="mt-8 flex items-center gap-3" aria-label={t('share')} aria-hidden="true" />
+    );
+  }
+
   return (
     <div className="mt-8 flex items-center gap-3" aria-label={t('share')}>
-      <button
-        type="button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black text-white border border-border hover:bg-black/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
-        aria-label="Share on X"
-        title="X"
-        onClick={onShareX}
-      >
-        <Icon className="text-[18px]" icon={<FaXTwitter />} />
-        <span className="sr-only">X</span>
-      </button>
-      <button
-        type="button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#1877F2] text-white hover:bg-[#1877F2]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
-        aria-label="Share on Facebook"
-        title="Facebook"
-        onClick={onShareFacebook}
-      >
-        <Icon className="text-[18px]" icon={<FaFacebook />} />
-        <span className="sr-only">Facebook</span>
-      </button>
-      <button
-        type="button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-card text-foreground border border-border hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
-        onClick={onCopy}
-        aria-live="polite"
-        aria-label={copied ? t('copied') : t('copy_link')}
-        title={copied ? t('copied') : t('copy_link')}
-      >
-        <Icon className="text-[18px]" icon={<FaLink />} />
-        <span className="sr-only">{copied ? t('copied') : t('copy_link')}</span>
-      </button>
+      {canUseWebShare ? (
+        <>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground border border-border hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
+            aria-label={t('share')}
+            title={t('share')}
+            onClick={onShareUnified}
+          >
+            <Icon className="text-[18px]" icon={<FaShareNodes />} />
+            <span className="sr-only">{t('share')}</span>
+          </button>
+          <button
+            type="button"
+            className={copyBtnClass}
+            onClick={onCopy}
+            aria-live="polite"
+            aria-label={copied ? t('copied') : t('copy_link')}
+            title={copied ? t('copied') : t('copy_link')}
+          >
+            <Icon className="text-[18px]" icon={copied ? <FaCheck /> : <FaLink />} />
+            <span className="sr-only">{copied ? t('copied') : t('copy_link')}</span>
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-black text-white border border-border hover:bg-black/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
+            aria-label="Share on X"
+            title="X"
+            onClick={onShareX}
+          >
+            <Icon className="text-[18px]" icon={<FaXTwitter />} />
+            <span className="sr-only">X</span>
+          </button>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#1877F2] text-white hover:bg-[#1877F2]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 ease-out shadow-sm hover:shadow-md active:translate-y-[1px]"
+            aria-label="Share on Facebook"
+            title="Facebook"
+            onClick={onShareFacebook}
+          >
+            <Icon className="text-[18px]" icon={<FaFacebook />} />
+            <span className="sr-only">Facebook</span>
+          </button>
+          <button
+            type="button"
+            className={copyBtnClass}
+            onClick={onCopy}
+            aria-live="polite"
+            aria-label={copied ? t('copied') : t('copy_link')}
+            title={copied ? t('copied') : t('copy_link')}
+          >
+            <Icon className="text-[18px]" icon={copied ? <FaCheck /> : <FaLink />} />
+            <span className="sr-only">{copied ? t('copied') : t('copy_link')}</span>
+          </button>
+        </>
+      )}
     </div>
   );
 }

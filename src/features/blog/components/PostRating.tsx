@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { FaRegHeart } from 'react-icons/fa';
 import Icon from '@/shared/components/ui/Icon';
@@ -11,27 +12,21 @@ type Props = { slug: string };
 
 export default function PostRating({ slug }: Props) {
   const t = useTranslations('Blog');
-  const [rating, setRating] = useState<Rating | null>(null);
   const [isSubmitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastActionAtRef = useRef<number>(0);
+  const [mounted, setMounted] = useState(false);
 
-  async function fetchRating() {
-    try {
-      setError(null);
-      const res = await fetch(`/api/v1/ratings?slug=${encodeURIComponent(slug)}`, { cache: 'no-store' });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Failed');
-      setRating(json.data as Rating);
-    } catch {
-      setError('failed');
-    }
-  }
+  useEffect(() => { setMounted(true); }, []);
 
-  useEffect(() => {
-    void fetchRating();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  const fetcher = useCallback(async (key: string) => {
+    const res = await fetch(key, { cache: 'no-store' });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || 'Failed');
+    return json.data as Rating;
+  }, []);
+
+  const { data: rating, isLoading, mutate } = useSWR<Rating>(`/api/v1/ratings?slug=${encodeURIComponent(slug)}`, fetcher);
 
   async function vote(value: 'up') {
     // throttle: 600ms
@@ -46,7 +41,7 @@ export default function PostRating({ slug }: Props) {
     const delta = currentlyVoted ? -1 : 1;
     const newUp = Math.max(0, currentUp + delta);
     const next: Rating = { up: newUp, down: 0, score: newUp, hasVoted: !currentlyVoted };
-    setRating(next);
+    void mutate(next, { revalidate: false });
     try {
       setSubmitting(true);
       setError(null);
@@ -57,16 +52,22 @@ export default function PostRating({ slug }: Props) {
       });
       if (!res.ok) {
         // revert on failure
-        setRating(prev ?? null);
+        void mutate(prev, { revalidate: false });
         if (res.status === 429) setError('throttled');
         else setError('failed');
         return;
       }
-      // サーバー結果で最終同期
-      await fetchRating();
+      // サーバーから最新の集計を受け取り反映
+      const json = await res.json();
+      if (json?.data) {
+        void mutate(json.data as Rating, { revalidate: false });
+      } else {
+        // 念のため再取得
+        await mutate();
+      }
     } catch {
       // revert on failure
-      setRating(prev ?? null);
+      void mutate(prev, { revalidate: false });
       setError('failed');
     } finally {
       setSubmitting(false);
@@ -86,7 +87,9 @@ export default function PostRating({ slug }: Props) {
       >
         <Icon icon={<FaRegHeart />} />
       </button>
-      <span className={`text-sm ${voted ? 'text-pink-600' : 'text-muted-foreground'}`}>{typeof rating?.up === 'number' ? rating.up : (rating ? Number(rating.up ?? 0) : 0)}</span>
+      <span className={`text-sm ${voted ? 'text-pink-600' : 'text-muted-foreground'}`} aria-live="polite" suppressHydrationWarning>
+        {mounted ? (isLoading ? '…' : (typeof rating?.up === 'number' ? rating.up : (rating ? Number(rating?.up ?? 0) : 0))) : ''}
+      </span>
       {error === 'already' && (
         <p className="text-xs text-muted-foreground">{t('you_already_voted')}</p>
       )}

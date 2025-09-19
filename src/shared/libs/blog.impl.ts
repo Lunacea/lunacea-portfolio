@@ -6,6 +6,7 @@ import { extractTableOfContents, parseMarkdownToHtml } from './mdx-parser';
 import { parseMDXToHtml, extractTableOfContentsFromMDX } from './mdx-remote';
 import 'server-only';
 import { logger } from '@/shared/libs/Logger';
+import { sanitizeHtmlServerSide } from '@/shared/utils/sanitize';
 
 export type BlogPost = {
   slug: string;
@@ -20,6 +21,8 @@ export type BlogPost = {
   tableOfContents?: Array<{ id: string; title: string; level: number }>;
   excerpt?: string;
   isMDX?: boolean; // MDXファイルかどうかのフラグ
+  ogImage?: string | { url: string; width?: number; height?: number; alt?: string };
+  coverImage?: string;
 };
 
 export type BlogPostMeta = Omit<BlogPost, 'content' | 'htmlContent'>;
@@ -97,6 +100,8 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
         htmlContent = await parseMarkdownToHtml(content);
         tableOfContents = extractTableOfContents(content);
       }
+      // 生成されたHTMLをサーバー側でサニタイズしておく
+      htmlContent = sanitizeHtmlServerSide(htmlContent);
     } catch (parseError) {
       logger.error({ parseError, filename }, 'コンテンツ変換エラー');
       htmlContent = `<pre class="error-fallback">${content}</pre>`;
@@ -115,6 +120,8 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       tableOfContents,
       excerpt: cleanExcerpt.length > 200 ? `${cleanExcerpt.substring(0, 200)}...` : cleanExcerpt,
       isMDX,
+      ogImage: data.ogImage,
+      coverImage: data.coverImage,
     };
   } catch (error) {
     logger.error({ error, filename }, 'ブログ記事の解析エラー');
@@ -131,6 +138,63 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
       tableOfContents: [],
       excerpt: 'エラーが発生しました',
       isMDX: false,
+      ogImage: undefined,
+      coverImage: undefined,
+    };
+  }
+}
+
+// メタ情報のみを軽量に取得（HTML変換・TOC抽出なし）
+export async function parseBlogPostMeta(filename: string): Promise<BlogPostMeta> {
+  const filePath = path.resolve(BLOG_CONTENT_PATH, filename);
+  try {
+    if (!fs.existsSync(filePath)) {
+      logger.warn(`ファイルが見つかりません: ${filePath}`);
+      throw new Error(`ファイルが見つかりません: ${filename}`);
+    }
+
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const { data, content } = matter(fileContent);
+    const slug = getSlugFromFilename(filename);
+    const readingTimeResult = readingTime(content);
+
+    const rawExcerpt = content.split('\n\n')[0]?.replace(/^#+\s/, '') || data.description || '';
+    const cleanExcerpt = rawExcerpt
+      .replace(/[#*_`~[\]]/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return {
+      slug,
+      title: data.title || slug,
+      description: data.description,
+      publishedAt: data.publishedAt || data.date || new Date().toISOString(),
+      updatedAt: data.updatedAt,
+      tags: data.tags || [],
+      readingTime: readingTimeResult.text,
+      tableOfContents: undefined,
+      excerpt: cleanExcerpt.length > 200 ? `${cleanExcerpt.substring(0, 200)}...` : cleanExcerpt,
+      isMDX: filename.endsWith('.mdx'),
+      ogImage: data.ogImage,
+      coverImage: data.coverImage,
+    };
+  } catch (error) {
+    logger.error({ error, filename }, 'ブログ記事メタの解析エラー');
+    const slug = getSlugFromFilename(filename);
+    return {
+      slug,
+      title: slug,
+      description: 'エラーが発生しました',
+      publishedAt: new Date().toISOString(),
+      tags: [],
+      readingTime: '1 min read',
+      tableOfContents: [],
+      excerpt: 'エラーが発生しました',
+      isMDX: false,
+      ogImage: undefined,
+      coverImage: undefined,
     };
   }
 }
@@ -138,9 +202,7 @@ export async function parseBlogPost(filename: string): Promise<BlogPost> {
 export async function getAllBlogPosts(): Promise<BlogPostMeta[]> {
   const files = getBlogPostFiles();
   const posts = await Promise.all(files.map(async (filename) => {
-    const post = await parseBlogPost(filename);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { content, htmlContent, ...meta } = post;
+    const meta = await parseBlogPostMeta(filename);
     return meta;
   }));
   return posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());

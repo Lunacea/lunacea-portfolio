@@ -5,14 +5,13 @@ type DayCellProps = {
   count: number;
   isMonthStart: boolean;
   intensityClass: string;
-  weekKey: string; // for empty cells
 };
 
-const DayCellComponent: React.FC<DayCellProps> = ({ date, count, isMonthStart, intensityClass, weekKey }) => {
+const DayCellComponent: React.FC<DayCellProps> = ({ date, count, isMonthStart, intensityClass }) => {
   if (!date) {
     return (
       <div
-        key={`empty-${weekKey}-${Math.random()}`}
+        // ランダムキーはハイドレーション不一致の原因となるため使用しない
         className="w-3 h-3 rounded-md bg-gradient-to-br from-muted/20 to-muted/40 shadow-inner shadow-black/5 dark:shadow-black/20 border border-black/5 dark:border-white/5"
       />
     );

@@ -99,7 +99,12 @@ export async function POST(request: Request) {
       await dbInstance
         .delete(postRatingVotes)
         .where(and(eq(postRatingVotes.slug, slug), eq(postRatingVotes.tripcode, tripcode)));
-      return NextResponse.json({ ok: true, removed: true }, { status: 200 });
+      // 最新集計を返す
+      const [{ count: up = 0 } = { count: 0 }] = await dbInstance
+        .select({ count: sql<number>`count(distinct ${postRatingVotes.tripcode})` })
+        .from(postRatingVotes)
+        .where(and(eq(postRatingVotes.slug, slug), eq(postRatingVotes.voteValue, 'up')));
+      return NextResponse.json({ ok: true, removed: true, data: { up, down: 0, score: up, hasVoted: false } }, { status: 200 });
     }
 
     await dbInstance.insert(postRatingVotes).values({
@@ -110,7 +115,13 @@ export async function POST(request: Request) {
       voteDay,
     });
 
-    return NextResponse.json({ ok: true, removed: false }, { status: 201 });
+    // 最新集計を返す
+    const [{ count: up = 0 } = { count: 0 }] = await dbInstance
+      .select({ count: sql<number>`count(distinct ${postRatingVotes.tripcode})` })
+      .from(postRatingVotes)
+      .where(and(eq(postRatingVotes.slug, slug), eq(postRatingVotes.voteValue, 'up')));
+
+    return NextResponse.json({ ok: true, removed: false, data: { up, down: 0, score: up, hasVoted: true } }, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'InternalError' }, { status: 500 });
   }

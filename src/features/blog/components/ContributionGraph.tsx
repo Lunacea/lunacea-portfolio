@@ -41,14 +41,14 @@ export default function ContributionGraph({ posts, weekCount = 20 }: Contributio
           </div>
           <div className="flex gap-1">
             {processedWeeks.map(weekData => (
-              <div key={weekData.weekKey} className="flex flex-col gap-1 w-3">
+              <div key={`week-${weekData.weekKey}`} className="flex flex-col gap-1 w-3">
                 <div className="h-4 flex items-end justify-start">
                   {weekData.monthLabel && (
                     <span className="text-xs text-muted-foreground font-medium whitespace-nowrap -ml-1">{weekData.monthLabel}</span>
                   )}
                 </div>
                 {weekData.daysInWeek.map(dayData => (
-                  <DayCell key={dayData.key} date={dayData.date} count={dayData.count} isMonthStart={dayData.isMonthStart} intensityClass={dayData.intensityClass} weekKey={dayData.weekKey} />
+                  <DayCell key={`day-${dayData.key}`} date={dayData.date} count={dayData.count} isMonthStart={dayData.isMonthStart} intensityClass={dayData.intensityClass} />
                 ))}
               </div>
             ))}

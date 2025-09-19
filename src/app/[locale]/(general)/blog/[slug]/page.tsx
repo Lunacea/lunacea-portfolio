@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
 import BlogPostContent from '@/features/blog/components/BlogPostContent';
-import CommentsSection from '@/features/blog/components/CommentsSection';
-import SideTableOfContents from '@/features/blog/components/SideTableOfContents';
+import dynamic from 'next/dynamic';
+const CommentsSection = dynamic(() => import('@/features/blog/components/CommentsSection'), { loading: () => null });
+const SideTableOfContents = dynamic(() => import('@/features/blog/components/SideTableOfContents'), { loading: () => null });
 import Icon from '@/shared/components/ui/Icon';
 import BackToTop from '@/shared/components/ui/BackToTop';
 import { getAllBlogPosts, getBlogPost, getRelatedPosts } from '@/shared/libs/blog';
-import { headers } from 'next/headers';
+// import { Env } from '@/shared/libs/Env';
 import { AppConfig } from '@/shared/utils/AppConfig';
-import PostRating from '@/features/blog/components/PostRating';
-import ShareButtons from '@/features/blog/components/ShareButtons';
+import { headers } from 'next/headers';
+const PostRating = dynamic(() => import('@/features/blog/components/PostRating'), { loading: () => null });
+const ShareButtons = dynamic(() => import('@/features/blog/components/ShareButtons'), { loading: () => null });
 
 type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -46,13 +48,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  // リクエストヘッダから絶対オリジンを構築
+  // 生成ルートの絶対URLのみを使用
   const h = await headers();
   const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
   const proto = h.get('x-forwarded-proto') ?? 'http';
   const origin = `${proto}://${host}`;
-
-  // 絶対URLでOG画像
   const ogImageUrl = `${origin}/api/og/blog?slug=${encodeURIComponent(slug)}`;
 
   return {
@@ -91,14 +91,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const t = await getTranslations({ locale, namespace: 'Blog' });
   const related = post ? await getRelatedPosts(post.slug, 3) : [];
 
-  // SSR側で安定したabsolute URLを生成（Hydration mismatch回避）
-  const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
-  const proto = h.get('x-forwarded-proto') ?? 'http';
-  const origin = `${proto}://${host}`;
   const isDefault = locale === AppConfig.defaultLocale && AppConfig.localePrefix === 'as-needed';
   const prefix = isDefault ? '' : `/${locale}`;
-  const absoluteUrl = `${origin}${prefix}/blog/${encodeURIComponent(slug)}`;
+  const absoluteUrl = `${prefix}/blog/${encodeURIComponent(slug)}`;
 
   if (!post) {
     notFound();
@@ -143,14 +138,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {post.title}
               </h1>
 
-              {post.description && (
+              {post.description ? (
                 <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
                   {post.description}
                 </p>
-              )}
+              ) : null}
 
               {/* メタデータ */}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground" suppressHydrationWarning>
                 <time dateTime={post.publishedAt} className="flex items-center gap-2">
                   <Icon icon={<FaCalendar />} className="text-primary" />
                   {formatDate(post.publishedAt, locale)}

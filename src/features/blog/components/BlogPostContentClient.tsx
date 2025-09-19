@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
-import TableOfContents from '@/features/blog/components/TableOfContents';
-import MermaidRenderer from './MermaidRenderer';
-import CodeCopyEnhancer from '@/features/blog/components/CodeCopyEnhancer';
-import { sanitizeHtmlClientSide } from '@/shared/utils/sanitize';
+import dynamic from 'next/dynamic';
+const TableOfContents = dynamic(() => import('@/features/blog/components/TableOfContents'), { ssr: false, loading: () => null });
+const MermaidRenderer = dynamic(() => import('./MermaidRenderer'), { ssr: false, loading: () => null });
+const CodeCopyEnhancer = dynamic(() => import('@/features/blog/components/CodeCopyEnhancer'), { ssr: false, loading: () => null });
 import '@/features/blog/styles/blog-content.css';
 
 type BlogPost = {
@@ -27,13 +27,24 @@ type BlogPostContentClientProps = {
 };
 
 function sanitizeHtmlContent(htmlContent: string): string {
-  return sanitizeHtmlClientSide(htmlContent);
+  // サーバーで既にサニタイズ済み。クライアント側ではそのまま使用。
+  return htmlContent;
 }
 
 export default function BlogPostContentClient({ post }: BlogPostContentClientProps) {
   const safeHtmlContent = useMemo(() => {
     return sanitizeHtmlContent(post.htmlContent || '');
   }, [post.htmlContent]);
+
+  const hasCodeBlocks = useMemo(() => {
+    const html = safeHtmlContent;
+    return html.includes('<pre') || html.includes('<code');
+  }, [safeHtmlContent]);
+
+  const hasMermaid = useMemo(() => {
+    const html = safeHtmlContent.toLowerCase();
+    return html.includes('language-mermaid') || html.includes('mermaid');
+  }, [safeHtmlContent]);
 
   const fallbackContent = useMemo(() => {
     if (!safeHtmlContent && post.content) {
@@ -55,7 +66,7 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
       {safeHtmlContent ? (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
           <div className="blog-content no-wrap-inline-code" dangerouslySetInnerHTML={{ __html: safeHtmlContent }} />
-          <CodeCopyEnhancer />
+          {hasCodeBlocks ? <CodeCopyEnhancer /> : null}
         </div>
       ) : (
         /* フォールバックコンテンツ */
@@ -69,7 +80,7 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
       )}
       
       {/* Mermaid図表のレンダリング */}
-      <MermaidRenderer />
+      {hasMermaid ? <MermaidRenderer /> : null}
     </div>
   );
 }
