@@ -1,0 +1,311 @@
+---
+title: 'DIによる保守性の高いコードへの改善ステップを理解する'
+description: '単一パッケージのコードから出発し、保守性とテスト容易性を備えたコードに改善する過程をステップバイステップでまとめます。'
+publishedAt: '2025-08-15'
+updatedAt: '2025-08-15'
+tags: ['Backend', 'Architecture', 'Go', 'Software Design', 'Clean Code']
+---
+
+この記事では、単一パッケージのコードから、保守性とテスト容易性を備えたコードに改善過程を、具体的なコードと共に簡単にまとめます。
+
+「HTTPリクエストで受け取ったユーザー名をDBに保存する」というシンプルなAPIを例に進めます。
+
+## 0. 単一パッケージによる雑なコード
+
+最初は誰しも、すべてのロジックを1つの場所に書いてしまいがちです。
+
+```go title="main.go"
+package main
+
+import (
+  "database/sql"
+  "fmt"
+  "net/http"
+  _ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+  // リクエスト受け取り ⇒ DB処理 ⇒ レスポンス だけの流れ
+  http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+    // HTTPの関心事、ビジネスロジック、DBアクセスのすべてが混在
+      name := r.URL.Query().Get("name")
+
+      // バリデーション
+      if len(name) < 3 {
+          http.Error(w, "Username is too short", http.StatusBadRequest)
+          return
+      }
+
+      // DB処理
+      db, _ := sql.Open("mysql", "user:password@/testdb")
+      defer db.Close()
+      _, err := db.Exec("INSERT INTO users (name) VALUES (?)", name)
+
+      // エラー処理
+      if err != nil {
+        http.Error(w, "DB error", http.StatusInternalServerError)
+        return
+      }
+      // レスポンス生成
+    fmt.Fprintf(w, "User %s created", name)
+  })
+
+  http.ListenAndServe(":8080", nil)
+}
+```
+
+これでは、処理を分けてテストすることが非常に困難で、DBをMySQLから変更するだけでも多大な修正が必要です。
+
+## 1. 責務の分離
+
+最初の改善は、役割（責務）ごとにコードを別のファイルやパッケージに分けることです。
+
+これを関心事の分離 (Separation of Concerns) と呼びます。
+
+以下の新しいディレクトリを用意します。
+
+- **handler**: HTTPリクエストとレスポンスを扱う
+- **repository**: データベースとのやり取りを扱う
+
+```text title="ディレクトリ構成"
+/
+├─ main.go                // エントリポイント
+├─ handler/
+|   └ user_handler.go     // ユーザ側とのやり取り
+├─ repository/
+|   └ user_repository.go  // データベースとのやり取り
+```
+
+---
+
+```go title="user_repository.go"
+package repository
+import ( "database/sql"; _ "github.com/go-sql-driver/mysql" )
+
+// ★具象型。MySQLに強く依存している
+type MySqlUserRepository struct {
+  DB *sql.DB
+}
+
+// DB処理だけを行う
+func (r *MySqlUserRepository) Save(name string) error {
+  _, err := r.DB.Exec("INSERT INTO users (name) VALUES (?)", name)
+  return err
+}
+```
+
+```go title="user_handler.go"
+package handler
+import ( "net/http"; "app/repository" ) // ★具象型に直接依存
+
+type UserHandler struct {
+  Repo *repository.MySqlUserRepository // ★具象型を直接参照
+}
+
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+  name := r.URL.Query().Get("name")
+  if len(name) < 3 {
+    http.Error(w, "Username is too short", http.StatusBadRequest)
+    return
+  }
+  // 具象型に直接依存している
+  err := h.Repo.Save(name)
+  // ... エラーハンドリング ...
+}
+```
+
+```go title="main.go"
+// ...
+db, _ := sql.Open("mysql", "...")
+repo := &repository.MySqlUserRepository{DB: db}
+handler := &handler.UserHandler{Repo: repo} // 依存性を組み立て
+http.HandleFunc("/user", handler.CreateUser)
+// （略）
+```
+
+これで、コードが整理され、どこに何が書かれているか分かりやすくなりました。
+
+しかし、`handler`が`repository`の具体的な実装に直接依存しています。
+つまり、`repository`（DB関連）の変更が`handler`に直接影響を与えてしまうため、依然としてテストがしづらく、DBの切り替えも困難です。
+
+## 2. 依存性の逆転
+
+ここが最も重要なステップです。
+
+具体的な実装に依存するのではなく、「契約（Interface）」に依存するように変更します。
+
+これを依存性注入 (Dependency Injection) といいます。
+
+```text title="ディレクトリ構成"
+/
+├─ domain/       // 「契約（Interface）」を置く場所を追加
+|   └ user.go
+// ... 他は同様
+```
+
+---
+
+```go title="domain/user.go"
+package domain
+
+// 「ユーザーを保存できる」という契約を定義
+type UserRepository interface {
+    Save(name string) error
+}
+```
+
+```go title="handler/user_handler.go"
+package handler
+
+import (
+    "net/http"
+    "app/domain" // ★domainの「契約」に依存
+)
+
+type UserHandler struct {
+    Repo domain.UserRepository // ★具象ではなくインターフェース型で持つ
+}
+
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+  // ...
+  // 相手がMySQLかどうかは知らない
+  err := h.Repo.Save(name)
+  // （略）
+}
+```
+
+```go title="repository/mysql_user_repository.go"
+package repository
+import ( "database/sql"; "app/domain" )
+
+// MySqlUserRepositoryはdomain.UserRepositoryを「満たす」ように実装
+type MySqlUserRepository struct {
+  DB *sql.DB
+}
+
+// このメソッドを持つことでdomain.UserRepositoryインターフェースを実装
+func (r *MySqlUserRepository) Save(name string) error {
+  // （略）
+}
+```
+
+```go title="main.go"
+// ...
+repo := &repository.MySqlUserRepository{DB: db}
+// MySqlUserRepositoryはUserRepositoryインターフェースを満たすので代入可能
+handler := &handler.UserHandler{Repo: repo}
+http.HandleFunc("/user", handler.CreateUser)
+// （略）
+```
+
+この変更により、`UserHandler`は相手がMySQLだろうとPostgreSQLだろうと知る必要がなくなりました。
+「Saveメソッドを持つ」という契約さえ守られていれば、どんな`UserRepository`でも受け入れられるようになります。
+
+UserHandlerのテストでは、DBに接続しない**テスト用のモックUserRepository**を注入できます。
+
+## その他の対応
+
+これらのほか、保守性を高めるために、
+
+1. コードを読みやすくする
+
+   - 命名規則に従う
+   - コメントを残す
+   - コードの入力・処理・出力を明確にする
+   - フォーマッタ・リンタを用いる
+
+2. コードを再利用・汎用化する
+
+   - DRY原則に従う
+   - 接続情報などの設定を分離する（セキュリティ的にも重要）
+   - ジェネリクスなどにより関数の汎用性を高める
+
+3. 壊れたときに分かるようにしておく
+
+   - エラーハンドリングとロギング・監視を行う
+   - 適切にコンパイル設定をする
+   - 適切にテストする
+
+などの対応が考えられます。
+
+## アーキテクチャの選択
+
+これらを満たしたうえで、ビジネスロジックをどう扱うか考える必要があります。
+
+```go title="user_handler.go（変更前）"
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+    // ① HTTPリクエストの解釈
+    name := r.URL.Query().Get("name")
+
+    // ② ビジネスロジックの実行
+    if len(name) < 3 {
+        http.Error(w, "Username is too short", http.StatusBadRequest)
+        return
+    }
+
+    // ③ データベースへの保存処理
+    // h.Repo.Save(name) ...
+
+    // ④ HTTPレスポンスの生成
+    fmt.Fprintf(w, "User %s created", name)
+}
+```
+
+例えば、階層型アーキテクチャでは`UseCase`層にビジネスロジックを委譲します。
+
+`UseCase`層は、アプリケーション固有のビジネスルールを実装する層です。HTTPやDBの詳細から独立して、純粋なビジネスロジックに集中できます。
+
+```go title="usecase/user_usecase.go"
+package usecase
+
+import "app/domain"
+
+type UserUseCase struct {
+    UserRepo domain.UserRepository
+}
+
+// ビジネスロジックに集中
+func (u *UserUseCase) RegisterUser(name string) error {
+    // ビジネスルール: ユーザー名の検証
+    if len(name) < 3 {
+        return errors.New("username is too short")
+    }
+    
+    // ビジネスルール: 重複チェック（将来の拡張例）
+    // existingUser, _ := u.UserRepo.FindByName(name)
+    // if existingUser != nil {
+    //     return errors.New("username already exists")
+    // }
+    
+    // データの永続化
+    return u.UserRepo.Save(name)
+}
+```
+
+```go title="user_handler.go（階層型）"
+package handler
+// ...
+type UserHandler struct {
+    UserUsecase *usecase.UserUseCase
+}
+
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+    // ① HTTPリクエストの解釈
+    name := r.URL.Query().Get("name")
+
+    // ② UseCaseを呼び出すだけ
+    err := h.UserUsecase.RegisterUser(name)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // ④ HTTPレスポンスの生成
+    fmt.Fprintf(w, "User %s created", name)
+}
+```
+
+これにより、`handler`はHTTPリクエスト／レスポンスに集中し、`UseCase`はビジネスロジックに集中できます。
+
+その他、様々なアーキテクチャパターンがあり、プロジェクトの特性によって
+使い分けることで、一貫したソフトウェアを設計することができるようになります。
