@@ -83,12 +83,12 @@ package repository
 import ( "database/sql"; _ "github.com/go-sql-driver/mysql" )
 
 // ★具象型。MySQLに強く依存している
-type MySqlUserRepository struct {
+type MySQLUserRepository struct {
   DB *sql.DB
 }
 
 // DB処理だけを行う
-func (r *MySqlUserRepository) Save(name string) error {
+func (r *MySQLUserRepository) Save(name string) error {
   _, err := r.DB.Exec("INSERT INTO users (name) VALUES (?)", name)
   return err
 }
@@ -99,7 +99,7 @@ package handler
 import ( "net/http"; "app/repository" ) // ★具象型に直接依存
 
 type UserHandler struct {
-  Repo *repository.MySqlUserRepository // ★具象型を直接参照
+  Repo *repository.MySQLUserRepository // ★具象型を直接参照
 }
 
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +117,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 ```go title="main.go"
 // ...
 db, _ := sql.Open("mysql", "...")
-repo := &repository.MySqlUserRepository{DB: db}
+repo := &repository.MySQLUserRepository{DB: db}
 handler := &handler.UserHandler{Repo: repo} // 依存性を組み立て
 http.HandleFunc("/user", handler.CreateUser)
 // （略）
@@ -178,21 +178,21 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 package repository
 import ( "database/sql"; "app/domain" )
 
-// MySqlUserRepositoryはdomain.UserRepositoryを「満たす」ように実装
-type MySqlUserRepository struct {
+// MySQLUserRepositoryはdomain.UserRepositoryを「満たす」ように実装
+type MySQLUserRepository struct {
   DB *sql.DB
 }
 
 // このメソッドを持つことでdomain.UserRepositoryインターフェースを実装
-func (r *MySqlUserRepository) Save(name string) error {
+func (r *MySQLUserRepository) Save(name string) error {
   // （略）
 }
 ```
 
 ```go title="main.go"
 // ...
-repo := &repository.MySqlUserRepository{DB: db}
-// MySqlUserRepositoryはUserRepositoryインターフェースを満たすので代入可能
+repo := &repository.MySQLUserRepository{DB: db}
+// MySQLUserRepositoryはUserRepositoryインターフェースを満たすので代入可能
 handler := &handler.UserHandler{Repo: repo}
 http.HandleFunc("/user", handler.CreateUser)
 // （略）
