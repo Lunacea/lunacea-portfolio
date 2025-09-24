@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import BlogCard from '@/features/blog/components/BlogCard';
-import BlogSearch from '@/features/blog/components/BlogSearch';
+import PublicBlogSearch from '@/features/blog/components/PublicBlogSearch';
 import ContributionGraph from '@/features/blog/components/ContributionGraph';
 import EmptyStateCard from '@/shared/components/ui/EmptyStateCard';
 import Icon from '@/shared/components/ui/Icon';
@@ -41,7 +41,7 @@ export default function BlogPageClient({ posts, t }: BlogPageClientProps) {
 
         {/* 検索機能 */}
         <ScrollReveal direction="fade" delay={150}>
-          <BlogSearch posts={posts} onSearchResults={handleSearchResults} />
+          <PublicBlogSearch posts={posts} onSearchResults={handleSearchResults} />
         </ScrollReveal>
 
         {/* ブログ記事一覧 */}

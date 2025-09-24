@@ -79,26 +79,25 @@ test.describe('Visual testing', () => {
       }
     });
 
-    test('should take screenshot of music controller', async ({ page }) => {
-      await page.goto('/');
+    test('should take screenshot of MDX styling test page', async ({ page }) => {
+      await page.goto('/blog/markdown-styling-test');
       await page.waitForLoadState('domcontentloaded');
 
-      // 音楽コントロールのスクリーンショットを取得
-      const musicController = page.getByRole('group', { name: '音楽コントロール' });
-      await expect(musicController).toBeVisible();
-      
-      // 音楽コントロールのスクリーンショットを取得
-      const boundingBox = await musicController.boundingBox();
-      if (boundingBox) {
-        await page.screenshot({ path: 'test-results/music-controller.png', clip: boundingBox });
-      } else {
-        // フォールバック: 音楽コントロールのスクリーンショットを取得
-        await musicController.screenshot({ path: 'test-results/music-controller.png' });
-      }
+      // ページのタイトルが表示されることを確認
+      await expect(page.getByText('MDX + Markdown + Math testing completed!')).toBeVisible();
+
+      // MDXカスタムボックスが表示されることを確認
+      await expect(page.getByText('MDXカスタムボックス')).toBeVisible();
+
+      // Mermaid図表が表示されることを確認（レンダリング完了まで待機）
+      await page.waitForSelector('.mermaid-diagram svg', { timeout: 10000 });
+
+      // MDXスタイリングテストページのスクリーンショットを取得
+      await page.screenshot({ path: 'test-results/mdx-styling-test.png', fullPage: true });
       
       // Percy用のビジュアルテスト（CI環境でのみ実行）
       if (process.env.CI && process.env.PERCY_TOKEN) {
-        await musicController.screenshot({ name: 'Music Controller' });
+        await page.screenshot({ name: 'MDX Styling Test Page' });
       }
     });
   });

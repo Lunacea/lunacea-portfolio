@@ -2,10 +2,14 @@
 
 import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
-const TableOfContents = dynamic(() => import('@/features/blog/components/TableOfContents'), { ssr: false, loading: () => null });
-const MermaidRenderer = dynamic(() => import('./MermaidRenderer'), { ssr: false, loading: () => null });
-const CodeCopyEnhancer = dynamic(() => import('@/features/blog/components/CodeCopyEnhancer'), { ssr: false, loading: () => null });
-import '@/features/blog/styles/blog-content.css';
+import { replaceFencesWithPlaceholders } from '@/shared/libs/mermaid';
+const TableOfContents = dynamic(() => import('@/features/blog/shared/components/TableOfContents'), {
+  ssr: false,
+  loading: () => null
+}) as React.ComponentType<{ items: { id: string; title: string; level: number; }[]; className?: string; }>;
+const MermaidRenderer = dynamic(() => import('@/features/blog/shared/components/MermaidRenderer'), { ssr: false, loading: () => null });
+const MathRenderer = dynamic(() => import('@/features/blog/shared/components/MathRenderer'), { ssr: false, loading: () => null });
+const CodeCopyEnhancer = dynamic(() => import('@/features/blog/shared/components/CodeCopyEnhancer'), { ssr: false, loading: () => null });
 
 type BlogPost = {
   slug: string;
@@ -28,22 +32,39 @@ type BlogPostContentClientProps = {
 
 function sanitizeHtmlContent(htmlContent: string): string {
   // サーバーで既にサニタイズ済み。クライアント側ではそのまま使用。
+  // ただし、基本的な検証は行う
+  if (!htmlContent || typeof htmlContent !== 'string') {
+    return '';
+  }
   return htmlContent;
 }
 
 export default function BlogPostContentClient({ post }: BlogPostContentClientProps) {
+  // Mermaidブロックをプレースホルダーに置き換えたHTMLコンテンツを生成
   const safeHtmlContent = useMemo(() => {
-    return sanitizeHtmlContent(post.htmlContent || '');
-  }, [post.htmlContent]);
+    let htmlContent = sanitizeHtmlContent(post.htmlContent || '');
+    if (!htmlContent && post.content?.includes('```mermaid')) {
+      htmlContent = replaceFencesWithPlaceholders(post.content);
+    }
+    return htmlContent;
+  }, [post.htmlContent, post.content]);
 
   const hasCodeBlocks = useMemo(() => {
     const html = safeHtmlContent;
     return html.includes('<pre') || html.includes('<code');
   }, [safeHtmlContent]);
 
-  const hasMermaid = useMemo(() => {
-    const html = safeHtmlContent.toLowerCase();
-    return html.includes('language-mermaid') || html.includes('mermaid');
+  const hasMermaid = post.content?.includes('```mermaid') || false;
+
+  const hasMath = useMemo(() => {
+    const html = safeHtmlContent;
+    return html.includes('math-inline') ||
+      html.includes('math-display') ||
+      html.includes('katex-inline') ||
+      html.includes('katex-display') ||
+      html.includes('katex') ||
+      html.includes('$$') ||
+      html.includes('$');
   }, [safeHtmlContent]);
 
   const fallbackContent = useMemo(() => {
@@ -61,7 +82,7 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
   return (
     <div>
       <TableOfContents items={post.tableOfContents || []} className="mb-8 lg:hidden" />
-      
+
       {/* HTMLコンテンツのレンダリング */}
       {safeHtmlContent ? (
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-code:text-primary prose-pre:!bg-transparent prose-pre:!p-0 prose-pre:!m-0">
@@ -70,17 +91,30 @@ export default function BlogPostContentClient({ post }: BlogPostContentClientPro
         </div>
       ) : (
         /* フォールバックコンテンツ */
-        <div className="bg-red-100 border border-red-300 rounded-lg p-4 my-6">
-          <h3 className="text-red-800 font-semibold mb-2">デバッグ情報</h3>
-          <p className="text-red-700 text-sm">isMDX: {String(post.isMDX)}</p>
-          <p className="text-red-700 text-sm">hasHtmlContent: {String(!!post.htmlContent)}</p>
-          <p className="text-red-700 text-sm">hasContent: {String(!!post.content)}</p>
+        <div className="bg-muted/50 rounded-2xl p-6 border border-border">
+          <h3 className="text-muted-foreground font-semibold mb-2">コンテンツの読み込みに失敗しました</h3>
+          <p className="text-muted-foreground text-sm mb-4">
+            記事のコンテンツを正しく表示できませんでした。以下の情報を確認してください：
+          </p>
+          <div className="bg-muted/30 rounded-lg p-3 text-xs text-muted-foreground space-y-1">
+            <p>• isMDX: {String(post.isMDX)}</p>
+            <p>• hasHtmlContent: {String(!!post.htmlContent)}</p>
+            <p>• hasContent: {String(!!post.content)}</p>
+            <p>• contentLength: {post.content?.length || 0}</p>
+          </div>
           {fallbackContent}
         </div>
       )}
-      
+
       {/* Mermaid図表のレンダリング */}
-      {hasMermaid ? <MermaidRenderer /> : null}
+      {hasMermaid && <MermaidRenderer />}
+
+      {/* 数式のレンダリング */}
+      {hasMath ? <MathRenderer /> : null}
+      {/* MermaidRendererフォールバック用: 元のMarkdownを非表示で埋め込む */}
+      {post.content ? (
+        <div data-markdown-content className="sr-only">{post.content}</div>
+      ) : null}
     </div>
   );
 }

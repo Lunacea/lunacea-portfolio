@@ -1,12 +1,5 @@
 export { default as BlogCard } from './BlogCard';
 export { default as BlogPostContent } from './BlogPostContent';
 export { default as BlogPostContentClient } from './BlogPostContentClient';
+export { default as PublicBlogSearch } from './PublicBlogSearch';
 export { default as ContributionGraph } from './ContributionGraph';
-export { mdxComponents } from './MDXComponents';
-export { default as MDXContent } from './MDXContent';
-export { default as MermaidDiagram } from './MermaidDiagram';
-export { default as MermaidErrorDisplay } from './MermaidErrorDisplay';
-export { default as MermaidLoadingDisplay } from './MermaidLoadingDisplay';
-export { default as MermaidRenderer } from './MermaidRenderer';
-export { default as SideTableOfContents } from './SideTableOfContents';
-export { default as TableOfContents } from './TableOfContents';

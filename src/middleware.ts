@@ -1,23 +1,21 @@
-import { NextResponse, type NextFetchEvent, type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { detectBot } from '@arcjet/next';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 import arcjet from '@/shared/libs/Arcjet';
 import { routing } from '@/shared/libs/i18nRouting';
+import { createServerClient } from '@supabase/ssr';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/:locale/dashboard(.*)',
-]);
-
-const isAuthPage = createRouteMatcher([
-  '/sign-in(.*)',
-  '/:locale/sign-in(.*)',
-  '/sign-up(.*)',
-  '/:locale/sign-up(.*)',
-]);
+// 保護されたルートのパターン
+const isProtectedRoute = (pathname: string): boolean => {
+  const protectedPatterns = [
+    /^\/dashboard/,
+    /^\/[a-z]{2}\/dashboard/,
+  ];
+  
+  return protectedPatterns.some(pattern => pattern.test(pathname));
+};
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -35,7 +33,6 @@ const aj = arcjet.withRule(
 
 export default async function middleware(
   request: NextRequest,
-  event: NextFetchEvent,
 ) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
@@ -47,25 +44,52 @@ export default async function middleware(
     }
   }
 
-  // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  if (
-    isAuthPage(request) || isProtectedRoute(request)
-  ) {
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
+  const pathname = request.nextUrl.pathname;
 
-        const signInUrl = new URL(`${locale}/sign-in`, req.url);
+    // 開発環境では認証を完全にスキップ
+    if (process.env.NODE_ENV === 'development') {
+      return handleI18nRouting(request)
+    }
 
-        await auth.protect({
-          unauthenticatedUrl: signInUrl.toString(),
-        });
+    // 本番環境: 保護されたルートでSupabase認証をチェック
+    if (isProtectedRoute(pathname)) {
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+        if (!supabaseUrl || !supabaseAnonKey) {
+          console.error('Missing Supabase environment variables')
+          return handleI18nRouting(request)
+        }
+
+        const supabase = createServerClient(
+          supabaseUrl,
+          supabaseAnonKey,
+          {
+            cookies: {
+              getAll() {
+                return request.cookies.getAll()
+              },
+              setAll(cookiesToSet) {
+                cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+              },
+            },
+          }
+        )
+
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (!session) {
+          const locale = pathname.match(/^\/([a-z]{2})\//)?.[1] ?? '';
+          const signInUrl = new URL(`${locale ? `/${locale}` : ''}/sign-in`, request.url);
+          return NextResponse.redirect(signInUrl);
+        }
+      } catch {
+        console.error('Supabase middleware error');
       }
+    }
 
-      return handleI18nRouting(request);
-    })(request, event);
-  }
-
+  // i18nルーティングを実行
   return handleI18nRouting(request);
 }
 

@@ -29,6 +29,13 @@
       "when": 1758027643737,
       "tag": "0003_red_jimmy_woo",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1758424264764,
+      "tag": "0004_add-blog-posts-tables",
+      "breakpoints": true
     }
   ]
 }

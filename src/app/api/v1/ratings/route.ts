@@ -3,7 +3,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import arcjet from '@/shared/libs/Arcjet';
-import { db } from '@/shared/libs/DB';
+import { db } from '@/shared/libs/blog-db';
 import { postRatingVotes } from '@/shared/models/Schema';
 
 const listQuerySchema = z.object({
@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 
   const { slug } = parsed.data;
   try {
-    const dbInstance = await db.get();
+    const dbInstance = db;
     // クライアントは日付に依存せずtripcodeで判定
     const [{ count: up = 0 } = { count: 0 }] = await dbInstance
       .select({ count: sql<number>`count(distinct ${postRatingVotes.tripcode})` })
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
   const voteDay = getUTCDateString(); // 互換用に埋める（判定には使用しない）
 
   try {
-    const dbInstance = await db.get();
+    const dbInstance = db;
     // トグル: 既存の投票（slug+tripcode）があれば削除、なければ作成
     const existing = await dbInstance
       .select({ id: postRatingVotes.id })

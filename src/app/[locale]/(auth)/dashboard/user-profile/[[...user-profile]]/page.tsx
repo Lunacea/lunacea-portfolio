@@ -1,6 +1,5 @@
-import { UserProfile } from '@clerk/nextjs';
+import { SupabaseUserProfile } from '@/components/auth/SupabaseUserProfile';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { getI18nPath } from '@/shared/utils/Helpers';
 
 type IUserProfilePageProps = {
   params: Promise<{ locale: string }>;
@@ -24,9 +23,7 @@ export default async function UserProfilePage(props: IUserProfilePageProps) {
 
   return (
     <div className="my-6 -ml-16">
-      <UserProfile
-        path={getI18nPath('/dashboard/user-profile', locale)}
-      />
+      <SupabaseUserProfile />
     </div>
   );
 };

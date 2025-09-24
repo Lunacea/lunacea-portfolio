@@ -1,4 +1,6 @@
 import BlogPostContentClient from './BlogPostContentClient';
+import '@/features/blog/styles/math.css';
+import '@/features/blog/styles/mermaid.css';
 
 type BlogPost = {
   slug: string;

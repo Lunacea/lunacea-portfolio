@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import BlogPageClient from './BlogPageClient';
-import { getAllBlogPosts } from '@/shared/libs/blog';
+import { getAllBlogPostsHybrid } from '@/shared/libs/blog';
 
 type BlogPageProps = {
   params: Promise<{ locale: string }>;
@@ -17,12 +17,14 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   };
 }
 
+export const revalidate = 3600; // 1時間でISR
+
 export default async function BlogPage({ params }: BlogPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'Blog' });
 
-  const posts = await getAllBlogPosts();
+  const posts = await getAllBlogPostsHybrid();
 
   return (
     <BlogPageClient 

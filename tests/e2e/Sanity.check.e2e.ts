@@ -36,12 +36,21 @@ test.describe('Sanity', () => {
       await expect(page.getByRole('link', { name: 'BLOG' }).first()).toBeVisible();
     });
 
-    test('should display English homepage', async ({ page, baseURL }) => {
-      await page.goto(`${baseURL}/en`);
+    test('should display MDX styling test page with custom components', async ({ page, baseURL }) => {
+      await page.goto(`${baseURL}/blog/markdown-styling-test`);
       await page.waitForLoadState('domcontentloaded');
 
-      // 英語版ホームページの主要要素が表示されることを確認
-      await expect(page.getByRole('main')).toBeVisible();
+      // ページのタイトルが表示されることを確認
+      await expect(page.getByText('MDX + Markdown + Math testing completed!')).toBeVisible();
+
+      // MDXカスタムボックスが表示されることを確認
+      await expect(page.getByText('MDXカスタムボックス')).toBeVisible();
+
+      // Mermaid図表が表示されることを確認（レンダリング完了まで待機）
+      await page.waitForSelector('.mermaid-diagram svg', { timeout: 10000 });
+
+      // 数式が表示されることを確認
+      await expect(page.locator('.katex')).toBeVisible();
     });
   });
 });

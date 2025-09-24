@@ -1,0 +1,71 @@
+/* KaTeX数式レンダリング用のスタイル */
+
+/* 数式コンテナの基本スタイル */
+.math-inline {
+  display: inline;
+  font-size: 1em;
+}
+
+.math-display {
+  display: block;
+  text-align: center;
+  margin: 1.5rem 0;
+  font-size: 1.1em;
+}
+
+/* KaTeXの基本スタイル */
+.katex {
+  font-size: 1.1em;
+  line-height: 1.2;
+  color: inherit;
+}
+
+.katex-display {
+  margin: 1.5em 0;
+  text-align: center;
+  display: block;
+}
+
+/* ダークテーマ対応 */
+.dark .katex {
+  color: #e5e7eb;
+}
+
+.dark .katex .base,
+.dark .katex .mord,
+.dark .katex .mrel,
+.dark .katex .mbin,
+.dark .katex .mopen,
+.dark .katex .mclose,
+.dark .katex .mpunct,
+.dark .katex .mord.mathdefault,
+.dark .katex .mrel.mathdefault,
+.dark .katex .mbin.mathdefault,
+.dark .katex .mopen.mathdefault,
+.dark .katex .mclose.mathdefault,
+.dark .katex .mpunct.mathdefault {
+  color: #e5e7eb;
+}
+
+/* 数式のレスポンシブ対応 */
+@media (max-width: 768px) {
+  .math-display {
+    font-size: 0.9em;
+    overflow-x: auto;
+  }
+  
+  .katex {
+    font-size: 1em;
+  }
+  
+  .katex-display {
+    margin: 1em 0;
+    overflow-x: auto;
+  }
+}
+
+/* 数式のホバー効果（オプション） */
+.katex:hover {
+  transition: opacity 0.2s ease;
+  opacity: 0.9;
+}

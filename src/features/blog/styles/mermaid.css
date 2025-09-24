@@ -1,0 +1,57 @@
+
+
+/* Mermaid図表レンダリング用のスタイル */
+
+/* Mermaidコンテナ */
+.mermaid-container {
+  margin: 16px 0;
+}
+
+/* Mermaid図表のプレースホルダー */
+.mermaid-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  @apply bg-background dark:bg-gray-800 rounded-2xl p-6 border border-border;
+}
+
+/* レンダリング済みMermaid図表 */
+.mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+  overflow-x: auto;
+  @apply bg-background dark:bg-gray-800 rounded-2xl p-6 border border-border;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* エラーフォールバック */
+.error-fallback {
+  @apply bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg;
+  margin: 16px 0;
+}
+
+.dark .error-fallback {
+  @apply bg-red-900/20 border-red-800 text-red-200;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .mermaid-diagram {
+    font-size: 0.8em;
+    padding: 1rem;
+  }
+  
+  .mermaid-placeholder {
+    min-height: 150px;
+    font-size: 0.9em;
+  }
+}

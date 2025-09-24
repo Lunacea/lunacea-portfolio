@@ -3,7 +3,7 @@ import { desc, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import arcjet from '@/shared/libs/Arcjet';
-import { db } from '@/shared/libs/DB';
+import { db } from '@/shared/libs/blog-db';
 import { comments } from '@/shared/models/Schema';
 
 const listQuerySchema = z.object({
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
   const { slug } = parsed.data;
   
   try {
-    const dbInstance = await db.get();
+    const dbInstance = db;
     const rows = await dbInstance.select().from(comments).where(eq(comments.slug, slug)).orderBy(desc(comments.createdAt)).limit(200);
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch {
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     const authorValue = author && author.trim().length > 0 ? author.trim() : 'anonymous';
     const dailyId = generateDailyId(request, slug);
     const tripcode = generateTripcode(request);
-    const dbInstance = await db.get();
+    const dbInstance = db;
     const [row] = await dbInstance.insert(comments).values({ slug, author: authorValue, body, parentId, dailyId, tripcode }).returning();
     return NextResponse.json({ data: row }, { status: 201 });
   } catch {

@@ -58,3 +58,8 @@ DESIGN.md
 
 # tsconfig
 *.tsbuildinfo
+
+#og-images
+public/og-images
+
+docs/ai-generated

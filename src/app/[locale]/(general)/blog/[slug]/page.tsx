@@ -5,16 +5,16 @@ import { notFound } from 'next/navigation';
 import { FaAngleLeft, FaCalendar, FaClock } from 'react-icons/fa';
 import BlogPostContent from '@/features/blog/components/BlogPostContent';
 import dynamic from 'next/dynamic';
-const CommentsSection = dynamic(() => import('@/features/blog/components/CommentsSection'), { loading: () => null });
-const SideTableOfContents = dynamic(() => import('@/features/blog/components/SideTableOfContents'), { loading: () => null });
+const CommentsSection = dynamic(() => import('@/features/blog/shared/components/CommentsSection'), { loading: () => null });
+const SideTableOfContents = dynamic(() => import('@/features/blog/shared/components/SideTableOfContents'), { loading: () => null });
 import Icon from '@/shared/components/ui/Icon';
 import BackToTop from '@/shared/components/ui/BackToTop';
 import LazyVisible from '@/shared/components/ui/LazyVisible';
-import { getAllBlogPosts, getBlogPost, getRelatedPosts } from '@/shared/libs/blog';
+import { getAllBlogPostsHybrid, getBlogPostHybrid, getRelatedPostsHybrid } from '@/shared/libs/blog';
 // import { Env } from '@/shared/libs/Env';
 import { AppConfig } from '@/shared/utils/AppConfig';
-const PostRating = dynamic(() => import('@/features/blog/components/PostRating'), { loading: () => null });
-const ShareButtons = dynamic(() => import('@/features/blog/components/ShareButtons'), { loading: () => null });
+const PostRating = dynamic(() => import('@/features/blog/shared/components/PostRating'), { loading: () => null });
+const ShareButtons = dynamic(() => import('@/features/blog/shared/components/ShareButtons'), { loading: () => null });
 
 type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -34,13 +34,13 @@ function formatDate(dateString: string, locale = 'ja'): string {
 
 // 静的生成のためのパス生成
 export async function generateStaticParams() {
-  const posts = await getAllBlogPosts();
+  const posts = await getAllBlogPostsHybrid();
   return posts.map(post => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const post = await getBlogPost(slug);
+  const post = await getBlogPostHybrid(slug);
 
   if (!post) {
     return {
@@ -112,15 +112,16 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   };
 }
 
-export const dynamicParams = false;
+export const dynamicParams = true;
+export const revalidate = 3600; // 1時間でISR
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const post = await getBlogPost(slug);
+  const post = await getBlogPostHybrid(slug);
   const t = await getTranslations({ locale, namespace: 'Blog' });
-  const related = post ? await getRelatedPosts(post.slug, 3) : [];
+  const related = post ? await getRelatedPostsHybrid(post.slug, 3) : [];
 
   const isDefault = locale === AppConfig.defaultLocale && AppConfig.localePrefix === 'as-needed';
   const prefix = isDefault ? '' : `/${locale}`;

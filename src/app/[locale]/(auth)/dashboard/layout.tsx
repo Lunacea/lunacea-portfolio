@@ -1,8 +1,10 @@
-import { SignOutButton } from '@clerk/nextjs';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Link from 'next/link';
 import BaseTemplate from '@/shared/components/layouts/BaseTemplate';
 import LocaleSwitcher from '@/shared/components/layouts/LocaleSwitcher';
+import { SupabaseSignOutButton } from '@/components/auth/SupabaseSignOutButton';
+import { FaHome, FaEdit, FaUser } from 'react-icons/fa';
+import Icon from '@/shared/components/ui/Icon';
 
 export default async function DashboardLayout(props: {
   children: React.ReactNode;
@@ -22,16 +24,27 @@ export default async function DashboardLayout(props: {
           <li>
             <Link
               href="/dashboard/"
-              className="border-none text-theme-secondary hover:text-theme-primary transition-colors duration-200"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-theme-secondary hover:text-theme-primary hover:bg-card/50 transition-all duration-300 backdrop-blur-sm"
             >
+              <Icon icon={<FaHome />} className="text-primary" />
               {t('dashboard_link')}
             </Link>
           </li>
           <li>
             <Link
-              href="/dashboard/user-profile/"
-              className="border-none text-theme-secondary hover:text-theme-primary transition-colors duration-200"
+              href="/dashboard/blog/"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-theme-secondary hover:text-theme-primary hover:bg-card/50 transition-all duration-300 backdrop-blur-sm"
             >
+              <Icon icon={<FaEdit />} className="text-primary" />
+              {t('blog_management')}
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard/user-profile/"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-theme-secondary hover:text-theme-primary hover:bg-card/50 transition-all duration-300 backdrop-blur-sm"
+            >
+              <Icon icon={<FaUser />} className="text-primary" />
               {t('user_profile_link')}
             </Link>
           </li>
@@ -40,11 +53,11 @@ export default async function DashboardLayout(props: {
       rightNav={(
         <>
           <li>
-            <SignOutButton>
-              <button className="border-none text-theme-secondary hover:text-theme-primary transition-colors duration-200" type="button">
+            <SupabaseSignOutButton>
+              <button className="flex items-center gap-3 px-4 py-3 rounded-2xl text-theme-secondary hover:text-theme-primary hover:bg-card/50 transition-all duration-300 backdrop-blur-sm" type="button">
                 {t('sign_out')}
               </button>
-            </SignOutButton>
+            </SupabaseSignOutButton>
           </li>
 
           <li>

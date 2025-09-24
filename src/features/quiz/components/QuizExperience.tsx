@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Quiz } from '@/features/quiz/types';
-import ShareButtons from '@/features/blog/components/ShareButtons';
+import ShareButtons from '@/features/blog/shared/components/ShareButtons';
 import QuizRunner from '@/features/quiz/components/QuizRunner';
 
 type Props = {
