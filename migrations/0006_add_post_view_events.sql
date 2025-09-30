@@ -10,3 +10,4 @@ CREATE INDEX IF NOT EXISTS post_view_events_slug_idx ON post_view_events (slug);
 CREATE INDEX IF NOT EXISTS post_view_events_day_idx ON post_view_events (view_day);
 
 
+

@@ -14,3 +14,4 @@ CREATE INDEX IF NOT EXISTS analytics_events_path_idx ON analytics_events (path);
 CREATE INDEX IF NOT EXISTS analytics_events_created_idx ON analytics_events (created_at);
 
 
+
