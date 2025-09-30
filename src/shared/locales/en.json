@@ -219,8 +219,7 @@
     "internationalization": "Internationalization",
     "conclusion": "Conclusion",
     "reference_materials": "Reference Materials"
-  }
-  ,
+  },
   "Quiz": {
     "meta_title": "Quiz | Lunacea portfolio",
     "meta_description": "Weekly one-question quiz to strengthen practical frontend skills",
