@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/shared/libs/supabase'
+import { supabase } from '@/shared/libs/supabase-browser'
 
 export function SupabaseSignUp() {
   const [loading, setLoading] = useState(false)

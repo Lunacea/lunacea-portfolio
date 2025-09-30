@@ -1,16 +1,13 @@
 'use server';
 
-import { auth } from '@/shared/libs/auth-server';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { blogPosts } from '@/shared/models/Schema';
 import { eq, sql, desc } from 'drizzle-orm';
 import { logger } from '@/shared/libs/Logger';
+import { getDatabase, requireAuth, checkAuth } from '@/shared/libs/db-common';
 import 'server-only';
 
 // データベース接続
-const client = postgres(process.env.DATABASE_URL as string);
-const db = drizzle(client);
+const { db } = getDatabase();
 
 export interface CategoryStats {
   tag: string;
@@ -34,11 +31,7 @@ export interface CategoryStats {
 export async function getAllCategoryStats(): Promise<CategoryStats[]> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      throw new Error('認証が必要です');
-    }
-    const userId = authResult.userId;
+    const userId = await requireAuth();
 
     // タグごとの統計情報を取得
     const tagStats = await db.select({
@@ -114,11 +107,7 @@ export async function getCategoryDetailStats(tag: string): Promise<{
 }> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      throw new Error('認証が必要です');
-    }
-    const userId = authResult.userId;
+    const userId = await requireAuth();
 
     // 基本統計の取得
     const [statsResult, postsResult] = await Promise.all([
@@ -175,16 +164,12 @@ export async function getCategoryDetailStats(tag: string): Promise<{
 /**
  * カテゴリ名を変更（すべての記事のタグを更新）
  */
-export async function renameCategory(oldTag: string, newTag: string): Promise<{
-  success: boolean;
-  error?: string;
-  updatedPosts: number;
-}> {
+export async function renameCategory(oldTag: string, newTag: string): Promise<{ success: boolean; error?: string; updatedPosts: number }> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です', updatedPosts: 0 };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error, updatedPosts: 0 };
     }
     const userId = authResult.userId;
 
@@ -226,16 +211,12 @@ export async function renameCategory(oldTag: string, newTag: string): Promise<{
 /**
  * カテゴリを削除（すべての記事からタグを削除）
  */
-export async function deleteCategory(tag: string): Promise<{
-  success: boolean;
-  error?: string;
-  updatedPosts: number;
-}> {
+export async function deleteCategory(tag: string): Promise<{ success: boolean; error?: string; updatedPosts: number }> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です', updatedPosts: 0 };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error, updatedPosts: 0 };
     }
     const userId = authResult.userId;
 

@@ -1,8 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
-import Link from 'next/link';
-import { FaArrowLeft } from 'react-icons/fa';
-import Icon from '@/shared/components/ui/Icon';
 
 type BlogEditorLayoutProps = {
   children: React.ReactNode;
@@ -26,17 +24,6 @@ export default async function BlogEditorLayout({ children, params }: BlogEditorL
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <header className="mb-8">
-          <nav className="mb-6">
-            <Link 
-              href="/dashboard" 
-              className="inline-flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 rounded-lg hover:bg-card/50 backdrop-blur-sm"
-            >
-              <Icon icon={<FaArrowLeft />} className="text-primary" />
-              ダッシュボードに戻る
-            </Link>
-          </nav>
-        </header>
         {children}
       </div>
     </div>

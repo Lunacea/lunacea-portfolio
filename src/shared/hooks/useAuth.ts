@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase } from '@/shared/libs/supabase'
+import { supabase } from '@/shared/libs/supabase-browser'
 
 export interface AuthState {
   user: User | null
@@ -20,8 +20,9 @@ export function useAuth() {
   })
 
   useEffect(() => {
-    // 開発環境では常に認証済みとして扱う
-    if (process.env.NODE_ENV === 'development') {
+    // 環境変数で明示的に許可されている場合のみ、認証バイパスを有効化
+    if (process.env.NEXT_PUBLIC_BYPASS_AUTH === 'true') {
+      console.warn('⚠️  Authentication bypass is enabled (NEXT_PUBLIC_BYPASS_AUTH=true)')
       setAuthState({
         user: {
           id: 'dev-user-123',
@@ -90,17 +91,15 @@ export function useAuth() {
     }
   }, [])
 
-  const signInWithGitHub = async (redirectTo = '/dashboard') => {
+  const signInWithGitHub = async (nextUrl = '/dashboard') => {
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
     
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/api/v1/auth/callback?redirect_to=${redirectTo}`,
-          queryParams: {
-            redirect_to: redirectTo
-          }
+          // OAuth完了後、/api/auth/callback にリダイレクトされ、そこからnextで指定した場所へ
+          redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(nextUrl)}`
         }
       })
 

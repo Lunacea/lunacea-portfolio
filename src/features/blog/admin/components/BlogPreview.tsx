@@ -213,7 +213,7 @@ export default function BlogPreview({ title, content, description, tags = [] }: 
       </div>
 
       {/* メインコンテンツエリア */}
-      <div className="max-w-4xl">
+      <div className="max-w-4xl min-h-[24rem]">
         {/* 記事コンテンツ */}
         <article className="min-w-0 flex-1 max-w-none">
           <TableOfContents items={previewState.tableOfContents} className="mb-8 lg:hidden" />

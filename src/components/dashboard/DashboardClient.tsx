@@ -2,14 +2,15 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import { useAuth } from '@/shared/hooks/useAuth'
 import { FaEdit, FaUser, FaCog, FaCheckCircle } from 'react-icons/fa'
 import Icon from '@/shared/components/ui/Icon'
-import EmptyStateCard from '@/shared/components/ui/EmptyStateCard'
+import type { AuthUser } from '@/shared/libs/auth-server'
 
-export function DashboardClient() {
-  const { user, loading } = useAuth()
+interface DashboardClientProps {
+  initialUser: AuthUser
+}
 
+export function DashboardClient({ initialUser }: DashboardClientProps) {
   useEffect(() => {
     // URLフラグメント（#以降）をクリーンアップ
     const cleanUrl = () => {
@@ -35,27 +36,6 @@ export function DashboardClient() {
     }
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">読み込み中...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return (
-      <EmptyStateCard
-        icon={<Icon icon={<FaUser />} className="text-foreground text-4xl" />}
-        title="認証が必要です"
-        description="ダッシュボードにアクセスするにはサインインしてください"
-      />
-    )
-  }
-
   return (
     <div className="space-y-8">
       {/* ページヘッダー */}
@@ -75,7 +55,7 @@ export function DashboardClient() {
         >
           <Icon icon={<FaCheckCircle />} className="text-green-500" />
           <span className="text-sm font-medium text-green-700 dark:text-green-300">
-            認証済み: {user.email || user.user_metadata?.full_name || 'ユーザー'}
+            認証済み: {initialUser.email || initialUser.name || 'ユーザー'}
           </span>
         </div>
       </header>

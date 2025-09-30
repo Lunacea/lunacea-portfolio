@@ -4,7 +4,6 @@ import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-// Button removed (unused)
 import { Input } from '@/shared/components/ui/input';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -12,7 +11,6 @@ import TagInput from './TagInput';
 import { createBlogPost, updateBlogPost } from '@/features/blog/admin/actions/blogActions';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-// Eye icon removed (unused)
 import BlogPreview from './BlogPreview';
 import MarkdownToolbar from './MarkdownToolbar';
 import dynamic from 'next/dynamic';
@@ -24,6 +22,7 @@ const TableOfContents = dynamic(() => import('@/features/blog/shared/components/
 // フォームのバリデーションスキーマ
 const blogPostSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(255, 'タイトルは255文字以内で入力してください'),
+  slug: z.string().min(1, 'slugは必須です').max(255, 'slugは255文字以内で入力してください'),
   description: z.string().max(500, '説明は500文字以内で入力してください').optional(),
   content: z.string().min(1, 'コンテンツは必須です'),
   tags: z.string().optional(),
@@ -36,6 +35,7 @@ interface BlogEditorFormProps {
   initialData?: {
     id: number;
     title: string;
+    slug: string;
     description: string;
     content: string;
     tags: string;
@@ -60,6 +60,7 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
     resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: initialData?.title || '',
+      slug: initialData?.slug || '',
       description: initialData?.description || '',
       content: initialData?.content || '',
       tags: initialData?.tags || '',
@@ -121,6 +122,7 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
 
       const formData = new FormData();
       formData.append('title', data.title);
+      formData.append('slug', data.slug);
       formData.append('description', data.description || '');
       formData.append('content', data.content);
       formData.append('tags', JSON.stringify(tags));
@@ -156,10 +158,13 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* 上部: タグ → タイトル → 説明 → 自動メタ */}
+      {/* 上部: タグ → タイトル → slug → 説明 → 自動メタ */}
       <div className="space-y-6 max-w-4xl">
         {/* タグ */}
         <Card className="shadow-none border-0 bg-transparent">
+          <CardHeader className="pt-0 pb-2 px-0">
+            <CardTitle className="text-base font-medium tracking-normal">Tags</CardTitle>
+          </CardHeader>
           <CardContent className="p-0">
             <TagInput
               value={parseTags(watchedTags || '')}
@@ -171,6 +176,9 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
 
         {/* タイトル */}
         <Card className="shadow-none border-0 bg-transparent">
+          <CardHeader className="pt-0 pb-2 px-0">
+            <CardTitle className="text-base font-medium tracking-normal">Title</CardTitle>
+          </CardHeader>
           <CardContent className="p-0">
             <Input
               {...register('title')}
@@ -183,8 +191,28 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
           </CardContent>
         </Card>
 
+        {/* slug */}
+        <Card className="shadow-none border-0 bg-transparent">
+          <CardHeader className="pt-0 pb-2 px-0">
+            <CardTitle className="text-base font-medium tracking-normal">Slug</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Input
+              {...register('slug')}
+              placeholder={t('slug_placeholder')}
+              className="text-base border-0 border-b focus-visible:ring-0 rounded-none p-4"
+            />
+          </CardContent>
+          {errors.slug && (
+            <p className="text-sm text-destructive mt-1">{errors.slug.message}</p>
+          )}
+        </Card>
+
         {/* 説明 */}
         <Card className="shadow-none border-0 bg-transparent">
+          <CardHeader className="pt-0 pb-2 px-0">
+            <CardTitle className="text-base font-medium tracking-normal">Description</CardTitle>
+          </CardHeader>
           <CardContent className="p-0">
             <Textarea
               {...register('description')}
@@ -293,10 +321,13 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
           </div>
         )}
 
+        {/* セパレータ */}
+        <div className="h-px border-b border-border" />
+
         {/* 公開設定 + 記事情報 */}
         {/* メタデータのプレビュー */}
         <Card className="shadow-none border-0 bg-transparent">
-          <CardHeader className="p-0">
+          <CardHeader className="py-2 px-0">
             <CardTitle className="text-base font-medium tracking-normal">メタデータ</CardTitle>
           </CardHeader>
           {/* TODO: テーブル調にレイアウトを変更 */}
@@ -305,6 +336,10 @@ export default function BlogEditorForm({ initialData }: BlogEditorFormProps) {
               <div className="flex gap-4">
                 <div className="w-24 text-muted-foreground font-medium">title</div>
                 <div className="flex-1 break-all text-foreground">{metaTitle}</div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-24 text-muted-foreground font-medium">URL</div>
+                <div className="flex-1 break-all text-foreground">{getValues('slug') || '—'}</div>
               </div>
               <div className="flex gap-4">
                 <div className="w-24 text-muted-foreground font-medium">description</div>

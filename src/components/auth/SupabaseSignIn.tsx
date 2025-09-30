@@ -1,14 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useLocale } from 'next-intl'
 import { useAuth } from '@/shared/hooks/useAuth'
-import { supabase } from '@/shared/libs/supabase'
+import { supabase } from '@/shared/libs/supabase-browser'
 
 export function SupabaseSignIn() {
   const [error, setError] = useState<string | null>(null)
   const { user, loading: authLoading } = useAuth()
+  const locale = useLocale()
 
-  // URLパラメータからエラーメッセージを取得
+  // URLパラメータからエラーメッセージを取得（redirect_toは保持）
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const errorParam = urlParams.get('error')
@@ -16,28 +18,35 @@ export function SupabaseSignIn() {
     if (errorParam) {
       setError(decodeURIComponent(errorParam))
       // URLからエラーパラメータを削除
-      const cleanUrl = window.location.origin + window.location.pathname
+      const clean = new URL(window.location.href)
+      clean.searchParams.delete('error')
+      const cleanUrl = clean.origin + clean.pathname + (clean.search ? `?${clean.searchParams.toString()}` : '')
       window.history.replaceState({}, document.title, cleanUrl)
     }
+
+    // redirect_toはそのまま残す（GitHub OAuth開始時に利用）
   }, [])
 
   // 既にログインしている場合はダッシュボードにリダイレクト
+  // 自動リダイレクトは行わない（UX簡素化）
   useEffect(() => {
-    if (user && !authLoading) {
-      console.warn('User already authenticated, redirecting to dashboard')
-      window.location.href = '/dashboard'
-    }
-  }, [user, authLoading])
+    // no-op
+  }, [user, authLoading, locale])
 
   const handleGitHubSignIn = async () => {
     setError(null)
     
     try {
       // SupabaseのGitHub OAuth認証を実行
+      const urlParams = new URLSearchParams(window.location.search)
+      const redirectToParam = urlParams.get('redirect_to')
+      const nextUrl = redirectToParam || `/${locale}/dashboard`
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          // OAuth完了後、/api/auth/callback にリダイレクトされ、そこからnextで指定した場所へ
+          redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(nextUrl)}`
         }
       })
 

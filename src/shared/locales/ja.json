@@ -336,6 +336,7 @@
         "editor_only": "エディターのみ",
         "preview_only": "プレビューのみ"
       }
-    }
+    },
+    "slug_placeholder": "URL用のslugを入力してください"
   }
 }

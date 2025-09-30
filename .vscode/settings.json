@@ -153,11 +153,14 @@
     "shiki",
     "sigstore",
     "spotlightjs",
+    "supabase",
     "Takizawa",
     "tohoku",
     "tripcode",
+    "TURBOPACK",
     "Vuedotjs",
-    "WCAG"
+    "WCAG",
+    "xlcmsu"
   ],
 
   // GitHub Actions - バリデーション設定（Context access警告を抑制）

@@ -3,11 +3,6 @@
 @import 'tw-animate-css';
 @import 'katex/dist/katex.min.css';
 
-/* ブログコンテンツのスタイル */
-@import '../../features/blog/styles/blog-content.css';
-@import '../../features/blog/styles/math.css';
-@import '../../features/blog/styles/mermaid.css';
-
 @custom-variant dark (&:is(.dark *));
 
 /* First Time Writing! 手書き風フォントの定義 */
@@ -158,6 +153,11 @@
 
   --title-color-dark: #e5e7eb;
 }
+
+/* ブログコンテンツのスタイル（トークン定義の後に読み込む） */
+@import '../../features/blog/styles/blog-content.css';
+@import '../../features/blog/styles/math.css';
+@import '../../features/blog/styles/mermaid.css';
 
 /* LazyVisible placeholders (small, fixed heights to reserve space) */
 .lazy-visible-ph-56 { min-height: 56px; }

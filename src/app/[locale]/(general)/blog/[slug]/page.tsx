@@ -257,17 +257,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Back to Top */}
       <BackToTop />
-
-      {/* フッター */}
-      {/* <footer className="container mx-auto px-4 py-12 max-w-7xl text-center">
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-accent text-primary-foreground rounded-2xl hover:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-300 font-medium"
-        >
-          <Icon icon={<FaCalendar />} />
-          <span>{t('all_posts')}</span>
-        </Link>
-      </footer> */}
     </div>
   );
 }

@@ -1,31 +1,30 @@
-import { auth } from '@/shared/libs/auth-server';
-import { redirect } from 'next/navigation';
-import CommentManager from '@/features/blog/admin/components/CommentManager';
-import { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
+import type { Metadata } from 'next';
+import CommentsManager from '@/features/blog/admin/components/CommentsManagerModal';
 
-export const metadata: Metadata = {
-  title: 'コメント管理 - ブログエディター',
-  description: '記事のコメントを管理します',
+type CommentsPageProps = {
+  params: Promise<{ locale: string }>;
 };
 
-export default async function CommentsPage() {
-  // 認証チェック
-  const { userId } = await auth();
-  if (!userId) {
-    redirect('/sign-in');
-  }
+export async function generateMetadata({ params }: CommentsPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return { title: locale === 'ja' ? `コメント一覧 | Dashboard` : `Comments List | Dashboard` };
+}
 
+export default async function CommentsPage({ params }: CommentsPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">コメント管理</h1>
-        <p className="text-muted-foreground mt-2">
-          記事に投稿されたコメントを管理できます
-        </p>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <h1 className="text-xl font-semibold mb-4">コメント一覧</h1>
+        {/* モーダル用のコンポーネント名だが、一覧UIとして使う */}
+        <CommentsManager />
       </div>
-      
-      <CommentManager />
     </div>
   );
 }
+
+
+
 

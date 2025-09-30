@@ -9,6 +9,7 @@ import { Badge } from '@/shared/components/ui/badge';
 import { Calendar, Edit, Eye, ExternalLink, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: '公開済み記事 - ブログエディター',

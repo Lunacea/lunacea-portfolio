@@ -344,6 +344,7 @@
         "editor_only": "Editor only",
         "preview_only": "Preview only"
       }
-    }
+    },
+    "slug_placeholder": "Enter URL slug"
   }
 }

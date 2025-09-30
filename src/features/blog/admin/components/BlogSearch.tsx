@@ -8,13 +8,19 @@ import { Badge } from '@/shared/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Search, Filter, Calendar, Eye, Clock } from 'lucide-react';
 import { searchBlogPosts, getSearchSuggestions, getPopularTags, type SearchResult, type SearchOptions } from '@/features/blog/admin/actions/searchActions';
+import { updatePostStatus } from '@/features/blog/admin/actions/blogActions';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 
-export default function AdminBlogSearch() {
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState<'all' | 'draft' | 'published'>('all');
+type AdminBlogSearchProps = {
+  initialQuery?: string;
+  initialStatus?: 'all' | 'draft' | 'published';
+};
+
+export default function AdminBlogSearch({ initialQuery = '', initialStatus = 'all' }: AdminBlogSearchProps) {
+  const [query, setQuery] = useState(initialQuery);
+  const [status, setStatus] = useState<'all' | 'draft' | 'published'>(initialStatus);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [total, setTotal] = useState(0);
@@ -260,11 +266,40 @@ export default function AdminBlogSearch() {
                       )}
                     </div>
                     
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/blog/edit/${result.slug}`}>
-                        編集
-                      </Link>
-                    </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/dashboard/blog/edit/${result.slug}`}>
+                      編集
+                    </Link>
+                  </Button>
+                  {result.status === 'draft' ? (
+                    <Button variant="default" size="sm" onClick={async () => {
+                      try {
+                        setLoading(true);
+                        await updatePostStatus(result.id, 'published');
+                        await performSearch();
+                        toast.success('公開しました');
+                      } catch {
+                        toast.error('公開に失敗しました');
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}>公開</Button>
+                  ) : (
+                    <Button variant="secondary" size="sm" onClick={async () => {
+                      try {
+                        setLoading(true);
+                        await updatePostStatus(result.id, 'draft');
+                        await performSearch();
+                        toast.success('下書きに戻しました');
+                      } catch {
+                        toast.error('更新に失敗しました');
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}>下書き</Button>
+                  )}
+                </div>
                   </div>
                 </CardContent>
               </Card>

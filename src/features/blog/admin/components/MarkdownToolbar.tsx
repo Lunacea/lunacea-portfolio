@@ -95,8 +95,8 @@ export default function MarkdownToolbar({ textareaRef, onChangeContentAction, on
   };
 
   return (
-    <div role="toolbar" aria-label="Markdown editor toolbar" className={`sticky top-12 md:top-14 lg:top-16 z-30 border-b bg-card/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/80 px-2 py-2 focus-within:ring-1 focus-within:ring-primary/20 ${className || ''}`}>
-      <div className="flex items-center justify-between gap-2 flex-wrap">
+    <div role="toolbar" aria-label="Markdown editor toolbar" className={`flex flex-col gap-2 sticky top-12 md:top-14 lg:top-16 z-30 border-b backdrop-blur px-2 py-2 focus-within:ring-1 focus-within:ring-primary/20 ${className || ''}`}>
+      <div className="flex items-center justify-between gap-2 flex-wrap bg-card/95 shadow-sm">
         <div role="group" aria-label="Text formatting" className="flex items-center gap-1 flex-wrap">
           <Button type="button" variant="ghost" size="sm" aria-label={t('toolbar.bold')} title={t('toolbar.tooltips.bold')} onClick={() => applyWrap('**', '**')}>
             <Bold className="h-4 w-4" />
@@ -170,6 +170,9 @@ export default function MarkdownToolbar({ textareaRef, onChangeContentAction, on
             <span className="sr-only">{t('toolbar.math')}</span>
           </Button>
         </div>
+      </div>
+      <div className="h-px border-b border-border" />
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           {onChangeLayoutModeAction && (
             <div role="group" aria-label="Layout" className="flex items-center gap-1 mr-2">
@@ -187,12 +190,14 @@ export default function MarkdownToolbar({ textareaRef, onChangeContentAction, on
               </Button>
             </div>
           )}
+        </div>
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <Button type="button" variant="ghost" size="sm" onClick={onSaveDraftAction} disabled={disabled} aria-label={t('save_draft')} title={t('save_draft')} className="flex flex-col items-center h-auto py-1">
               <FileText className="h-4 w-4" />
               <span className="text-[10px] leading-tight">{t('save_draft')}</span>
             </Button>
-            <Button type="button" variant="secondary" size="sm" onClick={onPublishAction} disabled={disabled} aria-label={t('publish')} title={t('publish')} className="flex flex-col items-center h-auto py-1">
+            <Button type="button" variant="secondary" size="sm" onClick={onPublishAction} disabled={disabled} aria-label={t('publish')} title={t('publish')} className="flex flex-col items-center h-auto py-1 hover:bg-accent hover:text-accent-foreground">
               <Eye className="h-4 w-4" />
               <span className="text-[10px] leading-tight">{t('publish')}</span>
             </Button>

@@ -10,8 +10,37 @@ export const comments = pgTable('comments', {
   // スレッド（親コメント）
   parentId: integer('parent_id'),
   body: text('body').notNull(),
+  isChecked: boolean('is_checked').notNull().default(false),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 });
+
+// 閲覧イベント（推移集計用）
+export const postViewEvents = pgTable('post_view_events', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 255 }).notNull(),
+  // YYYY-MM-DD（UTC）
+  viewDay: varchar('view_day', { length: 10 }).notNull(),
+  viewedAt: timestamp('viewed_at', { mode: 'date' }).defaultNow().notNull(),
+}, (table) => ({
+  slugIdx: index('post_view_events_slug_idx').on(table.slug),
+  dayIdx: index('post_view_events_day_idx').on(table.viewDay),
+}));
+
+// 汎用ユーザ行動イベント
+export const analyticsEvents = pgTable('analytics_events', {
+  id: serial('id').primaryKey(),
+  eventType: varchar('event_type', { length: 64 }).notNull(),
+  path: varchar('path', { length: 512 }).notNull(),
+  slug: varchar('slug', { length: 255 }),
+  referrer: varchar('referrer', { length: 512 }),
+  durationMs: integer('duration_ms'),
+  meta: text('meta'),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index('analytics_events_type_idx').on(table.eventType),
+  pathIdx: index('analytics_events_path_idx').on(table.path),
+  createdIdx: index('analytics_events_created_idx').on(table.createdAt),
+}));
 
 // 記事評価の投票テーブル
 // 1日1票/日替わりID(dailyId)をユニーク制約で保証する

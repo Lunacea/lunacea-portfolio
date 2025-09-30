@@ -1,16 +1,13 @@
 'use server';
 
-import { auth } from '@/shared/libs/auth-server';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { blogPosts } from '@/shared/models/Schema';
 import { eq, and, or, ilike, desc, sql } from 'drizzle-orm';
 import { logger } from '@/shared/libs/Logger';
+import { getDatabase, requireAuth, checkAuth } from '@/shared/libs/db-common';
 import 'server-only';
 
 // データベース接続
-const client = postgres(process.env.DATABASE_URL as string);
-const db = drizzle(client);
+const { db } = getDatabase();
 
 export interface SearchResult {
   id: number;
@@ -43,11 +40,7 @@ export async function searchBlogPosts(options: SearchOptions = {}): Promise<{
 }> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      throw new Error('認証が必要です');
-    }
-    const userId = authResult.userId;
+    const userId = await requireAuth();
 
     const {
       query = '',
@@ -139,8 +132,8 @@ export async function searchBlogPosts(options: SearchOptions = {}): Promise<{
 export async function getSearchSuggestions(query: string, limit = 10): Promise<string[]> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
+    const authResult = await checkAuth();
+    if (!authResult.success) {
       return [];
     }
     const userId = authResult.userId;
@@ -175,8 +168,8 @@ export async function getSearchSuggestions(query: string, limit = 10): Promise<s
 export async function getPopularTags(limit = 20): Promise<Array<{ tag: string; count: number }>> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
+    const authResult = await checkAuth();
+    if (!authResult.success) {
       return [];
     }
     const userId = authResult.userId;

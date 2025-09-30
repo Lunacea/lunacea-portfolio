@@ -1,8 +1,5 @@
 'use server';
 
-import { auth } from '@/shared/libs/auth-server';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { blogPosts } from '@/shared/models/Schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -10,10 +7,11 @@ import { logger } from '@/shared/libs/Logger';
 import { generateOGImageForPost } from '@/shared/libs/ogImageGenerator';
 import { convertMDXToHTML } from '@/shared/libs/mdxConverter';
 import { savePostVersion } from './versionActions';
+import { getDatabase, checkAuth, checkPostOwnershipDetailed } from '@/shared/libs/db-common';
+import { generateSlug, generateExcerpt, calculateReadingTime, normalizeTags } from '@/shared/libs/blog-utils';
 
 // データベース接続
-const client = postgres(process.env.DATABASE_URL as string);
-const db = drizzle(client);
+const { db } = getDatabase();
 
 export interface CreateBlogPostResult {
   success: boolean;
@@ -27,14 +25,15 @@ export interface CreateBlogPostResult {
 export async function createBlogPost(formData: FormData): Promise<CreateBlogPostResult> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です' };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
     }
     const userId = authResult.userId;
 
     // フォームデータの取得とバリデーション
     const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const content = formData.get('content') as string;
     const tagsString = formData.get('tags') as string;
@@ -45,25 +44,19 @@ export async function createBlogPost(formData: FormData): Promise<CreateBlogPost
     }
 
     // タグの処理
-    let tags: string[] = [];
-    try {
-      tags = JSON.parse(tagsString || '[]');
-    } catch {
-      // JSONパースに失敗した場合は空配列
-      tags = [];
-    }
+    const tags = normalizeTags(tagsString);
 
-    // スラッグの生成
-    const slug = generateSlug(title);
+    // スラッグの処理（フォームから取得、空の場合はタイトルから生成）
+    const finalSlug = slug && slug.trim() ? slug.trim() : generateSlug(title);
 
     // 既存のスラッグとの重複チェック
     const existingPost = await db.select()
       .from(blogPosts)
-      .where(eq(blogPosts.slug, slug))
+      .where(eq(blogPosts.slug, finalSlug))
       .limit(1);
 
     if (existingPost.length > 0) {
-      return { success: false, error: '同じタイトルの記事が既に存在します' };
+      return { success: false, error: '同じスラッグの記事が既に存在します' };
     }
 
     // MDXからHTMLへの変換
@@ -77,7 +70,7 @@ export async function createBlogPost(formData: FormData): Promise<CreateBlogPost
 
     // 記事の作成
     const newPost = await db.insert(blogPosts).values({
-      slug,
+      slug: finalSlug,
       title,
       description: description || null,
       content,
@@ -101,7 +94,7 @@ export async function createBlogPost(formData: FormData): Promise<CreateBlogPost
     // 公開記事の場合はOGP画像を生成
     if (status === 'published') {
       try {
-        const ogImagePath = await generateOGImageForPost(slug, title);
+        const ogImagePath = await generateOGImageForPost(finalSlug, title);
         
         // OGP画像パスを更新
         if (newPost[0]) {
@@ -117,7 +110,7 @@ export async function createBlogPost(formData: FormData): Promise<CreateBlogPost
       }
     }
 
-    logger.info({ postId: newPost[0]?.id, slug, status }, 'ブログ記事を作成しました');
+    logger.info({ postId: newPost[0]?.id, slug: finalSlug, status }, 'ブログ記事を作成しました');
 
     // キャッシュの再検証
     revalidatePath('/blog');
@@ -143,28 +136,27 @@ export async function createBlogPost(formData: FormData): Promise<CreateBlogPost
 export async function updateBlogPost(postId: number, formData: FormData): Promise<CreateBlogPostResult> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です' };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
     }
     const userId = authResult.userId;
 
     // 記事の存在確認と権限チェック
-    const existingPost = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (existingPost.length === 0) {
-      return { success: false, error: '記事が見つかりません' };
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      return { success: false, error: ownershipResult.error };
     }
-
-    if (existingPost[0]?.authorId !== userId) {
-      return { success: false, error: 'この記事を編集する権限がありません' };
+    const existingPost = ownershipResult.post;
+    
+    // TypeScriptの型ガード
+    if (!existingPost) {
+      return { success: false, error: '記事データの取得に失敗しました' };
     }
 
     // フォームデータの取得
     const title = formData.get('title') as string;
+    const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const content = formData.get('content') as string;
     const tagsString = formData.get('tags') as string;
@@ -175,16 +167,11 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
     }
 
     // タグの処理
-    let tags: string[] = [];
-    try {
-      tags = JSON.parse(tagsString || '[]');
-    } catch {
-      tags = [];
-    }
+    const tags = normalizeTags(tagsString);
 
-    // スラッグの更新（タイトルが変更された場合）
-    const newSlug = generateSlug(title);
-    const slugChanged = existingPost[0]?.slug !== newSlug;
+    // スラッグの処理（フォームから取得、空の場合はタイトルから生成）
+    const newSlug = slug && slug.trim() ? slug.trim() : generateSlug(title);
+    const slugChanged = existingPost.slug !== newSlug;
 
     // スラッグの重複チェック（変更された場合のみ）
     if (slugChanged) {
@@ -194,7 +181,7 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
         .limit(1);
 
       if (duplicatePost.length > 0) {
-        return { success: false, error: '同じタイトルの記事が既に存在します' };
+        return { success: false, error: '同じスラッグの記事が既に存在します' };
       }
     }
 
@@ -210,14 +197,14 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
     // 記事の更新
     await db.update(blogPosts)
       .set({
-        slug: slugChanged ? newSlug : existingPost[0]?.slug,
+        slug: slugChanged ? newSlug : existingPost.slug,
         title,
         description: description || null,
         content,
         contentHtml,
         excerpt: generateExcerpt(content),
         tags,
-        publishedAt: status === 'published' ? (existingPost[0]?.publishedAt || new Date()) : existingPost[0]?.publishedAt,
+        publishedAt: status === 'published' ? (existingPost.publishedAt || new Date()) : existingPost.publishedAt,
         updatedAt: new Date(),
         status: status as 'draft' | 'published',
         isPublished: status === 'published',
@@ -228,9 +215,9 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
       .where(eq(blogPosts.id, postId));
 
     // 公開記事の場合はOGP画像を生成（タイトルが変更された場合または新規公開の場合）
-    if (status === 'published' && (title !== existingPost[0]?.title || !existingPost[0]?.isPublished)) {
+    if (status === 'published' && (title !== existingPost.title || !existingPost.isPublished)) {
       try {
-        const finalSlug = slugChanged ? newSlug : existingPost[0]?.slug;
+        const finalSlug = slugChanged ? newSlug : existingPost.slug;
         const ogImagePath = await generateOGImageForPost(finalSlug, title);
         
         // OGP画像パスを更新
@@ -248,7 +235,7 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
     logger.info({ postId, slug: newSlug, status }, 'ブログ記事を更新しました');
 
     // バージョンを保存（コンテンツが変更された場合のみ）
-    if (content !== existingPost[0]?.content) {
+    if (content !== existingPost.content) {
       try {
         await savePostVersion(postId, content);
         logger.info({ postId }, '記事のバージョンを保存しました');
@@ -261,8 +248,8 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
     // キャッシュの再検証
     revalidatePath('/blog');
     revalidatePath('/blog/editor');
-    if (slugChanged && existingPost[0]?.slug) {
-      revalidatePath(`/blog/${existingPost[0].slug}`);
+    if (slugChanged && existingPost.slug) {
+      revalidatePath(`/blog/${existingPost.slug}`);
     }
     revalidatePath(`/blog/${newSlug}`);
 
@@ -278,41 +265,84 @@ export async function updateBlogPost(postId: number, formData: FormData): Promis
 }
 
 /**
+ * 記事の公開ステータスだけを更新
+ */
+export async function updatePostStatus(postId: number, nextStatus: 'draft' | 'published'): Promise<CreateBlogPostResult> {
+  try {
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
+    }
+    const userId = authResult.userId;
+
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      return { success: false, error: ownershipResult.error };
+    }
+    const existingPost = ownershipResult.post;
+    
+    // TypeScriptの型ガード
+    if (!existingPost) {
+      return { success: false, error: '記事データの取得に失敗しました' };
+    }
+
+    await db.update(blogPosts)
+      .set({
+        status: nextStatus,
+        isPublished: nextStatus === 'published',
+        publishedAt: nextStatus === 'published' ? (existingPost.publishedAt || new Date()) : existingPost.publishedAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(blogPosts.id, postId));
+
+    // キャッシュの再検証
+    revalidatePath('/blog');
+    revalidatePath('/dashboard/blog');
+    if (existingPost.slug) {
+      revalidatePath(`/blog/${existingPost.slug}`);
+    }
+
+    return { success: true };
+  } catch (error) {
+    logger.error({ error, postId, nextStatus }, '記事ステータス更新に失敗');
+    return { success: false, error: '記事の更新中にエラーが発生しました' };
+  }
+}
+
+/**
  * ブログ記事を削除
  */
 export async function deleteBlogPost(postId: number): Promise<CreateBlogPostResult> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です' };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
     }
     const userId = authResult.userId;
 
     // 記事の存在確認と権限チェック
-    const existingPost = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (existingPost.length === 0) {
-      return { success: false, error: '記事が見つかりません' };
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      return { success: false, error: ownershipResult.error };
     }
-
-    if (existingPost[0]?.authorId !== userId) {
-      return { success: false, error: 'この記事を削除する権限がありません' };
+    const existingPost = ownershipResult.post;
+    
+    // TypeScriptの型ガード
+    if (!existingPost) {
+      return { success: false, error: '記事データの取得に失敗しました' };
     }
 
     // 記事の削除
     await db.delete(blogPosts).where(eq(blogPosts.id, postId));
 
-    logger.info({ postId, slug: existingPost[0]?.slug }, 'ブログ記事を削除しました');
+    logger.info({ postId, slug: existingPost.slug }, 'ブログ記事を削除しました');
 
     // キャッシュの再検証
     revalidatePath('/blog');
     revalidatePath('/blog/editor');
-    if (existingPost[0]?.slug) {
-      revalidatePath(`/blog/${existingPost[0].slug}`);
+    if (existingPost.slug) {
+      revalidatePath(`/blog/${existingPost.slug}`);
     }
 
     return { success: true };
@@ -326,47 +356,3 @@ export async function deleteBlogPost(postId: number): Promise<CreateBlogPostResu
   }
 }
 
-/**
- * タイトルからスラッグを生成
- */
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // 特殊文字を除去
-    .replace(/\s+/g, '-') // スペースをハイフンに
-    .replace(/-+/g, '-') // 連続するハイフンを1つに
-    .replace(/^-+|-+$/g, ''); // 先頭・末尾のハイフンを除去
-}
-
-/**
- * コンテンツから抜粋を生成
- */
-function generateExcerpt(content: string): string {
-  // Markdownの見出し記号を除去
-  const cleanContent = content
-    .replace(/^#+\s/gm, '') // 見出し記号を除去
-    .replace(/[#*_`~[\]]/g, '') // その他のMarkdown記号を除去
-    .replace(/!\[.*?\]\(.*?\)/g, '') // 画像を除去
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // リンクテキストのみ残す
-    .replace(/\s+/g, ' ') // 連続するスペースを1つに
-    .trim();
-
-  // 200文字で切り取り
-  return cleanContent.length > 200 
-    ? `${cleanContent.substring(0, 200)}...` 
-    : cleanContent;
-}
-
-/**
- * 読了時間を計算（分単位）
- */
-function calculateReadingTime(content: string): number {
-  // 日本語は1分間に400文字、英語は200単語として計算
-  const japaneseChars = (content.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g) || []).length;
-  const englishWords = content.replace(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/g, '').split(/\s+/).length;
-  
-  const japaneseTime = japaneseChars / 400;
-  const englishTime = englishWords / 200;
-  
-  return Math.max(1, Math.ceil(japaneseTime + englishTime));
-}

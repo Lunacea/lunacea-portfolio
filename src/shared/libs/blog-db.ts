@@ -1,13 +1,11 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { blogPosts } from '@/shared/models/Schema';
+import { blogPosts, postViewEvents } from '@/shared/models/Schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { logger } from '@/shared/libs/Logger';
+import { getDatabase } from '@/shared/libs/db-common';
 import 'server-only';
 
 // データベース接続
-const client = postgres(process.env.DATABASE_URL as string);
-const db = drizzle(client);
+const { db } = getDatabase();
 
 export { db };
 
@@ -255,6 +253,14 @@ export async function incrementViewCount(slug: string): Promise<void> {
       await db.update(blogPosts)
         .set({ viewCount: (currentPost[0]?.viewCount || 0) + 1 })
         .where(eq(blogPosts.slug, slug));
+
+      // 推移集計用に日次イベントを記録
+      const today = new Date();
+      const y = today.getUTCFullYear();
+      const m = String(today.getUTCMonth() + 1).padStart(2, '0');
+      const d = String(today.getUTCDate()).padStart(2, '0');
+      const viewDay = `${y}-${m}-${d}`;
+      await db.insert(postViewEvents).values({ slug, viewDay });
     }
   } catch (error) {
     logger.error({ error, slug }, '閲覧数の更新に失敗');

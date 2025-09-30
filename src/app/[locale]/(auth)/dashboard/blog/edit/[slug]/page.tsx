@@ -34,14 +34,14 @@ export async function generateMetadata({ params }: EditPageProps): Promise<Metad
 export default async function EditBlogPostPage({ params }: EditPageProps) {
   const { slug } = await params;
   
-  // 認証チェック
+  // ユーザー情報を取得（middlewareで認証済み）
   const { userId } = await auth();
   if (!userId) {
     redirect('/sign-in');
   }
 
   // 記事の取得
-      const post = await db.select()
+  const post = await db.select()
     .from(blogPosts)
     .where(eq(blogPosts.slug, slug))
     .limit(1);
@@ -50,20 +50,21 @@ export default async function EditBlogPostPage({ params }: EditPageProps) {
     notFound();
   }
 
-  // 権限チェック（作成者のみ編集可能）
-  if (post[0]?.authorId !== userId) {
-    redirect('/dashboard/blog');
+  const blogPost = post[0];
+  
+  if (!blogPost) {
+    notFound();
   }
 
-  const blogPost = post[0];
+  // 権限チェック（作成者のみ編集可能）
+  if (blogPost.authorId !== userId) {
+    redirect('/dashboard/blog');
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">記事を編集</h1>
-        <p className="text-muted-foreground mt-2">
-          「{blogPost.title}」の編集
-        </p>
+        <h1 className="text-3xl font-bold">{blogPost.title}</h1>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -72,6 +73,7 @@ export default async function EditBlogPostPage({ params }: EditPageProps) {
             initialData={{
               id: blogPost.id,
               title: blogPost.title,
+              slug: blogPost.slug,
               description: blogPost.description || '',
               content: blogPost.content,
               tags: blogPost.tags?.join(', ') || '',

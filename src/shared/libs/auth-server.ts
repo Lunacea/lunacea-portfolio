@@ -13,8 +13,9 @@ export interface AuthUser {
  * Clerkのauth()の代替
  */
 export async function auth(): Promise<{ userId: string | null }> {
-  // 開発環境では常に認証済みとして扱う
-  if (process.env.NODE_ENV === 'development') {
+  // 環境変数で明示的に許可されている場合のみ、開発環境バイパスを有効化
+  if (process.env.BYPASS_AUTH === 'true') {
+    console.warn('⚠️  Authentication bypass is enabled (BYPASS_AUTH=true)')
     return { userId: 'dev-user-123' }
   }
 
@@ -52,20 +53,19 @@ export async function auth(): Promise<{ userId: string | null }> {
       }
     )
     
-    // クッキーからセッションを取得
-    const { data: { session }, error } = await supabase.auth.getSession()
+    // getUser() を使用してサーバー側で認証を検証（セキュリティ推奨）
+    const { data: { user }, error } = await supabase.auth.getUser()
     
     if (error) {
-      console.error('Session error:', error)
+      console.error('Auth error:', error.message)
       return { userId: null }
     }
 
-    if (!session) {
-      console.warn('No session found')
+    if (!user) {
       return { userId: null }
     }
 
-    return { userId: session.user.id }
+    return { userId: user.id }
   } catch (error) {
     console.error('Auth error:', error)
     return { userId: null }
@@ -110,23 +110,23 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       }
     )
     
-    const { data: { session }, error } = await supabase.auth.getSession()
+    // getUser() を使用してサーバー側で認証を検証（セキュリティ推奨）
+    const { data: { user }, error } = await supabase.auth.getUser()
     
     if (error) {
-      console.error('Session error:', error)
+      console.error('Get user error:', error.message)
       return null
     }
 
-    if (!session) {
-      console.warn('No session found')
+    if (!user) {
       return null
     }
 
     return {
-      id: session.user.id,
-      email: session.user.email,
-      name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
-      avatarUrl: session.user.user_metadata?.avatar_url
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata?.full_name || user.user_metadata?.name,
+      avatarUrl: user.user_metadata?.avatar_url
     }
   } catch (error) {
     console.error('Get current user error:', error)

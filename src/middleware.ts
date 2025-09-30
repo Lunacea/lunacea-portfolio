@@ -7,15 +7,26 @@ import { createServerClient } from '@supabase/ssr';
 
 const handleI18nRouting = createMiddleware(routing);
 
-// 保護されたルートのパターン
+// 保護対象ルートの判定
 const isProtectedRoute = (pathname: string): boolean => {
-  const protectedPatterns = [
-    /^\/dashboard/,
-    /^\/[a-z]{2}\/dashboard/,
+  // 認証不要のパスを除外
+  const publicPatterns = [
+    /^\/api\/auth\/callback$/,  // OAuth callback
+    /^\/[a-z]{2}\/api\/auth\/callback$/,  // ロケール付きcallback
   ];
   
-  return protectedPatterns.some(pattern => pattern.test(pathname));
+  if (publicPatterns.some((re) => re.test(pathname))) {
+    return false;
+  }
+  
+  // /dashboard または /{locale}/dashboard を対象
+  const protectedPatterns = [
+    /^\/dashboard(\/.+)?$/,
+    /^\/[a-z]{2}\/dashboard(\/.+)?$/,
+  ];
+  return protectedPatterns.some((re) => re.test(pathname));
 };
+
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -44,53 +55,49 @@ export default async function middleware(
     }
   }
 
+  // i18nのレスポンスを先に生成
+  const response = handleI18nRouting(request);
+
+  // 未認証で保護ルートに来たらサインインへ（元URLを持たせる）
   const pathname = request.nextUrl.pathname;
-
-    // 開発環境では認証を完全にスキップ
-    if (process.env.NODE_ENV === 'development') {
-      return handleI18nRouting(request)
-    }
-
-    // 本番環境: 保護されたルートでSupabase認証をチェック
-    if (isProtectedRoute(pathname)) {
-      try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-        if (!supabaseUrl || !supabaseAnonKey) {
-          console.error('Missing Supabase environment variables')
-          return handleI18nRouting(request)
-        }
-
-        const supabase = createServerClient(
-          supabaseUrl,
-          supabaseAnonKey,
-          {
-            cookies: {
-              getAll() {
-                return request.cookies.getAll()
-              },
-              setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-              },
+  if (isProtectedRoute(pathname)) {
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll();
             },
-          }
-        )
-
-        const { data: { session } } = await supabase.auth.getSession()
-
-        if (!session) {
-          const locale = pathname.match(/^\/([a-z]{2})\//)?.[1] ?? '';
-          const signInUrl = new URL(`${locale ? `/${locale}` : ''}/sign-in`, request.url);
-          return NextResponse.redirect(signInUrl);
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                response.cookies.set(name, value, options);
+              });
+            },
+          },
         }
-      } catch {
-        console.error('Supabase middleware error');
-      }
-    }
+      );
 
-  // i18nルーティングを実行
-  return handleI18nRouting(request);
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        const locale = pathname.match(/^\/([a-z]{2})\//)?.[1] ?? '';
+        const signInUrl = new URL(`${locale ? `/${locale}` : ''}/sign-in`, request.url);
+        signInUrl.searchParams.set('redirect_to', pathname + request.nextUrl.search);
+        return NextResponse.redirect(signInUrl);
+      }
+    } catch {
+      // セッション更新に失敗した場合も安全側でサインインへ
+      const locale = pathname.match(/^\/([a-z]{2})\//)?.[1] ?? '';
+      const signInUrl = new URL(`${locale ? `/${locale}` : ''}/sign-in`, request.url);
+      signInUrl.searchParams.set('redirect_to', pathname + request.nextUrl.search);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  // i18nルーティングを実行したレスポンスを返す（Cookieも反映済み）
+  return response;
 }
 
 export const config = {

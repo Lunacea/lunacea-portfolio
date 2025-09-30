@@ -1,16 +1,13 @@
 'use server';
 
-import { auth } from '@/shared/libs/auth-server';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { blogPosts, blogPostVersions } from '@/shared/models/Schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { logger } from '@/shared/libs/Logger';
+import { getDatabase, checkAuth, checkPostOwnershipDetailed, requireAuth } from '@/shared/libs/db-common';
 import 'server-only';
 
 // データベース接続
-const client = postgres(process.env.DATABASE_URL as string);
-const db = drizzle(client);
+const { db } = getDatabase();
 
 export interface VersionResult {
   success: boolean;
@@ -33,24 +30,16 @@ export interface BlogPostVersion {
 export async function savePostVersion(postId: number, content: string): Promise<VersionResult> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です' };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
     }
     const userId = authResult.userId;
 
     // 記事の存在確認と権限チェック
-    const post = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (post.length === 0) {
-      return { success: false, error: '記事が見つかりません' };
-    }
-
-    if (post[0]?.authorId !== userId) {
-      return { success: false, error: 'この記事を編集する権限がありません' };
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      return { success: false, error: ownershipResult.error };
     }
 
     // 最新バージョン番号を取得
@@ -89,24 +78,12 @@ export async function savePostVersion(postId: number, content: string): Promise<
 export async function getPostVersions(postId: number): Promise<BlogPostVersion[]> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      throw new Error('認証が必要です');
-    }
-    const userId = authResult.userId;
+    const userId = await requireAuth();
 
     // 記事の存在確認と権限チェック
-    const post = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (post.length === 0) {
-      throw new Error('記事が見つかりません');
-    }
-
-    if (post[0]?.authorId !== userId) {
-      throw new Error('この記事を編集する権限がありません');
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      throw new Error(ownershipResult.error);
     }
 
     // バージョン一覧を取得
@@ -129,24 +106,12 @@ export async function getPostVersions(postId: number): Promise<BlogPostVersion[]
 export async function getPostVersion(postId: number, version: number): Promise<BlogPostVersion | null> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      throw new Error('認証が必要です');
-    }
-    const userId = authResult.userId;
+    const userId = await requireAuth();
 
     // 記事の存在確認と権限チェック
-    const post = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (post.length === 0) {
-      throw new Error('記事が見つかりません');
-    }
-
-    if (post[0]?.authorId !== userId) {
-      throw new Error('この記事を編集する権限がありません');
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      throw new Error(ownershipResult.error);
     }
 
     // 特定のバージョンを取得
@@ -174,24 +139,16 @@ export async function getPostVersion(postId: number, version: number): Promise<B
 export async function restorePostToVersion(postId: number, version: number): Promise<VersionResult> {
   try {
     // 認証チェック
-    const authResult = await auth();
-    if (!authResult?.userId) {
-      return { success: false, error: '認証が必要です' };
+    const authResult = await checkAuth();
+    if (!authResult.success) {
+      return { success: false, error: authResult.error };
     }
     const userId = authResult.userId;
 
     // 記事の存在確認と権限チェック
-    const post = await db.select()
-      .from(blogPosts)
-      .where(eq(blogPosts.id, postId))
-      .limit(1);
-
-    if (post.length === 0) {
-      return { success: false, error: '記事が見つかりません' };
-    }
-
-    if (post[0]?.authorId !== userId) {
-      return { success: false, error: 'この記事を編集する権限がありません' };
+    const ownershipResult = await checkPostOwnershipDetailed(postId, userId);
+    if (!ownershipResult.success) {
+      return { success: false, error: ownershipResult.error };
     }
 
     // 復元するバージョンを取得

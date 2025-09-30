@@ -1,6 +1,6 @@
 'use client'
 
-import { supabase } from '@/shared/libs/supabase'
+import { supabase } from '@/shared/libs/supabase-browser'
 import { useRouter } from 'next/navigation'
 
 interface SupabaseSignOutButtonProps {
