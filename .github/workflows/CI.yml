@@ -73,7 +73,7 @@ jobs:
       
       - name: Upload lint results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: lint-results-${{ github.sha }}
           path: |
@@ -136,7 +136,7 @@ jobs:
       
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-results-${{ matrix.node-version }}-${{ github.sha }}
           path: |
@@ -216,7 +216,7 @@ jobs:
 
       - name: Upload build artifacts
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-output-${{ github.sha }}
           path: build-artifacts-${{ github.sha }}.tgz
@@ -312,7 +312,7 @@ jobs:
       
       - name: Upload blob report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: blob-report-${{ matrix.browser }}-${{ matrix.shardIndex }}-${{ github.sha }}
           path: blob-report
@@ -355,7 +355,7 @@ jobs:
       
       - name: Upload merged HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-html-report-${{ github.sha }}
           path: playwright-report
@@ -402,7 +402,7 @@ jobs:
       
       - name: Upload security scan results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: security-scan-results-${{ github.sha }}
           path: trivy-results.sarif
