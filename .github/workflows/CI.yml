@@ -52,7 +52,7 @@ jobs:
           bun-version: latest
       
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.bun/install/cache
@@ -105,7 +105,7 @@ jobs:
           bun-version: latest
       
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.bun/install/cache
@@ -168,7 +168,7 @@ jobs:
           bun-version: latest
       
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.bun/install/cache
@@ -250,7 +250,7 @@ jobs:
           bun-version: latest
       
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.bun/install/cache
@@ -280,7 +280,7 @@ jobs:
           fi
       
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/ms-playwright
